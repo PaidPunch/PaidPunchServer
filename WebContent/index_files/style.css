@@ -1,0 +1,82 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body {
+	background-image: url(bkgrd.png);
+	background-repeat:repeat;
+	font: Geneva, Helvetica, Verdana;
+}
+
+h1 {
+	font-size:24px;
+	font-weight:300;
+	text-align:center;
+	padding-top: 15px;
+	color: #333;
+}
+
+h2 {
+	font-size:18px;
+	font-weight:100;
+	text-align:center;
+	color:  #888;
+}
+
+h3 {
+	font-size:19px;
+	font-weight:100;
+	color: #f47b27;
+	padding-left: 10px;
+	padding-top: 0px;
+	
+}
+
+h4 {
+	font-size:16px;
+	font-weight:100;
+	color: #444;
+	padding-left: 10px;
+	
+}
+
+h5 {
+	font-size:13px;
+	font-weight:0;
+	color: #f47b27;
+	padding-left: 10px;
+}
+
+
+footer {
+	font-size:12px;
+	font-weight:0;
+	color: #444;
+	text-align:center;
+}
+
+
+.top {
+	vertical-align:text-top;
+	vertical-align:top;
+}
+
+.pad {
+	padding-top: 0px;
+}
+
+a:link {
+COLOR: #444;
+text-decoration: none;
+}
+a:visited {
+COLOR: #444;
+text-decoration: none;
+}
+a:hover {
+COLOR: #f47b27;
+text-decoration: none;
+}
+a:active {
+COLOR: #444;
+text-decoration: none;
+}

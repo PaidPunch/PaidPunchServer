@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/PaidPunch/!svn/ver/250/PaidPunch_Server/trunk/Development/src/java/net/authorize
+END
+DeviceType.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/DeviceType.java
+END
+Merchant.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/Merchant.java
+END
+ResponseReasonCode.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/ResponseReasonCode.java
+END
+ResponseField.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/ResponseField.java
+END
+Environment.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/Environment.java
+END
+CustomerProfileCommunication.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/PaidPunch/!svn/ver/248/PaidPunch_Server/trunk/Development/src/java/net/authorize/CustomerProfileCommunication.java
+END
+UnitTestData.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/PaidPunch/!svn/ver/250/PaidPunch_Server/trunk/Development/src/java/net/authorize/UnitTestData.java
+END
+pom.xml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/pom.xml
+END
+TransactionCommunication.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/PaidPunch/!svn/ver/247/PaidPunch_Server/trunk/Development/src/java/net/authorize/TransactionCommunication.java
+END
+AuthNetField.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/AuthNetField.java
+END
+PaymentMethod.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/PaymentMethod.java
+END
+Result.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/Result.java
+END
+MarketType.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/MarketType.java
+END
+Transaction.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/Transaction.java
+END
+TransactionType.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/TransactionType.java
+END
+ResponseCode.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/ResponseCode.java
+END

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/data/creditcard
+END
+AVSCode.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/data/creditcard/AVSCode.java
+END
+CreditCard.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/data/creditcard/CreditCard.java
+END
+CardType.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/data/creditcard/CardType.java
+END

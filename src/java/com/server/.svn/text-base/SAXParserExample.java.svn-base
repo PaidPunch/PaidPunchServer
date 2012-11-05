@@ -1,0 +1,213 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.server;
+
+
+
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.servlet.ServletInputStream;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import org.xml.sax.helpers.DefaultHandler;
+
+public class SAXParserExample extends DefaultHandler{
+
+	List aczList = new ArrayList();
+	String reqesttype="";
+	//to maintain context
+	private aczreqElements acz;
+
+        private String tempVal;
+
+
+	public SAXParserExample(){
+	//	myEmpls = new ArrayList();
+            reqesttype="camp";
+	}
+	public SAXParserExample(String temp){
+	//	myEmpls = new ArrayList();
+            reqesttype=temp;
+	}
+	public void runExample() {
+		//parseDocument();
+		printData();
+	}
+
+	public void parseDocument(InputSource in) {
+
+		//get a factory
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+		try {
+
+			//get a new instance of parser
+			SAXParser sp = spf.newSAXParser();
+
+			//parse the file and also register this class for call backs
+			sp.parse(in, this);
+
+		}catch(SAXException se) {
+			se.printStackTrace();
+		}catch(ParserConfigurationException pce) {
+			pce.printStackTrace();
+		}catch (IOException ie) {
+			ie.printStackTrace();
+		}
+	}
+
+	/**
+	 * Iterate through the list and print
+	 * the contents
+	 */
+	private void printData(){
+
+//		System.out.println("No of Employees '" + myEmpls.size() + "'.");
+//
+//		Iterator it = myEmpls.iterator();
+//		while(it.hasNext()) {
+//			System.out.println(it.next().toString());
+//		}
+	}
+
+
+	//Event Handlers
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		//reset
+		//tempVal = "";
+		if(qName.equalsIgnoreCase("paidpunch-req")) {
+			//create a new instance of employee
+			acz = new aczreqElements();
+			//tempEmp.setType(attributes.getValue("type"));
+		}
+	}
+
+
+	public void characters(char[] ch, int start, int length) throws SAXException {
+	            tempVal = new String(ch,start,length);
+
+	}
+
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+
+		if(qName.equalsIgnoreCase("paidpunch-req")) {
+			aczList.add(acz);
+		}else if (qName.equalsIgnoreCase("txtype")) {
+			acz.setTxtype(tempVal);
+                         tempVal="";
+                }else if (qName.equalsIgnoreCase("username")) {
+			acz.setUsername(tempVal);
+                         tempVal="";
+                }else if (qName.equalsIgnoreCase("name")) {
+                        acz.setName(tempVal);
+                         tempVal="";
+		}else if (qName.equalsIgnoreCase("password")) {
+			acz.setPassword(tempVal);
+                         tempVal="";
+                }else if (qName.equalsIgnoreCase("email")) {
+                        acz.setEmail(tempVal);
+                         tempVal="";
+		}else if (qName.equalsIgnoreCase("mobilenumber")) {
+                         acz.setMobilenumber(tempVal);
+                          tempVal="";
+		}
+                else if (qName.equalsIgnoreCase("city")) {
+                         acz.setCity(tempVal);
+                          tempVal="";
+		}else if (qName.equalsIgnoreCase("scannedcode")) {
+                         acz.setVerificationCode(tempVal);
+                          tempVal="";
+		}else if (qName.equalsIgnoreCase("userId")) {
+                         acz.setUserId(tempVal);
+                          tempVal="";
+                }else if (qName.equalsIgnoreCase("punchcardid")) {
+                         acz.setPunchCardID(tempVal);
+                          tempVal="";
+                }else if (qName.equalsIgnoreCase("orangeqrscannedvalue")) {
+                         acz.setOrangeqrscannedvalue(tempVal);
+                          tempVal="";
+                }else if (qName.equalsIgnoreCase("punch_card_downloadid")) {
+                         acz.setPunch_card_downloadid(tempVal);
+                          tempVal="";
+                }else if (qName.equalsIgnoreCase("oldpassword")) {
+                         acz.setOldPassword(tempVal);
+                          tempVal="";
+                }else if (qName.equalsIgnoreCase("feedbackText")) {
+                         acz.setFeedbackText(tempVal);
+                          tempVal="";
+                }else if (qName.equalsIgnoreCase("pincode")) {
+                         acz.setPin(tempVal);
+                          tempVal="";
+                }
+                else if (qName.equalsIgnoreCase("business_name")) {
+                         acz.setBusiness_name(tempVal);
+                }else if (qName.equalsIgnoreCase("sessionid")) {
+                         acz.setSessionid(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("barcodevalue")) {
+                         acz.setBarcodevalue(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("bussinessid")) {
+                         acz.setBusinessid(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("FBid")) {
+                         acz.setFbid(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("isfreepunch")) {
+                         acz.setIsfreepunch(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("transactionid")) {
+                         acz.setTid(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("is_mystery_punch")) {
+                         acz.setIs_mystery_punch(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("cardno")) {
+                         acz.setCardno(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("cvv")) {
+                         acz.setCvv(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("exp_date")) {
+                         acz.setExp_date(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("amount")) {
+                         acz.setAmount(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("paymentid")) {
+                         acz.setPaymentid(tempVal);
+                tempVal="";
+                }else if (qName.equalsIgnoreCase("cardtype")) {
+                         acz.setCardtype(tempVal);
+                tempVal="";
+                }
+
+	}
+
+//	public static void main(String[] args){
+//		SAXParserExample spe = new SAXParserExample();
+//		spe.runExample();
+//	}
+
+        public List getData(){
+            return aczList;
+        }
+
+}
+
+
+
+

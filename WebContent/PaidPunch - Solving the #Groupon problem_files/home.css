@@ -1,0 +1,33 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body {
+	background-color:#fdfdfd;
+}
+
+h3 {
+	font-family:Arial, Helvetica, sans-serif;
+	font-weight: 100;
+	font-size: 14px;
+	color: #f58220;
+	padding-top: 10px;
+	padding-bottom:10px ;
+	text-align:center;
+}
+
+
+a:link    {text-decoration: none;color:#818285;}
+a:visited {text-decoration: none;color:#818285;}
+a:hover   {text-decoration: none;color:#f58220;}
+a:active  {text-decoration: none;color:#818285;}
+
+#businessadminlink {
+    float : right;
+    margin-right: 20px;
+    margin-top: 10px;
+}
+
+.table {
+	position:relative;
+	margin-top: 10%;
+}

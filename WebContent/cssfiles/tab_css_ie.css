@@ -1,0 +1,84 @@
+ /**
+ This stylesheet is part of the java script calendar and date picker
+  **/
+ body {
+                font: 12px/16px Calibri;
+                color: #333;
+               background: #fff url("../images/bg_tab.png") repeat-x 0 0;
+
+
+            }
+            #jsddm
+            { float: left;
+              height: 38px;
+              margin-top: 57px;
+              margin-left: 10px;
+              margin-bottom: 20px;
+            }
+
+
+
+
+
+
+            #jsddm li
+            {float: left;
+              list-style: none;
+              font: 13px Calibri;
+            }
+
+            #jsddm li a
+            {
+                display: block;
+                width: 110px;
+                height: 38px;
+                text-align: center;
+                line-height: 38px;
+                background: url("../images/navtab.png") no-repeat 0 0;
+                color: #333;
+                text-decoration: none;
+            }
+            #jsddm li.navtext-sel a {
+                 font-size: 14px;
+                color:white;
+                background: url("../images/navtab-sel.png") no-repeat 0 0;
+            }
+
+            #jsddm li a:hover
+            {
+                color:  #323232;
+            }
+
+            #jsddm li ul
+            { width: auto;
+               text-align: left;
+               width: 200px;
+               height: 32px;
+               background: #F47B27;
+               color: #FFFFFF;}
+
+            #jsddm li ul li
+            { float: none;
+              display: inline}
+
+            #jsddm li ul li a
+            {  width: auto;
+               text-align: left;
+               width: 200px;
+               height: 32px;
+               background: #A9C251;
+               color: #F47B27
+            }
+            #jsddm li ul li.navtext-sel1 a {
+                 width: auto;
+                text-align: left;
+                width: 200px;
+                height: 32px;
+                background: #A9C251;
+                color: #F47B27;
+                font-weight: normal;
+                font-size: 12px;
+
+            }
+            #jsddm li ul li a:hover
+            {background: #F47B27}

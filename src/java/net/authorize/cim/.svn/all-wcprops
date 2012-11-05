@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/PaidPunch/!svn/ver/247/PaidPunch_Server/trunk/Development/src/java/net/authorize/cim
+END
+SplitTenderStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/cim/SplitTenderStatus.java
+END
+ValidationModeType.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/cim/ValidationModeType.java
+END
+Transaction.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/cim/Transaction.java
+END
+TransactionType.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/cim/TransactionType.java
+END
+Result.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/PaidPunch/!svn/ver/247/PaidPunch_Server/trunk/Development/src/java/net/authorize/cim/Result.java
+END

@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util
+END
+BasicXmlDocument.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/BasicXmlDocument.java
+END
+Luhn.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/Luhn.java
+END
+StringUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/StringUtils.java
+END
+DeepCopy.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/DeepCopy.java
+END
+DateUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/DateUtil.java
+END
+ResponseParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/ResponseParser.java
+END
+HttpClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/HttpClient.java
+END
+XmlTreeUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/PaidPunch/!svn/ver/245/PaidPunch_Server/trunk/Development/src/java/net/authorize/util/XmlTreeUtil.java
+END
