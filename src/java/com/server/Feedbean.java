@@ -1,17 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.server;
 
 /**
- *
  * @author qube26
  */
 public class Feedbean {
-    String fbid="",action="",name="",price="",buss_name="",saveprice="",date,time="",mystery_punchid="",punchcard_id="",app_user_id="",timestamp="",ismysterypunch="" ;
-    String no_of_punches_per_card="",value_of_each_punch="",selling_price_of_punch_card="",effective_discount="",offer="",isfbaccount="",disc_value_of_each_punch="";
+    String fbid = "", action = "", name = "", price = "", buss_name = "", saveprice = "", date, time = "",
+            mystery_punchid = "", punchcard_id = "", app_user_id = "", timestamp = "", ismysterypunch = "";
+    String no_of_punches_per_card = "", value_of_each_punch = "", selling_price_of_punch_card = "",
+            effective_discount = "", offer = "", isfbaccount = "", disc_value_of_each_punch = "";
 
     public String getDisc_value_of_each_punch() {
         return disc_value_of_each_punch;
@@ -36,6 +32,7 @@ public class Feedbean {
     public void setOffer(String offer) {
         this.offer = offer;
     }
+
     boolean ismyfrend;
 
     public boolean isIsmyfrend() {

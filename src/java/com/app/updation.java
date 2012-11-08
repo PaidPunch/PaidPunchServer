@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import com.db.DataAccessControler;
@@ -23,17 +19,21 @@ import com.server.Constants;
 import com.server.aczreqElements;
 
 /**
- *
  * @author qube26
  */
 public class updation extends HttpServlet {
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -62,7 +62,6 @@ public class updation extends HttpServlet {
             ServletInputStream in = request.getInputStream();
 
             SAXParserExample example = new SAXParserExample();
-
 
             int info;
             StringBuffer sb = new StringBuffer();
@@ -93,13 +92,19 @@ public class updation extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -107,12 +112,17 @@ public class updation extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -120,8 +130,9 @@ public class updation extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -141,13 +152,14 @@ public class updation extends HttpServlet {
         fields_value.add(email);
         fields_value.add(mobileno);
 
-         String sessionid=arz.getSessionid();
-               sessionhandler session=new sessionhandler();
-             boolean sessionverify=  session.sessionidverify(userid,sessionid);
-             if(!sessionverify)
-             { email_Updation_Xml(response, email, mobileno, "400", "You have logged in from another device");
-                 return;
-             }
+        String sessionid = arz.getSessionid();
+        sessionhandler session = new sessionhandler();
+        boolean sessionverify = session.sessionidverify(userid, sessionid);
+        if (!sessionverify)
+        {
+            email_Updation_Xml(response, email, mobileno, "400", "You have logged in from another device");
+            return;
+        }
 
         int res = DataAccessControler.updateDataToTable("app_user", "user_id", userid, fields, fields_value);
         if (res == 1) {
@@ -159,7 +171,8 @@ public class updation extends HttpServlet {
         }
     }
 
-    private void email_Updation_Xml(HttpServletResponse response, String email, String mobileno, String statusCode, String statusMessage) {
+    private void email_Updation_Xml(HttpServletResponse response, String email, String mobileno, String statusCode,
+            String statusMessage) {
 
         PrintWriter out = null;
         try {
@@ -180,7 +193,7 @@ public class updation extends HttpServlet {
 
             }
             out.print(res);
-            Constants.logger.info("Email Updataion Response->"+res);
+            Constants.logger.info("Email Updataion Response->" + res);
         } catch (Exception ex) {
             Constants.logger.error(ex);
         }
@@ -204,32 +217,33 @@ public class updation extends HttpServlet {
         Vector fields_value = new Vector();
         fields_value.add(password);
 
-         String sessionid=arz.getSessionid();
-               sessionhandler session=new sessionhandler();
-             boolean sessionverify=  session.sessionidverify(userid,sessionid);
-             if(!sessionverify)
-             {  Password_updation_Xml(response, "400", "You have logged in from another device");
-                 return;
-             }
+        String sessionid = arz.getSessionid();
+        sessionhandler session = new sessionhandler();
+        boolean sessionverify = session.sessionidverify(userid, sessionid);
+        if (!sessionverify)
+        {
+            Password_updation_Xml(response, "400", "You have logged in from another device");
+            return;
+        }
 
         int res = DataAccessControler.updateDataToTable("app_user", pid, pid_value, fields, fields_value);
         if (res == 1)
         {
-         Password_updation_Xml(response,"00","Your password is updated successfully.");
-         return;
+            Password_updation_Xml(response, "00", "Your password is updated successfully.");
+            return;
         }
         else
         {
-        Password_updation_Xml(response,"01","Failed to process request.");
-         return;
+            Password_updation_Xml(response, "01", "Failed to process request.");
+            return;
         }
 
     }
 
     private void Password_updation_Xml(HttpServletResponse p_response, String statusCode, String statusMessage) {
-         try {
+        try {
             PrintWriter out = p_response.getWriter();
-           Constants.logger.info("Password Updataion Response->");
+            Constants.logger.info("Password Updataion Response->");
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
 

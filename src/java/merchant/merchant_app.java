@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package merchant;
 
 import org.apache.commons.codec.binary.Base64;
@@ -33,17 +29,21 @@ import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.InputSource;
 
 /**
- *
  * @author qube26
  */
 public class merchant_app extends HttpServlet {
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     ServletConfig config = null;
     ServletContext context;
@@ -53,7 +53,6 @@ public class merchant_app extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         response.setContentType("text/html;charset=UTF-8");
-
 
         String msg;
 
@@ -70,7 +69,6 @@ public class merchant_app extends HttpServlet {
             ServletInputStream in = request.getInputStream();
 
             SAXParserExample example = new SAXParserExample();
-
 
             int info;
             StringBuffer sb = new StringBuffer();
@@ -99,19 +97,24 @@ public class merchant_app extends HttpServlet {
                 login(list, response);
             }
 
-
         } finally {
             out.close();
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -119,12 +122,17 @@ public class merchant_app extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -132,8 +140,9 @@ public class merchant_app extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -154,8 +163,8 @@ public class merchant_app extends HttpServlet {
             Vector userinfo = new Vector();
             userinfo.add("");
             userinfo.add("");
-//             config = getServletConfig();
-//            ServletContext context = config.getServletContext();
+            // config = getServletConfig();
+            // ServletContext context = config.getServletContext();
             String path = context.getRealPath("appMessage.properties").toString();
             Properties props = new Properties();
             props.load(new FileInputStream(path));
@@ -182,11 +191,12 @@ public class merchant_app extends HttpServlet {
                     filedvalue.add(time);
                     filedvalue.add(date);
                     filedvalue.add("scan");
-                    int i = DataAccessControler.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue, filed, filedvalue);
+                    int i = DataAccessControler.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue,
+                            filed, filedvalue);
 
                     if (i == -1) {
-                         xml_write(response, "01", invalidbarcode);
-                       
+                        xml_write(response, "01", invalidbarcode);
+
                     } else {
                         xml_write(response, "00", validbarcode);
                     }
@@ -194,9 +204,6 @@ public class merchant_app extends HttpServlet {
             } catch (Exception ex) {
                 Constants.logger.error(ex);
             }
-
-
-
 
         } catch (Exception e) {
 
@@ -218,7 +225,7 @@ public class merchant_app extends HttpServlet {
 
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
- // String res = "<?xml version='1.0' ?>"
+            // String res = "<?xml version='1.0' ?>"
             p_response.setHeader("Content-Disposition", "attachement; filename= response.xml");
             String res = "<? xml version='1.0' ?>"
                     + "<paidpunch-resp>"
@@ -239,7 +246,6 @@ public class merchant_app extends HttpServlet {
         try {
             aczreqElements arz = (aczreqElements) list.get(0);
             bussinessid = arz.getBusinessid();
-
 
             String path = context.getRealPath("appMessage.properties").toString();
             Properties props = new Properties();
@@ -325,7 +331,8 @@ public class merchant_app extends HttpServlet {
 
     }
 
-    private void xmlloginORlogout(HttpServletResponse p_response, String statusCode, String statusMessage, String userid) throws IOException {
+    private void xmlloginORlogout(HttpServletResponse p_response, String statusCode, String statusMessage, String userid)
+            throws IOException {
         try {
             PrintWriter out = p_response.getWriter();
             Constants.logger.info("Respones userid   " + userid);
@@ -343,7 +350,6 @@ public class merchant_app extends HttpServlet {
         } catch (Exception e) {
             Constants.logger.error(e);
         }
-
 
     }
 
@@ -368,60 +374,57 @@ public class merchant_app extends HttpServlet {
                     + "<statusCode>" + statusCode + "</statusCode>");
             String respons = "<userid>" + userid + "</userid>"
                     + "<name>" + userdata.elementAt(2) + "</name>"
-                    + "<totalPunch>"+userdata.elementAt(4)+"</totalPunch>"
-                    + "<value_of_each_Punch>"+userdata.elementAt(5)+"</value_of_each_Punch>"
-                    + "<selling_Price>"+userdata.elementAt(6)+"</selling_Price>";
+                    + "<totalPunch>" + userdata.elementAt(4) + "</totalPunch>"
+                    + "<value_of_each_Punch>" + userdata.elementAt(5) + "</value_of_each_Punch>"
+                    + "<selling_Price>" + userdata.elementAt(6) + "</selling_Price>";
             Constants.logger.info("respons" + respons);
-            respons = respons + "<logo>" +  new String(baseimage.encode(l_imageData))  + "</logo>";
+            respons = respons + "<logo>" + new String(baseimage.encode(l_imageData)) + "</logo>";
 
             out.print(respons);
-           
-
 
             out.print("<statusMessage>" + statusMessage + "</statusMessage>");
 
-
             out.print("</paidpunch-resp>");
-
 
         } catch (Exception e) {
             Constants.logger.error(e);
         }
 
     }
+
     public static String RandomInteger() {
-       
-//        int aStart = 100;
-//        int aEnd = 999;
-//        Random aRandom = new Random();
-//        if (aStart > aEnd) {
-//            throw new IllegalArgumentException("Start cannot exceed End.");
-//        }
-//        //get the range, casting to long to avoid overflow problems
-//        long range = aEnd - (long) aStart + 1;
-//        // System.out.println("range>>>>>>>>>>>" + range);
-//        // compute a fraction of the range, 0 <= frac < range
-//        long fraction = (long) (range * aRandom.nextDouble());
-//        // System.out.println("fraction>>>>>>>>>>>>>>>>>>>>" + fraction);
-//        long randomNumber = fraction + (long) aStart;
-//        System.out.println("Generated : " + randomNumber + " length " + ("" + randomNumber).length());
-    int E4 = 0;
-    String temp="";
-    boolean b=true;
-    while(b)
-    { E4 = (int) Math.round(Math.random() * 1000); //3 digit random
-      System.out.print("\nnumber  "+E4);
-    temp=""+E4;
-    if(temp.length()==3)
-    {
-       b=false;
-    }
-     temp="";
-    }
 
-       System.out.println("number genrate times "+E4);
-    return ""+E4;
-    }
+        // int aStart = 100;
+        // int aEnd = 999;
+        // Random aRandom = new Random();
+        // if (aStart > aEnd) {
+        // throw new IllegalArgumentException("Start cannot exceed End.");
+        // }
+        // //get the range, casting to long to avoid overflow problems
+        // long range = aEnd - (long) aStart + 1;
+        // // System.out.println("range>>>>>>>>>>>" + range);
+        // // compute a fraction of the range, 0 <= frac < range
+        // long fraction = (long) (range * aRandom.nextDouble());
+        // // System.out.println("fraction>>>>>>>>>>>>>>>>>>>>" + fraction);
+        // long randomNumber = fraction + (long) aStart;
+        // System.out.println("Generated : " + randomNumber + " length " + ("" + randomNumber).length());
+        int E4 = 0;
+        String temp = "";
+        boolean b = true;
+        while (b)
+        {
+            E4 = (int) Math.round(Math.random() * 1000); // 3 digit random
+            System.out.print("\nnumber  " + E4);
+            temp = "" + E4;
+            if (temp.length() == 3)
+            {
+                b = false;
+            }
+            temp = "";
+        }
 
+        System.out.println("number genrate times " + E4);
+        return "" + E4;
+    }
 
 }

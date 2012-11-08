@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package payment;
 
 import com.app.sessionhandler;
@@ -35,7 +31,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 /**
- *
  * @author qube26
  */
 public class payment_detail extends HttpServlet {
@@ -45,10 +40,15 @@ public class payment_detail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -70,7 +70,6 @@ public class payment_detail extends HttpServlet {
 
                 SAXParserExample example = new SAXParserExample();
 
-
                 int info;
                 StringBuffer sb = new StringBuffer();
                 while ((info = in.read()) != -1) {
@@ -90,16 +89,18 @@ public class payment_detail extends HttpServlet {
                 aczreqElements arz = (aczreqElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
-
                 if (reqtype.equalsIgnoreCase("profile-REQ")) {
-                //String cardtype=arz.getCardtype();
+                    // String cardtype=arz.getCardtype();
                     CustomerProfileCommunication profile = new CustomerProfileCommunication();
-                     Constants.logger.info("create profile request ");
-                     Constants.logger.info("userID:"+ arz.getUserId()+ "   user name :"+arz.getName()+" email ID: "+arz.getEmail() );
-                    Vector profile_data = profile.createCustomerProfileAuth(arz.getName(), arz.getEmail(), arz.getCardno(), arz.getExp_date(), arz.getCvv());
-                Constants.logger.info("response from payment gatway");
-                    Constants.logger.info("code :"+profile_data.elementAt(0).toString() + "  message:" + profile_data.elementAt(2).toString() + "  profileid:" + profile_data.elementAt(1).toString() + ":");
-
+                    Constants.logger.info("create profile request ");
+                    Constants.logger.info("userID:" + arz.getUserId() + "   user name :" + arz.getName()
+                            + " email ID: " + arz.getEmail());
+                    Vector profile_data = profile.createCustomerProfileAuth(arz.getName(), arz.getEmail(),
+                            arz.getCardno(), arz.getExp_date(), arz.getCvv());
+                    Constants.logger.info("response from payment gatway");
+                    Constants.logger.info("code :" + profile_data.elementAt(0).toString() + "  message:"
+                            + profile_data.elementAt(2).toString() + "  profileid:"
+                            + profile_data.elementAt(1).toString() + ":");
 
                     String code = profile_data.elementAt(0).toString();
                     if (code.equalsIgnoreCase("00")) {
@@ -112,9 +113,9 @@ public class payment_detail extends HttpServlet {
                             String maskno = get_profile_data.elementAt(3).toString();
                             String userid = arz.getUserId();
                             DataAccess da = new DataAccess();
-                            da.update_profileid("app_user", userid, profileid,"true");
+                            da.update_profileid("app_user", userid, profileid, "true");
                             getprofilexml(response, get_meas, code, maskno, payid);
-                            //xml(response,"successful","00");
+                            // xml(response,"successful","00");
                             return;
                         }
                     } else {
@@ -122,28 +123,26 @@ public class payment_detail extends HttpServlet {
                         return;
                     }
                 }
-                 if (reqtype.equalsIgnoreCase("Delete-Profile-REQ")) {
-                 deleteProfile(list, response);
-                 return;
-
+                if (reqtype.equalsIgnoreCase("Delete-Profile-REQ")) {
+                    deleteProfile(list, response);
+                    return;
 
                 }
-                     if (reqtype.equalsIgnoreCase("Get-Profile-REQ")) {
+                if (reqtype.equalsIgnoreCase("Get-Profile-REQ")) {
                     String userid = arz.getUserId();
                     DataAccess da = new DataAccess();
                     Vector profile_info = da.getprofileid(userid);
-                    if(profile_info==null)
+                    if (profile_info == null)
                     {
-                     xml(response, "Failed to process request.Please try again.", "01");
-                     return;
+                        xml(response, "Failed to process request.Please try again.", "01");
+                        return;
                     }
-                    String profileid=profile_info.elementAt(0).toString();
-                    //String card_type=profile_info.elementAt(1).toString();
+                    String profileid = profile_info.elementAt(0).toString();
+                    // String card_type=profile_info.elementAt(1).toString();
                     CustomerProfileCommunication profile = new CustomerProfileCommunication();
                     Vector profile_data = profile.getCustomerProfileAuth(profileid);
                     String code = profile_data.elementAt(0).toString();
                     String meas = profile_data.elementAt(1).toString();
-
 
                     if (code.equalsIgnoreCase("00")) {
                         String payid = profile_data.elementAt(2).toString();
@@ -154,88 +153,88 @@ public class payment_detail extends HttpServlet {
                         String payid = "";
                         String maskno = "";
                         getprofilexml(response, meas, code, maskno, payid);
-                         return;
+                        return;
                     }
 
                 }
 
-
-
-            }
-            catch(SSLPeerUnverifiedException ssl)
-        {
-           Constants.logger.error(ssl);
-            getprofilexml(response, "Failed to process request.Please try again.",  "02", "", "");
-            return; 
-        }
-            catch (Exception ex) {
+            } catch (SSLPeerUnverifiedException ssl)
+            {
+                Constants.logger.error(ssl);
+                getprofilexml(response, "Failed to process request.Please try again.", "02", "", "");
+                return;
+            } catch (Exception ex) {
                 Constants.logger.error(ex);
-                getprofilexml(response, "Failed to process request.Please try again.",  "02", "", "");
-            return;
+                getprofilexml(response, "Failed to process request.Please try again.", "02", "", "");
+                return;
             }
         } catch (Exception e) {
             Constants.logger.error(e);
         }
     }
- private void deleteProfile(List list, HttpServletResponse response) {
-        try{
-             aczreqElements arz = (aczreqElements) list.get(0);
+
+    private void deleteProfile(List list, HttpServletResponse response) {
+        try {
+            aczreqElements arz = (aczreqElements) list.get(0);
             String userid = arz.getUserId();
 
             String sessionid = arz.getSessionid();
             sessionhandler session = new sessionhandler();
             boolean b = session.sessionidverify(userid, sessionid);
             Constants.logger.info("Delete profile");
-            if(b)
-            {Constants.logger.info("userid:"+userid );
+            if (b)
+            {
+                Constants.logger.info("userid:" + userid);
 
                 DataAccess da = new DataAccess();
-              Vector profile_info = da.getprofileid(userid);
-                    if(profile_info==null)
-                    {
-                     xml(response, "Failed to process request.Please try again.", "01");
-                     return;
-                    }
-                    String profileid=profile_info.elementAt(0).toString();
-                     CustomerProfileCommunication profile = new CustomerProfileCommunication();
-                    Vector profile_data = profile.testDeleteCustomerProfileRequest(profileid);
-                    Constants.logger.info("paymentgatway response   code:"+profile_data.elementAt(0).toString()+" message: "+profile_data.elementAt(1).toString()+" "+profile_data.elementAt(2).toString());
-                    String successcode=profile_data.elementAt(0).toString();
-                    if(successcode.equalsIgnoreCase("00"))
-                    {
-                     int res=da.update_profileid("app_user", userid,"","false");
-                    if(res>0)
-                    {
-                     deleteXml(response, "00","Delete Successful", "false");
-                     return;
-                    }
-                    else
-                    {
+                Vector profile_info = da.getprofileid(userid);
+                if (profile_info == null)
+                {
                     xml(response, "Failed to process request.Please try again.", "01");
-                     return;     
-                    }
+                    return;
+                }
+                String profileid = profile_info.elementAt(0).toString();
+                CustomerProfileCommunication profile = new CustomerProfileCommunication();
+                Vector profile_data = profile.testDeleteCustomerProfileRequest(profileid);
+                Constants.logger.info("paymentgatway response   code:" + profile_data.elementAt(0).toString()
+                        + " message: " + profile_data.elementAt(1).toString() + " "
+                        + profile_data.elementAt(2).toString());
+                String successcode = profile_data.elementAt(0).toString();
+                if (successcode.equalsIgnoreCase("00"))
+                {
+                    int res = da.update_profileid("app_user", userid, "", "false");
+                    if (res > 0)
+                    {
+                        deleteXml(response, "00", "Delete Successful", "false");
+                        return;
                     }
                     else
                     {
-                        xml(response, profile_data.elementAt(2).toString(), "01");
-                     return;
+                        xml(response, "Failed to process request.Please try again.", "01");
+                        return;
                     }
-
+                }
+                else
+                {
+                    xml(response, profile_data.elementAt(2).toString(), "01");
+                    return;
+                }
 
             }
             else
             {
-                xml(response,"You have logged in from another device","400");
+                xml(response, "You have logged in from another device", "400");
             }
         }
 
-        catch(Exception e)
+        catch (Exception e)
         {
             Constants.logger.info(e.toString());
-             xml(response,"Failed to process request.Please try again.","01");
-             return;
+            xml(response, "Failed to process request.Please try again.", "01");
+            return;
         }
     }
+
     private void xml(HttpServletResponse p_response, String mesage, String code) {
 
         String statusCode = code;
@@ -244,28 +243,27 @@ public class payment_detail extends HttpServlet {
         try {
             PrintWriter out = p_response.getWriter();
 
-
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
 
             p_response.setHeader("Content-Disposition", "attachement; filename= response.xml");
-            String resmes="<?xml version='1.0' ?>"
+            String resmes = "<?xml version='1.0' ?>"
                     + "<paidpunch-resp>"
                     + "<statusCode>" + statusCode + "</statusCode>"
-                    +"<statusMessage>" + statusMessage + "</statusMessage>";
+                    + "<statusMessage>" + statusMessage + "</statusMessage>";
             out.print(resmes);
-            //out.print();
-
+            // out.print();
 
             out.print("</paidpunch-resp>");
-
 
         } catch (Exception e) {
             Constants.logger.error(e);
         }
 
     }
-private void deleteXml(HttpServletResponse p_response, String statusCode, String statusMessage, String isprofilecreated) {
+
+    private void deleteXml(HttpServletResponse p_response, String statusCode, String statusMessage,
+            String isprofilecreated) {
         try {
             PrintWriter out = p_response.getWriter();
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -299,22 +297,23 @@ private void deleteXml(HttpServletResponse p_response, String statusCode, String
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            //StreamResult result = new StreamResult(new File("C:\\file.xml"));
+            // StreamResult result = new StreamResult(new File("C:\\file.xml"));
 
             // Output to console for testing
             StreamResult result = new StreamResult(out);
 
             transformer.transform(source, result);
-            Constants.logger.info( "Delete prfole xml");
+            Constants.logger.info("Delete prfole xml");
             Constants.logger.info(result.toString());
-            
+
         } catch (ParserConfigurationException pce) {
-           Constants.logger.error(pce.toString());
+            Constants.logger.error(pce.toString());
         } catch (Exception tfe) {
             Constants.logger.error(tfe.toString());
         }
 
     }
+
     private void getprofilexml(HttpServletResponse p_response, String mesage, String code, String masked, String payid) {
 
         String statusCode = code;
@@ -322,7 +321,6 @@ private void deleteXml(HttpServletResponse p_response, String statusCode, String
 
         try {
             PrintWriter out = p_response.getWriter();
-
 
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
@@ -334,28 +332,31 @@ private void deleteXml(HttpServletResponse p_response, String statusCode, String
                     + "<masked>" + masked + "</masked>"
                     + "<paymentid>" + payid + "</paymentid>"
                     + "<statusMessage>" + statusMessage + "</statusMessage></paidpunch-resp>";
-            Constants.logger.info("masked no"+masked +" code: "+statusCode);
+            Constants.logger.info("masked no" + masked + " code: " + statusCode);
             Constants.logger.info("masked no and paymentid send to mobile");
 
             out.print(xml);
-
-
-           
-
 
         } catch (Exception e) {
             Constants.logger.error(e);
         }
 
     }
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -363,21 +364,27 @@ private void deleteXml(HttpServletResponse p_response, String statusCode, String
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-        }
+    }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -385,5 +392,4 @@ private void deleteXml(HttpServletResponse p_response, String statusCode, String
         return "Short description";
     }// </editor-fold>
 
-   
 }

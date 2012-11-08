@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.app;
 
 import com.db.DataAccessControler;
@@ -13,49 +8,51 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author qube26
  */
 public class sessionhandler {
-    public boolean sessionidverify(String userid,String sessionid)
+    public boolean sessionidverify(String userid, String sessionid)
     {
         boolean verify = false;
         try {
 
-        verify=DataAccessControler.getDataTable("app_user", "user_id", "sessionid",userid, sessionid);
+            verify = DataAccessControler.getDataTable("app_user", "user_id", "sessionid", userid, sessionid);
 
         } catch (SQLException ex) {
             Constants.logger.error(ex.toString());
         }
-return verify;
+        return verify;
     }
- public int insertsessionid(String userid,String sessionid)
+
+    public int insertsessionid(String userid, String sessionid)
     {
         int verify = -1;
         try {
 
-        verify=DataAccessControler.updatetDataToTable("app_user", "user_id", userid,"sessionid", sessionid);
+            verify = DataAccessControler.updatetDataToTable("app_user", "user_id", userid, "sessionid", sessionid);
 
         } catch (Exception ex) {
             Constants.logger.error(ex.toString());
         }
-return verify;
+        return verify;
     }
- public String genratesessionid()
-    { 
-     String sessionid="";
-     sessionid=createRandomInteger();
-     return sessionid;
 
- }
- private static String createRandomInteger() {
+    public String genratesessionid()
+    {
+        String sessionid = "";
+        sessionid = createRandomInteger();
+        return sessionid;
+
+    }
+
+    private static String createRandomInteger() {
         Long aStart = 100000000000l;
         Long aEnd = 999999999999l;
         Random aRandom = new Random();
         if (aStart > aEnd) {
             throw new IllegalArgumentException("Start cannot exceed End.");
         }
-        //get the range, casting to long to avoid overflow problems
+        // get the range, casting to long to avoid overflow problems
         long range = aEnd - (long) aStart + 1;
         // System.out.println("range>>>>>>>>>>>" + range);
         // compute a fraction of the range, 0 <= frac < range

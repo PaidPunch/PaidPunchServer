@@ -12,102 +12,103 @@ import net.authorize.data.echeck.ECheckType;
 
 public class UnitTestData {
 
-	//protected static String apiLoginID = "2Mfk7E77";
-	//protected static String transactionKey = "32TtuG628W938nYB";
-//        protected static String apiLoginID = "2a8XX76p5q2";
-//	protected static String transactionKey = "76bb7f69A8TnBW6X";
-        protected static String apiLoginID = "3Q3KjuB3LvY6";
-        protected static String transactionKey = "3Q3UTr5m3BSx9v56";
-	protected static String cp_apiLoginID = System.getProperty("CP_API_LOGIN_ID");
-	protected static String cp_transactionKey = System.getProperty("CP_TRANSACTION_KEY");
-	protected static String merchantMD5Key = "9876543210123456789";
-	protected static Merchant merchant = Merchant.createMerchant(Environment.PRODUCTION_TESTMODE, apiLoginID, transactionKey);
+    // protected static String apiLoginID = "2Mfk7E77";
+    // protected static String transactionKey = "32TtuG628W938nYB";
+    // protected static String apiLoginID = "2a8XX76p5q2";
+    // protected static String transactionKey = "76bb7f69A8TnBW6X";
+    protected static String apiLoginID = "3Q3KjuB3LvY6";
+    protected static String transactionKey = "3Q3UTr5m3BSx9v56";
+    protected static String cp_apiLoginID = System.getProperty("CP_API_LOGIN_ID");
+    protected static String cp_transactionKey = System.getProperty("CP_TRANSACTION_KEY");
+    protected static String merchantMD5Key = "9876543210123456789";
+    protected static Merchant merchant = Merchant.createMerchant(Environment.PRODUCTION_TESTMODE, apiLoginID,
+            transactionKey);
 
-	// customer information
-	protected  String firstName = "Shahid";
-	protected  String lastName = "Tamboli";
-	protected  String address = "";
-	protected  String city = "Pune";
-	protected  String state = "Maharashtra";
-	protected  String zipPostalCode = "411016";
-	protected  String magicSplitTenderZipCode = "46225";
-	protected  String company = "Mobimedia Technologies";
-	protected  String country = "US";
-	protected  String customerId = "CUST000000";
-	protected  String customerIP = "127.0.0.1";
-	protected  String email = "shahid@mmobimedia.in";
-	protected  String email2 = "customer2@merchant.com";
-	protected  String phone = "9890218239";
-	protected  String fax = "415-555-1313";
-	protected  String customerDescription = "Customer A";
-	protected  String customerDescription2 = "Customer B";
+    // customer information
+    protected String firstName = "Shahid";
+    protected String lastName = "Tamboli";
+    protected String address = "";
+    protected String city = "Pune";
+    protected String state = "Maharashtra";
+    protected String zipPostalCode = "411016";
+    protected String magicSplitTenderZipCode = "46225";
+    protected String company = "Mobimedia Technologies";
+    protected String country = "US";
+    protected String customerId = "CUST000000";
+    protected String customerIP = "127.0.0.1";
+    protected String email = "shahid@mmobimedia.in";
+    protected String email2 = "customer2@merchant.com";
+    protected String phone = "9890218239";
+    protected String fax = "415-555-1313";
+    protected String customerDescription = "Customer A";
+    protected String customerDescription2 = "Customer B";
 
-	// email receipt information
-	protected  String headerEmailReceipt = "Thank you for purchasing " +
-			"Widgets from The Antibes Company";
-	protected  String footerEmailReceipt = "If you have any problems, " +
-			"please contact us at +44 20 5555 1212";
-	protected  String merchantEmail = "shahid1311@gmail.com";
+    // email receipt information
+    protected String headerEmailReceipt = "Thank you for purchasing " +
+            "Widgets from The Antibes Company";
+    protected String footerEmailReceipt = "If you have any problems, " +
+            "please contact us at +44 20 5555 1212";
+    protected String merchantEmail = "shahid1311@gmail.com";
 
-	// order information
-	protected  String orderDescription = "Widgets";
-	protected  String invoiceNumber = Long.toString(System.currentTimeMillis());
-	protected  String mdfKey = "notes";
-	protected  String mdfValue = "Would like a blue widget.";
+    // order information
+    protected String orderDescription = "Widgets";
+    protected String invoiceNumber = Long.toString(System.currentTimeMillis());
+    protected String mdfKey = "notes";
+    protected String mdfValue = "Would like a blue widget.";
 
-	// order item information
-	protected  String itemDescription = "A widget for widgeting.";
-	protected  String itemId = "widget_a_1000";
-	protected  String itemName = "Widget A";
-	protected  BigDecimal itemPrice = new BigDecimal(19.99);
-	protected  BigDecimal itemQuantity = new BigDecimal(1.00);
-	protected  String itemDescription2 = "A FREE micro widget.";
-	protected  String itemId2 = "mwidget_z_0001";
-	protected  String itemName2 = "Micro Widget Z";
-	protected  BigDecimal itemPrice2 = new BigDecimal(0.01);
-	protected  BigDecimal itemQuantity2 = new BigDecimal(1.00);
+    // order item information
+    protected String itemDescription = "A widget for widgeting.";
+    protected String itemId = "widget_a_1000";
+    protected String itemName = "Widget A";
+    protected BigDecimal itemPrice = new BigDecimal(19.99);
+    protected BigDecimal itemQuantity = new BigDecimal(1.00);
+    protected String itemDescription2 = "A FREE micro widget.";
+    protected String itemId2 = "mwidget_z_0001";
+    protected String itemName2 = "Micro Widget Z";
+    protected BigDecimal itemPrice2 = new BigDecimal(0.01);
+    protected BigDecimal itemQuantity2 = new BigDecimal(1.00);
 
-	// shipping address information is the same as the customer address
+    // shipping address information is the same as the customer address
 
-	// shipping charges information
-	protected  BigDecimal dutyAmount = new BigDecimal(0.00);
-	protected  String dutyItemDescription = "VAT";
-	protected  String dutyItemName = "VAT Tax";
-	protected  BigDecimal freightAmount = new BigDecimal(5.00);
-	protected  String freightDescription = "Flat rate";
-	protected  String freightItemName = "Shipping";
-	protected  String purchaseOrderNumber = "PO-1001";
-	protected  BigDecimal taxAmount = new BigDecimal(2.37);
-	protected  String taxDescription = "9.5%";
-	protected  boolean taxExempt = false;
-	protected  String taxItemName = "California Tax";
+    // shipping charges information
+    protected BigDecimal dutyAmount = new BigDecimal(0.00);
+    protected String dutyItemDescription = "VAT";
+    protected String dutyItemName = "VAT Tax";
+    protected BigDecimal freightAmount = new BigDecimal(5.00);
+    protected String freightDescription = "Flat rate";
+    protected String freightItemName = "Shipping";
+    protected String purchaseOrderNumber = "PO-1001";
+    protected BigDecimal taxAmount = new BigDecimal(2.37);
+    protected String taxDescription = "9.5%";
+    protected boolean taxExempt = false;
+    protected String taxItemName = "California Tax";
 
-	// credit card information
-	protected  String creditCardNumber = "4346-7810-1034-1352";
-	protected  String rawCreditCardNumber = "4346781010341352";
-	protected  String maskedCreditCardNumber = "xxxx1111";
-	protected  CardType cardType = CardType.VISA;
-	protected  String creditCardExpMonth = "12";
-	protected  String creditCardExpYear = "2020";
-	protected  AVSCode avsCode = AVSCode.P;
-	protected  String cardCodeVerification = "P";
-	protected  String cardholderAuthenticationIndicator = "5";
-	protected  String cardholderAuthenticationValue = "123";
+    // credit card information
+    protected String creditCardNumber = "4346-7810-1034-1352";
+    protected String rawCreditCardNumber = "4346781010341352";
+    protected String maskedCreditCardNumber = "xxxx1111";
+    protected CardType cardType = CardType.VISA;
+    protected String creditCardExpMonth = "12";
+    protected String creditCardExpYear = "2020";
+    protected AVSCode avsCode = AVSCode.P;
+    protected String cardCodeVerification = "P";
+    protected String cardholderAuthenticationIndicator = "5";
+    protected String cardholderAuthenticationValue = "123";
 
-	// eCheck information
-	protected  String bankAccountName = "Test Checking";
-	protected  String bankAccountNumber = "1234567890";
-	protected  BankAccountType bankAccountType = BankAccountType.CHECKING;
-	protected  String bankCheckNumber = "1001";
-	protected  String bankName = "Bank of America";
-	protected  ECheckType eCheckType = ECheckType.WEB;
-	protected  String routingNumber = "111000025";
+    // eCheck information
+    protected String bankAccountName = "Test Checking";
+    protected String bankAccountNumber = "1234567890";
+    protected BankAccountType bankAccountType = BankAccountType.CHECKING;
+    protected String bankCheckNumber = "1001";
+    protected String bankName = "Bank of America";
+    protected ECheckType eCheckType = ECheckType.WEB;
+    protected String routingNumber = "111000025";
 
-	// transaction information
-	protected  BigDecimal totalAmount = new BigDecimal(27.36);
+    // transaction information
+    protected BigDecimal totalAmount = new BigDecimal(27.36);
 
-	protected  String reportingBatchId = "814302";
-	protected  String reportingTransId = "2156009012";
+    protected String reportingBatchId = "814302";
+    protected String reportingTransId = "2156009012";
 
     public String getAddress() {
         return address;
@@ -677,5 +678,4 @@ public class UnitTestData {
         this.zipPostalCode = zipPostalCode;
     }
 
-        
 }

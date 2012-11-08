@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import com.db.DataAccessControler;
@@ -29,17 +25,21 @@ import javax.servlet.ServletInputStream;
 import org.xml.sax.InputSource;
 
 /**
- *
  * @author qube26
  */
 public class forgotpassword extends HttpServlet {
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     ServletContext context;
     ServletConfig config = null;
@@ -89,16 +89,16 @@ public class forgotpassword extends HttpServlet {
                 if (password.equals("")) {
 
                     emailmessage = props.getProperty("forgotpassword.invaildemailid");
-                    forgotpasswordxml(response,"01",emailmessage);
+                    forgotpasswordxml(response, "01", emailmessage);
                     return;
 
                 } else {
                     emailmessage = props.getProperty("forgotpassword.vaildemailid");
 
                 }
-                 signup_paidpunch_add mail=new signup_paidpunch_add();
-                 mail.sendEmail_For_forgotPassword(password, email);
-                   forgotpasswordxml(response,"00",emailmessage+" "+email+" .");
+                signup_paidpunch_add mail = new signup_paidpunch_add();
+                mail.sendEmail_For_forgotPassword(password, email);
+                forgotpasswordxml(response, "00", emailmessage + " " + email + " .");
             } catch (SQLException ex) {
                 Logger.getLogger(forgotpassword.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -107,13 +107,19 @@ public class forgotpassword extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -121,12 +127,17 @@ public class forgotpassword extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -134,8 +145,9 @@ public class forgotpassword extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -143,10 +155,11 @@ public class forgotpassword extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-private void forgotpasswordxml(HttpServletResponse p_response, String statusCode, String statusMessage) throws IOException {
+    private void forgotpasswordxml(HttpServletResponse p_response, String statusCode, String statusMessage)
+            throws IOException {
         try {
             PrintWriter out = p_response.getWriter();
-  
+
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
 
@@ -161,5 +174,5 @@ private void forgotpasswordxml(HttpServletResponse p_response, String statusCode
         } catch (Exception e) {
             Constants.logger.error(e);
         }
-}
+    }
 }

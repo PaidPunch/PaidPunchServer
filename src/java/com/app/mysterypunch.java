@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import com.db.DataAccess;
@@ -47,10 +43,15 @@ public class mysterypunch extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,7 +72,6 @@ public class mysterypunch extends HttpServlet {
             context = config.getServletContext();
             Constants.loadJDBCConstants(context);
 
-
         } catch (Exception e) {
             Constants.logger.error(e);
         }
@@ -80,7 +80,6 @@ public class mysterypunch extends HttpServlet {
             ServletInputStream in = request.getInputStream();
 
             SAXParserExample example = new SAXParserExample();
-
 
             int info;
             StringBuffer sb = new StringBuffer();
@@ -113,10 +112,12 @@ public class mysterypunch extends HttpServlet {
                 String punchcardid = arz.getPunchCardID();
                 String punchcarddownloadid = arz.getPunch_card_downloadid();
 
-                Vector punchcard_download = (Vector) DataAccessControler.getDataFromTable("punchcard_download", "punch_card_downloadid", punchcarddownloadid).elementAt(0);
+                Vector punchcard_download = (Vector) DataAccessControler.getDataFromTable("punchcard_download",
+                        "punch_card_downloadid", punchcarddownloadid).elementAt(0);
                 if (punchcard_download.elementAt(8) != null) {
                     String mysteryid = punchcard_download.elementAt(8).toString();
-                    Vector mystery_data = (Vector) DataAccessControler.getDataFromTable("mystery_punch", "mystery_id", mysteryid).elementAt(0);
+                    Vector mystery_data = (Vector) DataAccessControler.getDataFromTable("mystery_punch", "mystery_id",
+                            mysteryid).elementAt(0);
                     String offer_data = mystery_data.elementAt(2).toString();
                     mysteryxml(response, "00", "successfully", offer_data);
                     return;
@@ -127,12 +128,13 @@ public class mysterypunch extends HttpServlet {
                     return;
                 }
                 System.out.print(bean.toString());
-                int res = DataAccessControler.updatetDataToTable("punchcard_download", "punch_card_downloadid", punchcarddownloadid, "mystery_punchid", bean.getMysteryid());
+                int res = DataAccessControler.updatetDataToTable("punchcard_download", "punch_card_downloadid",
+                        punchcarddownloadid, "mystery_punchid", bean.getMysteryid());
                 if (res == 1) {
                     DataAccess da = new DataAccess();
-                    //need some changes hear
+                    // need some changes hear
 
-                    da.insert_user_feeds(punchcardid, userid, "Mystery", "Y",bean.getMysteryid());
+                    da.insert_user_feeds(punchcardid, userid, "Mystery", "Y", bean.getMysteryid());
                     mysteryxml(response, "00", "successfully", bean.getOffer());
                     return;
                 } else {
@@ -149,13 +151,19 @@ public class mysterypunch extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -163,12 +171,17 @@ public class mysterypunch extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -176,8 +189,9 @@ public class mysterypunch extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -189,14 +203,14 @@ public class mysterypunch extends HttpServlet {
         ArrayList<mysteryBean> beanlist = new ArrayList<mysteryBean>();
 
         try {
-            Vector field_name=new Vector();
+            Vector field_name = new Vector();
             field_name.add("punch_card_id");
             field_name.add("mysterypunchvalid");
-             Vector field_value=new Vector();
+            Vector field_value = new Vector();
             field_value.add(punchcardid);
             field_value.add("Y");
-           Vector mystry_data = DataAccessControler.getDataFromTable("mystery_punch",field_name, field_value);
-             int size = mystry_data.size();
+            Vector mystry_data = DataAccessControler.getDataFromTable("mystery_punch", field_name, field_value);
+            int size = mystry_data.size();
             if (size == 0) {
                 mysteryBean bean = null;
                 return bean;
@@ -212,15 +226,15 @@ public class mysterypunch extends HttpServlet {
                 String mysterypr = data.elementAt(3).toString();
                 int punchloop = 0;
                 punchloop = Integer.parseInt(bean.getPro());
-//                if (mysterypr.equalsIgnoreCase("H")) {
-//                    punchloop = h;
-//                }
-//                if (mysterypr.equalsIgnoreCase("m")) {
-//                    punchloop = m;
-//                }
-//                if (mysterypr.equalsIgnoreCase("l")) {
-//                    punchloop = l;
-//                }
+                // if (mysterypr.equalsIgnoreCase("H")) {
+                // punchloop = h;
+                // }
+                // if (mysterypr.equalsIgnoreCase("m")) {
+                // punchloop = m;
+                // }
+                // if (mysterypr.equalsIgnoreCase("l")) {
+                // punchloop = l;
+                // }
                 for (int pro = 0; pro < punchloop; pro++) {
                     beanlist.add(bean);
                 }
@@ -231,7 +245,6 @@ public class mysterypunch extends HttpServlet {
         } catch (Exception ex) {
             Constants.logger.info(ex.toString());
         }
-
 
         Random random = new Random();
         int pos = createRandomInteger(0, beanlist.size(), random);
@@ -250,7 +263,7 @@ public class mysterypunch extends HttpServlet {
         if (aStart > aEnd) {
             throw new IllegalArgumentException("Start cannot exceed End.");
         }
-        //get the range, casting to long to avoid overflow problems
+        // get the range, casting to long to avoid overflow problems
         long range = (long) aEnd - (long) aStart + 1;
         System.out.print("range>>>>>>>>>>>" + range);
         // compute a fraction of the range, 0 <= frac < range
@@ -295,7 +308,7 @@ public class mysterypunch extends HttpServlet {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            //StreamResult result = new StreamResult(new File("C:\\file.xml"));
+            // StreamResult result = new StreamResult(new File("C:\\file.xml"));
 
             // Output to console for testing
             StreamResult result = new StreamResult(out);

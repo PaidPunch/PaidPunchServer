@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import com.db.DataAccessControler;
@@ -24,17 +20,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.xml.sax.InputSource;
 
 /**
- *
  * @author qube26
  */
 public class feedback extends HttpServlet {
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -64,7 +64,6 @@ public class feedback extends HttpServlet {
 
             SAXParserExample example = new SAXParserExample();
 
-
             int info;
             StringBuffer sb = new StringBuffer();
             while ((info = in.read()) != -1) {
@@ -93,13 +92,19 @@ public class feedback extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -107,12 +112,17 @@ public class feedback extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -120,8 +130,9 @@ public class feedback extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -136,21 +147,22 @@ public class feedback extends HttpServlet {
         Vector rowdata = new Vector();
         rowdata.add(userid);
         rowdata.add(feedbackdata);
-         Date time1=new Date();
-         java.sql.Date sqlDate = new java.sql.Date(time1.getTime());
-               java.sql.Time time=new java.sql.Time(time1.getTime());
-               rowdata.add(sqlDate);
-               rowdata.add(time);
+        Date time1 = new Date();
+        java.sql.Date sqlDate = new java.sql.Date(time1.getTime());
+        java.sql.Time time = new java.sql.Time(time1.getTime());
+        rowdata.add(sqlDate);
+        rowdata.add(time);
 
-                boolean expirestatus = false;
- 
-             String sessionid=arz.getSessionid();
-               sessionhandler session=new sessionhandler();
-             boolean sessionverify=  session.sessionidverify(userid,sessionid);
-             if(!sessionverify)
-             {    feedBack_Xml(response, "400", "You have logged in from another device");
-                 return;
-             }
+        boolean expirestatus = false;
+
+        String sessionid = arz.getSessionid();
+        sessionhandler session = new sessionhandler();
+        boolean sessionverify = session.sessionidverify(userid, sessionid);
+        if (!sessionverify)
+        {
+            feedBack_Xml(response, "400", "You have logged in from another device");
+            return;
+        }
 
         int res = DataAccessControler.insert_feedback_data("feedback", rowdata);
         if (res == 1) {

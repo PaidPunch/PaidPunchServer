@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import com.db.DataAccess;
@@ -27,7 +23,6 @@ import javax.servlet.ServletInputStream;
 import org.xml.sax.InputSource;
 
 /**
- *
  * @author qube26
  */
 public class FB_login extends HttpServlet {
@@ -36,10 +31,15 @@ public class FB_login extends HttpServlet {
     private Vector userdata, userinfo;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     ServletContext context;
 
@@ -62,7 +62,6 @@ public class FB_login extends HttpServlet {
 
                 SAXParserExample example = new SAXParserExample();
 
-
                 int info;
                 StringBuffer sb = new StringBuffer();
                 while ((info = in.read()) != -1) {
@@ -82,9 +81,6 @@ public class FB_login extends HttpServlet {
                 aczreqElements arz = (aczreqElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
-
-
-
                 if (reqtype.equalsIgnoreCase("FB-LOGIN-REQ")) {
                     String name, email, fbid, sessionid;
                     DataAccess da = new DataAccess();
@@ -93,48 +89,46 @@ public class FB_login extends HttpServlet {
                     fbid = arz.getFbid();
                     sessionid = arz.getSessionid();
                     boolean res = da.check_fbid(fbid);
-                    //res true means already reg OR  false means first time login
+                    // res true means already reg OR false means first time login
                     Vector app_user;
                     String app_id;
-                    String isproifleid="false";
+                    String isproifleid = "false";
                     if (res) {
                         da.fb_login(fbid, email, name, sessionid);
                         Vector userinfo = DataAccessControler.getDataFromTable("app_user", "FBid", fbid);
                         app_user = (Vector) userinfo.get(0);
-                        app_id =""+app_user.get(0);
-                        isproifleid=""+app_user.get(13);
-
+                        app_id = "" + app_user.get(0);
+                        isproifleid = "" + app_user.get(13);
 
                     } else {
                         da.fb_Registration(fbid, email, name, sessionid);
                         Vector userinfo = DataAccessControler.getDataFromTable("app_user", "FBid", fbid);
-                       String temp=name;
-                        String namearray[]=temp.split(" ");
-              String lastName="";
-              if(namearray.length>1)
-              {
-                lastName=namearray[namearray.length-1];
-                char firstChar=lastName.charAt(0);
-                //lastName=""+firstChar;
-                //namearray[namearray.length-1]=lastName;
-              }
-              temp="";
-              for(int index=0;index<namearray.length-1;index++)
-              {
-                  temp=temp+namearray[index];
-                  temp=temp+" ";
-              }
-              temp=temp.trim();
-              // email function call
+                        String temp = name;
+                        String namearray[] = temp.split(" ");
+                        String lastName = "";
+                        if (namearray.length > 1)
+                        {
+                            lastName = namearray[namearray.length - 1];
+                            char firstChar = lastName.charAt(0);
+                            // lastName=""+firstChar;
+                            // namearray[namearray.length-1]=lastName;
+                        }
+                        temp = "";
+                        for (int index = 0; index < namearray.length - 1; index++)
+                        {
+                            temp = temp + namearray[index];
+                            temp = temp + " ";
+                        }
+                        temp = temp.trim();
+                        // email function call
 
                         app_user = (Vector) userinfo.get(0);
-                        app_id =""+app_user.get(0);
-                         signup_paidpunch_add  emailsender=new signup_paidpunch_add();
-                                 emailsender.sendConfirmationEmail(email,temp);
-                        
+                        app_id = "" + app_user.get(0);
+                        signup_paidpunch_add emailsender = new signup_paidpunch_add();
+                        emailsender.sendConfirmationEmail(email, temp);
+
                     }
-                    xmllogin(response, "Login Successful", app_id, sessionid,isproifleid);
-                   
+                    xmllogin(response, "Login Successful", app_id, sessionid, isproifleid);
 
                 }
             } catch (Exception ex) {
@@ -144,11 +138,11 @@ public class FB_login extends HttpServlet {
             Constants.logger.error(e);
         }
 
-
     }
 
-    private void xmllogin(HttpServletResponse p_response, String mesage, String user_id, String session,String iscreated) {
-      
+    private void xmllogin(HttpServletResponse p_response, String mesage, String user_id, String session,
+            String iscreated) {
+
         String statusCode = "00";
         String statusMessage = mesage;
 
@@ -166,16 +160,13 @@ public class FB_login extends HttpServlet {
             String respons = "<userid>" + user_id + "</userid>"
                     + "<sessionid>" + session + "</sessionid>"
                     + "<is_profileid_created>" + iscreated + "</is_profileid_created>";
-            ;
+
             out.print(respons);
             Constants.logger.info("respons" + respons);
 
-
             out.print("<statusMessage>" + statusMessage + "</statusMessage>");
 
-
             out.print("</paidpunch-resp>");
-
 
         } catch (Exception e) {
             Constants.logger.error(e);
@@ -183,13 +174,19 @@ public class FB_login extends HttpServlet {
 
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -197,12 +194,17 @@ public class FB_login extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -210,14 +212,16 @@ public class FB_login extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
     private void feeds(List list, HttpServletResponse response) {
         ArrayList<Feedbean> feedlist = new ArrayList<Feedbean>();
         DataAccess da = new DataAccess();

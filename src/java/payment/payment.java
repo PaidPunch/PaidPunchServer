@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package payment;
 
 import com.app.sessionhandler;
@@ -40,7 +36,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.InputSource;
 
 /**
- *
  * @author qube26
  */
 public class payment extends HttpServlet {
@@ -49,10 +44,15 @@ public class payment extends HttpServlet {
     private Vector userdata, userinfo;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     ServletContext context;
 
@@ -75,7 +75,6 @@ public class payment extends HttpServlet {
 
             SAXParserExample example = new SAXParserExample();
 
-
             int info;
             StringBuffer sb = new StringBuffer();
             while ((info = in.read()) != -1) {
@@ -85,7 +84,7 @@ public class payment extends HttpServlet {
             }
             Constants.logger.info("-------------paid_punch---------------");
 
-           Constants.logger.info("XML File rev" );
+            Constants.logger.info("XML File rev");
             String xmldata = new String(sb);
             xmldata = xmldata.trim();
             InputSource iSource = new InputSource(new StringReader(xmldata));
@@ -94,7 +93,6 @@ public class payment extends HttpServlet {
             list = example.getData();
             aczreqElements arz = (aczreqElements) list.get(0);
             String reqtype = arz.getTxtype();
-
 
             if (reqtype.equalsIgnoreCase("BUYBUSSINESSOFFER-REQ")) {
                 try {
@@ -118,9 +116,7 @@ public class payment extends HttpServlet {
             String wrongnoenter = props.getProperty("buy.punch.wrong.entered");
             String codeexpiremsg = props.getProperty("buy.punch.merchant.code.expire");
 
-
-
-            //  String successmsg = props.getProperty("issue.success");
+            // String successmsg = props.getProperty("issue.success");
             aczreqElements arz = (aczreqElements) list.get(0);
             String userId = arz.getUserId();
             String sccancode = arz.getVerificationCode();
@@ -134,9 +130,9 @@ public class payment extends HttpServlet {
             String mystrypunchid = null, value_mystery_punch = "";
             String amt = arz.getAmount();
             String paymentid = arz.getPaymentid();
-            Constants.logger.info("userid:"+userId);
-             Constants.logger.info("punchcardid:"+punchcardid);
-             Constants.logger.info("paymentid:"+paymentid);
+            Constants.logger.info("userid:" + userId);
+            Constants.logger.info("punchcardid:" + punchcardid);
+            Constants.logger.info("paymentid:" + paymentid);
             sessionhandler session = new sessionhandler();
             boolean sessionverify = session.sessionidverify(userId, sessionid);
             if (!(sessionverify)) {
@@ -144,15 +140,15 @@ public class payment extends HttpServlet {
                 return;
             }
             // punch card exipre check and deactive bussn
-            Vector puch_card_data = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", punchcardid).elementAt(0);
-            Vector buss_data = (Vector) DataAccessControler.getDataFromTable("business_users", "business_userid", puch_card_data.elementAt(7).toString()).elementAt(0);
+            Vector puch_card_data = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id",
+                    punchcardid).elementAt(0);
+            Vector buss_data = (Vector) DataAccessControler.getDataFromTable("business_users", "business_userid",
+                    puch_card_data.elementAt(7).toString()).elementAt(0);
             String busi_enabled = buss_data.elementAt(14).toString();
             if (busi_enabled.equalsIgnoreCase("N")) {
                 buy_Punch(response, userdata, "401", " Sorry,This business is expired ");
                 return;
             }
-
-
 
             String expiredate = puch_card_data.elementAt(5).toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
@@ -161,12 +157,11 @@ public class payment extends HttpServlet {
             String strDate = dateFormat.format(new java.util.Date());
             java.util.Date l_scan_Date = dateFormat.parse(strDate);
 
-            //punch exipre
+            // punch exipre
             if (Utility.isAfterDateTime(l_scan_Date, tempexipredate)) {
                 buy_Punch(response, userdata, "401", " Sorry,This business is expired ");
                 return;
             }
-
 
             if (isfreepunch.equalsIgnoreCase("false")) {
                 DataAccess da = new DataAccess();
@@ -182,12 +177,13 @@ public class payment extends HttpServlet {
                 code = paymentdata.elementAt(0).toString();
                 servermes = paymentdata.elementAt(1).toString();
                 getwaymessage = paymentdata.elementAt(2).toString();
-                        
-                           invoiceno = paymentdata.elementAt(3).toString();
-                         authcode = paymentdata.elementAt(4).toString();
-                        transactionId = paymentdata.elementAt(5).toString();
-                        com.server.Constants.logger.info("Invoice No : "+invoiceno+" Authentication Code : "+authcode+" Transaction ID : "+transactionId);
-                                        Vector payment_data = new Vector();
+
+                invoiceno = paymentdata.elementAt(3).toString();
+                authcode = paymentdata.elementAt(4).toString();
+                transactionId = paymentdata.elementAt(5).toString();
+                com.server.Constants.logger.info("Invoice No : " + invoiceno + " Authentication Code : " + authcode
+                        + " Transaction ID : " + transactionId);
+                Vector payment_data = new Vector();
                 payment_data.add(punchcardid);
                 payment_data.add(userId);
                 payment_data.add(transactionId);
@@ -198,14 +194,12 @@ public class payment extends HttpServlet {
                     buy_Punch(response, userdata, code, getwaymessage);
                     return;
                 }
-                
-//tid=da.getpaymentID();
-//tid="123456";
+
+                // tid=da.getpaymentID();
+                // tid="123456";
             }
 
-
-
-            //only one time purch free punch
+            // only one time purch free punch
             if (isfreepunch.equalsIgnoreCase("true")) {
                 DataAccess da = new DataAccess();
                 boolean freepunch_buy = da.check_free_punch(punchcardid, userId);
@@ -218,65 +212,64 @@ public class payment extends HttpServlet {
                 tid = "" + 0;
             }
 
-
-
-
-            //punch card valid  or not
+            // punch card valid or not
             boolean b = DataAccessControler.getUserValidation("punch_card", "punch_card_id", punchcardid);
             if (b) {
                 userdata = new Vector();
                 userdata.add(userId);
                 userdata.add(punchcardid);
-                Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", punchcardid).elementAt(0);
+                Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id",
+                        punchcardid).elementAt(0);
 
-                //no verifyer  code modify on 19 jan 2012
+                // no verifyer code modify on 19 jan 2012
 
+                // String vrifyno = "" + punchdata.elementAt(7);
 
-                //String vrifyno = "" + punchdata.elementAt(7);
+                // 13 mar 2012
+                // boolean no_check = DataAccessControler.buy_punch_verifyer("marchant_code", oreangecode,
+                // arz.getPunchCardID());
+                // if (no_check) {
+                // buy_Punch(response, userdata, "02", wrongnoenter);
+                // return;
+                //
+                // }
+                // boolean timecheck = timelimitcheck(oreangecode, punchcardid, Constants.merchant_code_validate_time);
+                // if (timecheck) {
+                // buy_Punch(response, userdata, "02",codeexpiremsg);
+                // return;
+                // }
 
-//                    13 mar 2012
-//                    boolean no_check = DataAccessControler.buy_punch_verifyer("marchant_code", oreangecode, arz.getPunchCardID());
-//                    if (no_check) {
-//                        buy_Punch(response, userdata, "02", wrongnoenter);
-//                        return;
-//
-//                    }
-//                    boolean timecheck = timelimitcheck(oreangecode, punchcardid, Constants.merchant_code_validate_time);
-//                    if (timecheck) {
-//                        buy_Punch(response, userdata, "02",codeexpiremsg);
-//                        return;
-//                    }
-
-//                    if((""+punchdata.elementAt(11)).equalsIgnoreCase("true"))
-//                    {
-//                          DataAccess da=new DataAccess();
-//                              Vector mystery_data=DataAccessControler.getDataFromTable("mystery_punch", "punch_card_id", punchcardid);
-//                             Vector mystery_info=(Vector) mystery_data.elementAt(0);
-//                            mystrypunchid =""+mystery_info.elementAt(0);
-//                       value_mystery_punch=""+mystery_info.elementAt(2);
-// dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                // if((""+punchdata.elementAt(11)).equalsIgnoreCase("true"))
+                // {
+                // DataAccess da=new DataAccess();
+                // Vector mystery_data=DataAccessControler.getDataFromTable("mystery_punch", "punch_card_id",
+                // punchcardid);
+                // Vector mystery_info=(Vector) mystery_data.elementAt(0);
+                // mystrypunchid =""+mystery_info.elementAt(0);
+                // value_mystery_punch=""+mystery_info.elementAt(2);
+                // dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat dateFormat_exipre = new SimpleDateFormat("MM-dd-yyyy");
                 strDate = dateFormat_exipre.format(new Date());
                 l_scan_Date = dateFormat_exipre.parse(strDate);
                 int validdays = Integer.parseInt(punchdata.elementAt(13).toString());
                 Date expire_time_in_long = Utility.addDays(l_scan_Date, validdays);
                 String punch_expire_Date = dateFormat_exipre.format(expire_time_in_long);
-                //  Date punch_expire_Date = dateFormat.parse(strDate);
+                // Date punch_expire_Date = dateFormat.parse(strDate);
 
                 java.util.Date match_Start_Date = new java.util.Date(((java.sql.Date) punchdata.elementAt(5)).getTime());
                 strDate = dateFormat.format(new Date());
                 l_scan_Date = dateFormat.parse(strDate);
-//                    if (Utility.isAfterDateTime(l_scan_Date, match_Start_Date)) {
-//                        buy_Punch(response, userdata, "01", "Expired");
-//                        return;
-//                    }
+                // if (Utility.isAfterDateTime(l_scan_Date, match_Start_Date)) {
+                // buy_Punch(response, userdata, "01", "Expired");
+                // return;
+                // }
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HHmm");
                 String strTime = timeFormat.format(new Date());
 
                 java.util.Date sqlTime = timeFormat.parse(strTime);
                 java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
 
-                //no of punchs
+                // no of punchs
                 if (isfreepunch.equalsIgnoreCase("true")) {
                     userdata.add("1");
 
@@ -291,18 +284,18 @@ public class payment extends HttpServlet {
                 }
                 userdata.add(isfreepunch);
                 userdata.add(punch_expire_Date);
-//                        userdata.add(mystrypunchid);
+                // userdata.add(mystrypunchid);
                 int i = DataAccessControler.insert_punchcard_download("punchcard_download", userdata, isfreepunch);
                 if (i != -1) {
                     DataAccess da = new DataAccess();
-                   if(isfreepunch.equalsIgnoreCase("true"))
-                   {
-                     da.insert_user_feeds(punchcardid, userId, "free", "F", null);
-                   }
-                   else
-                   {
-                       da.insert_user_feeds(punchcardid, userId, "bought", "F", null);
-                }
+                    if (isfreepunch.equalsIgnoreCase("true"))
+                    {
+                        da.insert_user_feeds(punchcardid, userId, "free", "F", null);
+                    }
+                    else
+                    {
+                        da.insert_user_feeds(punchcardid, userId, "bought", "F", null);
+                    }
                     buy_Punch(response, userdata, "00", "Succesful");
                     return;
                 } else {
@@ -310,19 +303,16 @@ public class payment extends HttpServlet {
                     return;
                 }
 
-
             } else {
                 buy_Punch(response, userdata, "400", "You have logged in from another device");
 
             }
-        }
-        catch(SSLPeerUnverifiedException ssl)
+        } catch (SSLPeerUnverifiedException ssl)
         {
-           Constants.logger.error(ssl);
+            Constants.logger.error(ssl);
             buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
-            return; 
-        }
-        catch (Exception ex) {
+            return;
+        } catch (Exception ex) {
             Constants.logger.error(ex);
             buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
             return;
@@ -343,20 +333,27 @@ public class payment extends HttpServlet {
                     + "<statusMessage>" + statusMessage + "</statusMessage>"
                     + "</paidpunch-resp>";
             out.print(res);
-             Constants.logger.info("Buy request response");
+            Constants.logger.info("Buy request response");
             Constants.logger.info(res);
         } catch (Exception e) {
             Constants.logger.error(e);
         }
     }
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
+    // <editor-fold defaultstate="collapsed"
+    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -364,12 +361,17 @@ public class payment extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -377,8 +379,9 @@ public class payment extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override

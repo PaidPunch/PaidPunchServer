@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.server;
 
 public class aczreqElements {
@@ -24,17 +20,17 @@ public class aczreqElements {
     private String sessionid = "";
     private String barcodevalue = "";
     private String businessid = "";
-    private String fbid="";
-    private String isfreepunch="";
-    private String tid="";
-    private String is_mystery_punch="";
-    private String cardno="";
-    private String cvv="";
-    private String exp_date="";
-    private String amount="";
-    private  String paymentid="";
-    private String cardtype="";
-    private String expirestatus="";
+    private String fbid = "";
+    private String isfreepunch = "";
+    private String tid = "";
+    private String is_mystery_punch = "";
+    private String cardno = "";
+    private String cvv = "";
+    private String exp_date = "";
+    private String amount = "";
+    private String paymentid = "";
+    private String cardtype = "";
+    private String expirestatus = "";
 
     public String getExpirestatus() {
         return expirestatus;
@@ -43,6 +39,7 @@ public class aczreqElements {
     public void setExpirestatus(String expirestatus) {
         this.expirestatus = expirestatus;
     }
+
     public String getCardtype() {
         return cardtype;
     }
@@ -58,6 +55,7 @@ public class aczreqElements {
     public void setPaymentid(String paymentid) {
         this.paymentid = paymentid;
     }
+
     public String getAmount() {
         return amount;
     }
@@ -65,6 +63,7 @@ public class aczreqElements {
     public void setAmount(String amount) {
         this.amount = amount;
     }
+
     public String getCardno() {
         return cardno;
     }
@@ -88,7 +87,6 @@ public class aczreqElements {
     public void setExp_date(String exp_date) {
         this.exp_date = exp_date;
     }
-   
 
     public String getIs_mystery_punch() {
         return is_mystery_punch;
@@ -97,6 +95,7 @@ public class aczreqElements {
     public void setIs_mystery_punch(String is_mystery_punch) {
         this.is_mystery_punch = is_mystery_punch;
     }
+
     public String getTid() {
         return tid;
     }
@@ -120,6 +119,7 @@ public class aczreqElements {
     public void setFbid(String fbid) {
         this.fbid = fbid;
     }
+
     public String getBusinessid() {
         return businessid;
     }
@@ -191,6 +191,7 @@ public class aczreqElements {
     public void setPunchCardID(String punchCardID) {
         this.punchCardID = punchCardID;
     }
+
     private String orangeqrscannedvalue = "";
 
     public aczreqElements() {
@@ -212,7 +213,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param txtype the txtype to set
+     * @param txtype
+     *            the txtype to set
      */
     public void setTxtype(String txtype) {
         this.txtype = txtype;
@@ -226,7 +228,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param username the username to set
+     * @param username
+     *            the username to set
      */
     public void setUsername(String username) {
         this.username = username;
@@ -240,7 +243,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param password the password to set
+     * @param password
+     *            the password to set
      */
     public void setPassword(String password) {
         this.password = password;
@@ -254,7 +258,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -268,7 +273,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param email the email to set
+     * @param email
+     *            the email to set
      */
     public void setEmail(String email) {
         this.email = email;
@@ -282,7 +288,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param mobilenumber the mobilenumber to set
+     * @param mobilenumber
+     *            the mobilenumber to set
      */
     public void setMobilenumber(String mobilenumber) {
         this.mobilenumber = mobilenumber;
@@ -296,7 +303,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param city the city to set
+     * @param city
+     *            the city to set
      */
     public void setCity(String city) {
         this.city = city;
@@ -310,7 +318,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param verificationCode the verificationCode to set
+     * @param verificationCode
+     *            the verificationCode to set
      */
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
@@ -324,7 +333,8 @@ public class aczreqElements {
     }
 
     /**
-     * @param userId the userId to set
+     * @param userId
+     *            the userId to set
      */
     public void setUserId(String userId) {
         this.userId = userId;

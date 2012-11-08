@@ -1,16 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.server;
 
 /**
- *
  * @author qube26
  */
 public class mysteryBean {
-    String mysteryid,punch_card_id,offer,pro;
+    String mysteryid, punch_card_id, offer, pro;
 
     public String getMysteryid() {
         return mysteryid;

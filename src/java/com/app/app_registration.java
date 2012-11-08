@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import java.text.ParseException;
@@ -37,7 +33,6 @@ import org.xml.sax.InputSource;
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 /**
- *
  * @author qube26
  */
 public class app_registration extends HttpServlet {
@@ -47,10 +42,15 @@ public class app_registration extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     ServletContext context;
 
@@ -72,10 +72,9 @@ public class app_registration extends HttpServlet {
             }
             try {
                 ServletInputStream in = request.getInputStream();
-                //in.setEncoding("UTF-8");
+                // in.setEncoding("UTF-8");
 
                 SAXParserExample example = new SAXParserExample();
-
 
                 int info;
                 StringBuffer sb = new StringBuffer();
@@ -89,10 +88,10 @@ public class app_registration extends HttpServlet {
                 Constants.logger.info("XML File rev in app_registation");
                 String xmldata = new String(sb);
                 xmldata = xmldata.trim();
-               // org.apache.commons.lang.StringEscapeUtils u=new org.apache.commons.lang.StringEscapeUtils();
-               // xmldata=StringEscapeUtils.unescapeXml(xmldata);
+                // org.apache.commons.lang.StringEscapeUtils u=new org.apache.commons.lang.StringEscapeUtils();
+                // xmldata=StringEscapeUtils.unescapeXml(xmldata);
 
-//xmldata = new String(xmldata.getBytes("UTF-8"), "UTF-8");
+                // xmldata = new String(xmldata.getBytes("UTF-8"), "UTF-8");
                 InputSource iSource = new InputSource(new StringReader(xmldata));
                 iSource.setEncoding("UTF-8");
                 example.parseDocument(iSource);
@@ -100,10 +99,8 @@ public class app_registration extends HttpServlet {
                 aczreqElements arz = (aczreqElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
-
-
                 if (reqtype.equalsIgnoreCase("REGISTER-REQ")) {
-                     Constants.logger.info("XML File"+sb);
+                    Constants.logger.info("XML File" + sb);
                     userregister(list, response);
 
                 }
@@ -111,7 +108,7 @@ public class app_registration extends HttpServlet {
                     String username = "";
                     String password = "";
                     String sesstionid = arz.getSessionid();
-                    //if sesstion id .
+                    // if sesstion id .
                     if (sesstionid.equalsIgnoreCase("")) {
                         sessionhandler session = new sessionhandler();
                         sesstionid = session.genratesessionid();
@@ -131,11 +128,17 @@ public class app_registration extends HttpServlet {
                         return;
                     } else if (res.equalsIgnoreCase("03")) {
 
-                        xmlloginORlogout(response, "01", "This account is logged in on another device. Sign out on that device and try again.", res);
+                        xmlloginORlogout(response, "01",
+                                "This account is logged in on another device. Sign out on that device and try again.",
+                                res);
                         return;
                     } else if (res.equalsIgnoreCase("04")) {
 
-                        xmlloginORlogout(response, "04", "You still need to verify your email address. Click the link within the email that we sent you.", res);
+                        xmlloginORlogout(
+                                response,
+                                "04",
+                                "You still need to verify your email address. Click the link within the email that we sent you.",
+                                res);
                         return;
                     } else {
                         userdata = DataAccessControler.getDataFromTable("app_user", "user_id", res);
@@ -144,30 +147,27 @@ public class app_registration extends HttpServlet {
                     }
                     xmllogin(response, " Login Successful", userinfo);
 
-
-
                     return;
-                }//login type request
+                }// login type request
                 if (reqtype.equalsIgnoreCase("BUSSINESSOFFER-REQ")) {
-                      Constants.logger.info("XML File"+sb);
+                    Constants.logger.info("XML File" + sb);
                     BUSSINESSOFFER(list, response);
                 }
-//                if (reqtype.equalsIgnoreCase("BUYBUSSINESSOFFER-REQ")) {
-//                    buy_Bussiness_Offer(list, response);
-//                }
+                // if (reqtype.equalsIgnoreCase("BUYBUSSINESSOFFER-REQ")) {
+                // buy_Bussiness_Offer(list, response);
+                // }
                 if (reqtype.equalsIgnoreCase("LOGOUT-REQ")) {
-                      Constants.logger.info("XML File"+sb);
+                    Constants.logger.info("XML File" + sb);
                     logOut(list, response);
                 }
             } catch (Exception ex) {
-                 xmlloginORlogout(response, "01", "Failed to process request", "0");
+                xmlloginORlogout(response, "01", "Failed to process request", "0");
                 Constants.logger.error(ex);
             }
         } catch (Exception e) {
             Constants.logger.error(e);
-   xmlloginORlogout(response, "01", "Failed to process request", "0");
+            xmlloginORlogout(response, "01", "Failed to process request", "0");
         }
-
 
     }
 
@@ -179,61 +179,56 @@ public class app_registration extends HttpServlet {
             aczreqElements arz = (aczreqElements) list.get(0);
             userid = arz.getUserId();
             scancode = arz.getVerificationCode();
-            
+
             String sessionid = arz.getSessionid();
             sessionhandler session = new sessionhandler();
             boolean b = session.sessionidverify(userid, sessionid);
-            boolean isfreepunch=false;
+            boolean isfreepunch = false;
             // boolean b = DataAccessControler.getUserValidation("app_user", "user_id", userid);
             String msg;
             if (b) {
-                Vector rowdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "qrcode", scancode).elementAt(0);
-                                       DataAccess da=new DataAccess();
+                Vector rowdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "qrcode", scancode)
+                        .elementAt(0);
+                DataAccess da = new DataAccess();
 
-
-                                       //user already purch free card
-                                       isfreepunch=da.check_free_punch(""+rowdata.elementAt(0), userid);
+                // user already purch free card
+                isfreepunch = da.check_free_punch("" + rowdata.elementAt(0), userid);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                 String strDate = dateFormat.format(new Date());
 
-
-
                 java.util.Date l_scan_Date = dateFormat.parse(strDate);
 
-                 int validdays=Integer.parseInt(rowdata.elementAt(13).toString());
+                int validdays = Integer.parseInt(rowdata.elementAt(13).toString());
                 Date expire_time_in_long = Utility.addDays(l_scan_Date, validdays);
 
                 strDate = dateFormat.format(expire_time_in_long);
-                 punch_expire_Date = dateFormat.parse(strDate);
-
+                punch_expire_Date = dateFormat.parse(strDate);
 
                 Constants.logger.debug("l_scan_Date={}" + l_scan_Date);
-             //   punch_expire_Date = new java.util.Date(((java.sql.Date) rowdata.elementAt(5)).getTime());
+                // punch_expire_Date = new java.util.Date(((java.sql.Date) rowdata.elementAt(5)).getTime());
                 if (Utility.isAfterDateTime(l_scan_Date, punch_expire_Date)) {
                     msg = "This card is no longer available";
 
                     Constants.logger.info(msg);
-                    getBusinesXml(response, rowdata, "02", msg,isfreepunch);
+                    getBusinesXml(response, rowdata, "02", msg, isfreepunch);
                     return;
                 } else {
 
-
                     String bid = "" + rowdata.elementAt(7);
-                    Vector businessdata = (Vector) DataAccessControler.getDataFromTable("business_users", "business_userid", bid).elementAt(0);
-                    String busn_provide_free_punch=""+businessdata.elementAt(12);
+                    Vector businessdata = (Vector) DataAccessControler.getDataFromTable("business_users",
+                            "business_userid", bid).elementAt(0);
+                    String busn_provide_free_punch = "" + businessdata.elementAt(12);
 
-
-
-                    //secoond time free punch not allow
-                    if(busn_provide_free_punch.endsWith("true")&& isfreepunch==false)
+                    // secoond time free punch not allow
+                    if (busn_provide_free_punch.endsWith("true") && isfreepunch == false)
                     {
-                        isfreepunch=true;
+                        isfreepunch = true;
                     }
-                        else
+                    else
                     {
-                        isfreepunch=false;
-                        }
+                        isfreepunch = false;
+                    }
                     String buss_name = "";
                     byte buss_logo[] = null;
                     buss_name = "" + businessdata.elementAt(1);
@@ -241,20 +236,20 @@ public class app_registration extends HttpServlet {
                     rowdata.add(buss_name);
                     rowdata.add(buss_logo);
                     rowdata.add(businessdata.elementAt(5));
-                    String imageurl=businessdata.elementAt(11).toString();
+                    String imageurl = businessdata.elementAt(11).toString();
 
                     dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 
                     String punchexpireDate = dateFormat.format(punch_expire_Date);
                     rowdata.add(punchexpireDate);
                     rowdata.add(imageurl);
-                    getBusinesXml(response, rowdata, "00", "Succesful",isfreepunch);
+                    getBusinesXml(response, rowdata, "00", "Succesful", isfreepunch);
                     return;
                 }
 
             } else {
                 Vector d = null;
-                getBusinesXml(response, d, "400", "You have logged in from another device",isfreepunch);
+                getBusinesXml(response, d, "400", "You have logged in from another device", isfreepunch);
                 return;
 
             }
@@ -262,7 +257,7 @@ public class app_registration extends HttpServlet {
         } catch (Exception e) {
             Vector d = null;
             try {
-                getBusinesXml(response, d, "01", "No Match found.Please scan correct QR code.",false);
+                getBusinesXml(response, d, "01", "No Match found.Please scan correct QR code.", false);
                 return;
             } catch (EncoderException ex) {
                 Constants.logger.error(ex);
@@ -271,12 +266,17 @@ public class app_registration extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -284,12 +284,17 @@ public class app_registration extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -297,8 +302,9 @@ public class app_registration extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -314,26 +320,26 @@ public class app_registration extends HttpServlet {
         String city = "";
         try {
             aczreqElements arz = (aczreqElements) list.get(0);
-            if(arz.getName()==null||arz.getName().equalsIgnoreCase("(null)")||arz.getName().equalsIgnoreCase("null"))
+            if (arz.getName() == null || arz.getName().equalsIgnoreCase("(null)")
+                    || arz.getName().equalsIgnoreCase("null"))
             {
-             arz.setName("");
+                arz.setName("");
             }
-             if(arz.getEmail()==null||arz.getEmail().equalsIgnoreCase("(null)")||arz.getEmail().equalsIgnoreCase("null"))
+            if (arz.getEmail() == null || arz.getEmail().equalsIgnoreCase("(null)")
+                    || arz.getEmail().equalsIgnoreCase("null"))
             {
-             arz.setEmail("");
+                arz.setEmail("");
             }
-             if(arz.getPin()==null||arz.getPin().equalsIgnoreCase("(null)")||arz.getPin().equalsIgnoreCase("null"))
+            if (arz.getPin() == null || arz.getPin().equalsIgnoreCase("(null)")
+                    || arz.getPin().equalsIgnoreCase("null"))
             {
-             arz.setPin("");
+                arz.setPin("");
             }
-             if(arz.getMobilenumber()==null||arz.getMobilenumber().equalsIgnoreCase("(null)")||arz.getMobilenumber().equalsIgnoreCase("null"))
+            if (arz.getMobilenumber() == null || arz.getMobilenumber().equalsIgnoreCase("(null)")
+                    || arz.getMobilenumber().equalsIgnoreCase("null"))
             {
-             arz.setMobilenumber("");
+                arz.setMobilenumber("");
             }
-
-
-
-
 
             name = arz.getName();
 
@@ -348,42 +354,38 @@ public class app_registration extends HttpServlet {
             rowdata.add(password);
             String pin = "";
             rowdata.add(arz.getPin());
-            //by defult staus no boz not login yet
+            // by defult staus no boz not login yet
             rowdata.add("N");
-            //email not verify at reg time.
+            // email not verify at reg time.
 
             rowdata.add("N");
             java.sql.Time time = new java.sql.Time(new Date().getTime());
             java.sql.Date date = new java.sql.Date(new Date().getTime());
             rowdata.add(time);
             rowdata.add(date);
-             rowdata.add("N");
+            rowdata.add("N");
             Vector colmid = new Vector();
             colmid.add("email_id");
             colmid.add("password");
-             colmid.add("isfbaccount");
+            colmid.add("isfbaccount");
             Vector data = new Vector();
             data.add(arz.getEmail());
             data.add(password);
-             data.add("N");
+            data.add("N");
             DataAccess dataaccess = new DataAccess();
             String res = dataaccess.UserRegistration(rowdata);
             if (res.equalsIgnoreCase("00")) {
                 Vector userdata = (Vector) DataAccessControler.getDataFromTable("app_user", colmid, data);
                 Vector userinfo = (Vector) userdata.elementAt(0);
                 regXml(response, res, userinfo);
-                //  email send for app user conformation
+                // email send for app user conformation
                 signup_paidpunch_add mail = new signup_paidpunch_add();
                 mail.sendEmail_For_app_user("" + userinfo.elementAt(0), arz.getEmail());
-
 
                 return;
             }
             Vector userinfo = null;
             regXml(response, res, userinfo);
-
-
-
 
             return;
 
@@ -399,8 +401,6 @@ public class app_registration extends HttpServlet {
             Constants.logger.error(ex);
         }
     }
-
-
 
     private void regXml(HttpServletResponse response, String res, Vector userinfo) throws IOException {
         PrintWriter out = response.getWriter();
@@ -432,14 +432,14 @@ public class app_registration extends HttpServlet {
         }
         out.print("<statusMessage>" + statusMessage + "</statusMessage>");
 
-
         out.print("</paidpunch-resp>");
 
-
     }
-// this function call when login failed
 
-    private void xmlloginORlogout(HttpServletResponse p_response, String statusCode, String statusMessage, String userid) throws IOException {
+    // this function call when login failed
+
+    private void xmlloginORlogout(HttpServletResponse p_response, String statusCode, String statusMessage, String userid)
+            throws IOException {
         try {
             PrintWriter out = p_response.getWriter();
             Constants.logger.info("Respones userid   " + userid);
@@ -458,9 +458,9 @@ public class app_registration extends HttpServlet {
             Constants.logger.error(e);
         }
 
-
     }
-// this function call when login succesful
+
+    // this function call when login succesful
 
     private void xmllogin(HttpServletResponse p_response, String mesage, Vector userdata) {
         String userid = "" + userdata.elementAt(0);
@@ -485,15 +485,11 @@ public class app_registration extends HttpServlet {
                     + "<sessionid>" + userdata.elementAt(10) + "</sessionid>"
                     + "<is_profileid_created>" + userdata.elementAt(13) + "</is_profileid_created>";
             out.print(respons);
-          
-
 
             out.print("<statusMessage>" + statusMessage + "</statusMessage>");
 
-
             out.print("</paidpunch-resp>");
-Constants.logger.info("user login with userid "+userid);
-
+            Constants.logger.info("user login with userid " + userid);
 
         } catch (Exception e) {
             Constants.logger.error(e);
@@ -501,7 +497,8 @@ Constants.logger.info("user login with userid "+userid);
 
     }
 
-    private void getBusinesXml(HttpServletResponse p_response, Vector businessdata, String statusCode, String statusMessage,boolean  isfreepunch) throws EncoderException {
+    private void getBusinesXml(HttpServletResponse p_response, Vector businessdata, String statusCode,
+            String statusMessage, boolean isfreepunch) throws EncoderException {
         try {
             PrintWriter out = p_response.getWriter();
 
@@ -515,43 +512,45 @@ Constants.logger.info("user login with userid "+userid);
             out.print("<statusMessage>" + statusMessage + "</statusMessage>");
             if (statusCode.equalsIgnoreCase("00")) {
                 byte[] l_imageData = null;
-                l_imageData = (byte[]) businessdata.elementAt(16);//14
+                l_imageData = (byte[]) businessdata.elementAt(16);// 14
                 Base64 baseimage = new Base64();
                 baseimage.encode(l_imageData);
 
                 int val1 = Integer.parseInt("" + businessdata.elementAt(2));
                 float val2 = Float.parseFloat("" + businessdata.elementAt(3));
 
-                String respons = "<bussinessid>" + businessdata.elementAt(7) + "</bussinessid>"//7
-                        + "<bussinessname>" +StringEscapeUtils.escapeXml( businessdata.elementAt(8).toString()) + "</bussinessname>"//8
+                String respons = "<bussinessid>"
+                        + businessdata.elementAt(7)
+                        + "</bussinessid>"// 7
+                        + "<bussinessname>"
+                        + StringEscapeUtils.escapeXml(businessdata.elementAt(8).toString())
+                        + "</bussinessname>"// 8
                         + "<punchcardid>" + businessdata.elementAt(0) + "</punchcardid>"
-                        + "<punchcardname>" +StringEscapeUtils.escapeXml( businessdata.elementAt(1).toString()) + "</punchcardname>"
-                        + "<pucnchcarddesc>" +StringEscapeUtils.escapeXml( businessdata.elementAt(17).toString()) + "</pucnchcarddesc>"
+                        + "<punchcardname>" + StringEscapeUtils.escapeXml(businessdata.elementAt(1).toString())
+                        + "</punchcardname>"
+                        + "<pucnchcarddesc>" + StringEscapeUtils.escapeXml(businessdata.elementAt(17).toString())
+                        + "</pucnchcarddesc>"
                         + "<totalnoofpunches>" + businessdata.elementAt(2) + "</totalnoofpunches>"
                         + "<eachpunchvalue>" + businessdata.elementAt(3) + "</eachpunchvalue>"
                         + "<actualprice>" + val1 * val2 + "</actualprice>"
                         + "<sellingprice>" + businessdata.elementAt(4) + "</sellingprice>"
                         + "<discount>" + businessdata.elementAt(6) + "</discount>"
-                        + "<expiredate>" + new String(businessdata.elementAt(18).toString())+ "</expiredate>"
-                        + "<isfreepunch>"+isfreepunch+"</isfreepunch>"
+                        + "<expiredate>" + new String(businessdata.elementAt(18).toString()) + "</expiredate>"
+                        + "<isfreepunch>" + isfreepunch + "</isfreepunch>"
                         + "<is_mystery_punch>" + businessdata.elementAt(11) + "</is_mystery_punch>"
-                        + "<minimum_value>"+ businessdata.elementAt(14) +"</minimum_value>"
-                        + "<expire_days>"+ businessdata.elementAt(13) +"</expire_days>"
-                        +"<discount_value_of_each_punch>"+ businessdata.elementAt(9) +"</discount_value_of_each_punch>"
-                        + "<redeem_time_diff>"+ businessdata.elementAt(10) +"</redeem_time_diff>"
-                        + "<bussinesslogo_url>"+businessdata.elementAt(19).toString()+"</bussinesslogo_url>";//10
+                        + "<minimum_value>" + businessdata.elementAt(14) + "</minimum_value>"
+                        + "<expire_days>" + businessdata.elementAt(13) + "</expire_days>"
+                        + "<discount_value_of_each_punch>" + businessdata.elementAt(9)
+                        + "</discount_value_of_each_punch>"
+                        + "<redeem_time_diff>" + businessdata.elementAt(10) + "</redeem_time_diff>"
+                        + "<bussinesslogo_url>" + businessdata.elementAt(19).toString() + "</bussinesslogo_url>";// 10
 
                 out.print(respons);
-              //  out.print("<bussinesslogo>" + new String(baseimage.encode(l_imageData)) + "</bussinesslogo>");
+                // out.print("<bussinesslogo>" + new String(baseimage.encode(l_imageData)) + "</bussinesslogo>");
                 Constants.logger.info("respons" + respons);
             }
 
-
-
-
             out.print("</paidpunch-resp>");
-
-
 
         } catch (IOException ex) {
             Constants.logger.error(ex);
@@ -610,11 +609,11 @@ Constants.logger.info("user login with userid "+userid);
             java.util.Date l_scan_Date = dateFormat.parse(strDate);
             java.util.Date l_scan_Time = timeFormat.parse(strTime);
             int min = Integer.parseInt("-" + mint);
-//            min=0-min;
+            // min=0-min;
 
             java.util.Date befor_time = Utility.HoureAdd(l_scan_Time, min);
             strTime = befor_time.toString();
-            //l_scan_Time = timeFormat.parse(strTime);
+            // l_scan_Time = timeFormat.parse(strTime);
             java.sql.Time time = new java.sql.Time(befor_time.getTime());
             java.sql.Date Date = new java.sql.Date(l_scan_Date.getTime());
             strTime = time.toString();

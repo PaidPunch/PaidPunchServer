@@ -7,14 +7,14 @@ import java.io.Serializable;
  */
 public class ShippingAddress extends Address implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ShippingAddress() {
-		super();
-	}
+    private ShippingAddress() {
+        super();
+    }
 
-	public static ShippingAddress createShippingAddress() {
-		return new ShippingAddress();
-	}
+    public static ShippingAddress createShippingAddress() {
+        return new ShippingAddress();
+    }
 
 }

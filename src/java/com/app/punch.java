@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.app;
 
 import com.db.DataAccess;
@@ -43,17 +39,21 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 import org.krysalis.barcode4j.tools.UnitConv;
 
 /**
- *
  * @author qube26
  */
 public class punch extends HttpServlet {
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -76,7 +76,6 @@ public class punch extends HttpServlet {
                 context = config.getServletContext();
                 Constants.loadJDBCConstants(context);
 
-
             } catch (Exception e) {
                 Constants.logger.error(e);
             }
@@ -84,7 +83,6 @@ public class punch extends HttpServlet {
                 ServletInputStream in = request.getInputStream();
 
                 SAXParserExample example = new SAXParserExample();
-
 
                 int info;
                 StringBuffer sb = new StringBuffer();
@@ -105,7 +103,6 @@ public class punch extends HttpServlet {
                 aczreqElements arz = (aczreqElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
-
                 if (reqtype.equalsIgnoreCase("SEARCHBYBUSINESSNAME-REQ")) {
                     Search_By_Busines_Name(list, response);
                 }
@@ -115,7 +112,6 @@ public class punch extends HttpServlet {
                 if (reqtype.equalsIgnoreCase("MARKPUNCHUSED-REQ")) {
                     Mark_Punch_Card(list, response, request);
                 }
-
 
             } catch (Exception e) {
                 Punch_Card_List_XML_Response(card_list, "01", "Failure", response);
@@ -132,14 +128,20 @@ public class punch extends HttpServlet {
             out.close();
         }
 
-    }// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    }// <editor-fold defaultstate="collapsed"
+     // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -147,12 +149,17 @@ public class punch extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -160,8 +167,9 @@ public class punch extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     * 
      * @return a String containing servlet description
      */
     @Override
@@ -195,7 +203,6 @@ public class punch extends HttpServlet {
         aczreqElements arz = (aczreqElements) list.get(0);
         // String buss_name=arz.getBusiness_name();
 
-
         Vector card_list = null;
         String sessionid = arz.getSessionid();
         String userid = arz.getUserId();
@@ -214,14 +221,11 @@ public class punch extends HttpServlet {
         }
     }
 
-    private void Punch_Card_List_XML_Response(Vector punchcard, String statusCode, String statusMessage, HttpServletResponse p_response) {
+    private void Punch_Card_List_XML_Response(Vector punchcard, String statusCode, String statusMessage,
+            HttpServletResponse p_response) {
         PrintWriter out = null;
         try {
             out = p_response.getWriter();
-
-
-
-
 
             String res = "";
             // Constants.logger.info("Respones userid   " + userid);
@@ -229,10 +233,10 @@ public class punch extends HttpServlet {
             Constants.logger.info("statusmessage" + statusMessage);
             p_response.setHeader("Content-Disposition", "attachement; filename= response.xml");
 
-
             if (statusCode.equalsIgnoreCase("00")) {
 
-                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>" + "<statusMessage>" + statusMessage + "</statusMessage>"
+                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>"
+                        + "<statusMessage>" + statusMessage + "</statusMessage>"
                         + "<punchcardlist>";
                 for (int i = 0; i < punchcard.size(); i++) {
 
@@ -244,15 +248,12 @@ public class punch extends HttpServlet {
 
                     String strDate = dateFormat.format(new java.util.Date());
                     java.util.Date l_scan_Date = dateFormat.parse(strDate);
-                    if (Utility.isAfterDateTime(l_scan_Date,tempexipredate)) {
+                    if (Utility.isAfterDateTime(l_scan_Date, tempexipredate)) {
                         punchexipre = "true";
                     }
-//                    java.util.Date date = new java.util.Date(((java.sql.Date) card_list.elementAt(21)).getTime());
-//
-//                    String expiredate = dateFormat.format(date);
-
-
-
+                    // java.util.Date date = new java.util.Date(((java.sql.Date) card_list.elementAt(21)).getTime());
+                    //
+                    // String expiredate = dateFormat.format(date);
 
                     int val1 = Integer.parseInt("" + card_list.elementAt(6));
                     float val2 = Float.parseFloat("" + card_list.elementAt(7));
@@ -264,33 +265,36 @@ public class punch extends HttpServlet {
                     int remainpunch;
                     int totalpunch;
                     boolean free_card_add_list = true;
-                    //free punch card  case.
-                    if (("" + card_list.elementAt(19)).equalsIgnoreCase("Y") || ("" + card_list.elementAt(19)).equalsIgnoreCase("true")) {
+                    // free punch card case.
+                    if (("" + card_list.elementAt(19)).equalsIgnoreCase("Y")
+                            || ("" + card_list.elementAt(19)).equalsIgnoreCase("true")) {
                         int temp = Integer.parseInt("" + card_list.elementAt(10));
                         if (temp == 0) {
-                            //free punch used so no need to add in list
+                            // free punch used so no need to add in list
                             remainpunch = 1;
-                               free_card_add_list = false;
+                            free_card_add_list = false;
                         } else {
-                          
-                          
+
                             remainpunch = 0;
                         }
                         ismystery = "false";
                         totalpunch = 1;
                     } else {
-                        remainpunch = Integer.parseInt("" + card_list.elementAt(6)) - Integer.parseInt("" + card_list.elementAt(10));
+                        remainpunch = Integer.parseInt("" + card_list.elementAt(6))
+                                - Integer.parseInt("" + card_list.elementAt(10));
                         totalpunch = Integer.parseInt("" + card_list.elementAt(6));
                     }
-
 
                     if (free_card_add_list) {
                         res = res + "<punchcard>"
                                 + "<bussinessid>" + card_list.elementAt(0) + "</bussinessid>"
-                                + "<bussinessname>" +StringEscapeUtils.escapeXml( card_list.elementAt(1).toString()) + "</bussinessname>"
+                                + "<bussinessname>" + StringEscapeUtils.escapeXml(card_list.elementAt(1).toString())
+                                + "</bussinessname>"
                                 + "<punchcardid>" + card_list.elementAt(4) + "</punchcardid>"
-                                + "<punchcardname>" + StringEscapeUtils.escapeXml(card_list.elementAt(5).toString()) + "</punchcardname>"
-                                + "<pucnchcarddesc>" + StringEscapeUtils.escapeXml(card_list.elementAt(11).toString()) + "</pucnchcarddesc>"
+                                + "<punchcardname>" + StringEscapeUtils.escapeXml(card_list.elementAt(5).toString())
+                                + "</punchcardname>"
+                                + "<pucnchcarddesc>" + StringEscapeUtils.escapeXml(card_list.elementAt(11).toString())
+                                + "</pucnchcarddesc>"
                                 + "<totalnoofpunches>" + totalpunch + "</totalnoofpunches>"
                                 + "<eachpunchvalue>" + card_list.elementAt(7) + "</eachpunchvalue>"
                                 + "<actualprice>" + val1 * val2 + "</actualprice>"
@@ -298,7 +302,8 @@ public class punch extends HttpServlet {
                                 + "<discount>" + card_list.elementAt(9) + "</discount>"
                                 + "<totalpunchesused>" + remainpunch + "</totalpunchesused>"
                                 + "<punch_card_downloadid>" + card_list.elementAt(12) + "</punch_card_downloadid>"
-                                + "<discount_value_of_each_punch>" + card_list.elementAt(13) + "</discount_value_of_each_punch>"
+                                + "<discount_value_of_each_punch>" + card_list.elementAt(13)
+                                + "</discount_value_of_each_punch>"
                                 + "<expiredate>" + expiredate + "</expiredate>"
                                 + "<punchexpire>" + punchexipre + "</punchexpire>"
                                 + "<isfreepunch>" + card_list.elementAt(17) + "</isfreepunch>"
@@ -309,10 +314,9 @@ public class punch extends HttpServlet {
                             res = res + "<mysteryid>" + card_list.elementAt(20) + "</mysteryid>";
                         }
 
-
                         res = res + "<mystery_punch_used>" + card_list.elementAt(22) + "</mystery_punch_used>";
                         // Constants.logger.info("response->" + res);
-                        //  res=res+ "<bussinesslogo>" + new String(baseimage.encode(l_imageData)) + "</bussinesslogo>"
+                        // res=res+ "<bussinesslogo>" + new String(baseimage.encode(l_imageData)) + "</bussinesslogo>"
                         res = res + "<bussinesslogo>" + card_list.elementAt(16) + "</bussinesslogo>"
                                 + "</punchcard>";
                         Constants.logger.info("response->" + res);
@@ -320,7 +324,8 @@ public class punch extends HttpServlet {
                 }
                 res = res + "</punchcardlist></paidpunch-resp>";
             } else {
-                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>" + "<statusMessage>" + statusMessage + "</statusMessage>" + "</paidpunch-resp>";
+                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>"
+                        + "<statusMessage>" + statusMessage + "</statusMessage>" + "</paidpunch-resp>";
                 Constants.logger.info("response->" + res);
             }
             out.print(res);
@@ -344,11 +349,11 @@ public class punch extends HttpServlet {
         String down_id = arz.getPunch_card_downloadid();
         String is_mystery_punch = arz.getIs_mystery_punch();
         String mysteryid = "", value_mystery_punch = "";
-        String exitrestatus_in_app="";
-        exitrestatus_in_app=arz.getExpirestatus();
-        if(exitrestatus_in_app.equalsIgnoreCase("")||exitrestatus_in_app.isEmpty())
+        String exitrestatus_in_app = "";
+        exitrestatus_in_app = arz.getExpirestatus();
+        if (exitrestatus_in_app.equalsIgnoreCase("") || exitrestatus_in_app.isEmpty())
         {
-            exitrestatus_in_app="false";
+            exitrestatus_in_app = "false";
         }
         String expirestatus = "false";
         try {
@@ -359,32 +364,36 @@ public class punch extends HttpServlet {
                 mark_Punch_Card_Xml(response, "400", "You have logged in from another device", -1, pid, barcodeimage);
                 return;
             }
-             Vector userinfo = (Vector) DataAccessControler.getDataFromTable("punchcard_download", "punch_card_downloadid", down_id).elementAt(0);
-                   
-            Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", pid).elementAt(0);
-            String restrict_min = "" + punchdata.elementAt(10);
-            
-            String expiredate=userinfo.elementAt(9).toString();
-           SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-                    Date tempexipredate = dateFormat.parse(expiredate);
+            Vector userinfo = (Vector) DataAccessControler.getDataFromTable("punchcard_download",
+                    "punch_card_downloadid", down_id).elementAt(0);
 
-                    String strDate = dateFormat.format(new java.util.Date());
-                    java.util.Date l_scan_Date = dateFormat.parse(strDate);
-                    if (Utility.isAfterDateTime(l_scan_Date,tempexipredate)) {
-                         expirestatus = "true";
-                   }
-                    if(!(exitrestatus_in_app.equalsIgnoreCase(expirestatus)))
-                    {
-                         mark_Punch_Card_Xml(response, "401", " Punch Card Expired",-1,pid,barcodeimage);
-                            return ;
-                    }
+            Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", pid)
+                    .elementAt(0);
+            String restrict_min = "" + punchdata.elementAt(10);
+
+            String expiredate = userinfo.elementAt(9).toString();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+            Date tempexipredate = dateFormat.parse(expiredate);
+
+            String strDate = dateFormat.format(new java.util.Date());
+            java.util.Date l_scan_Date = dateFormat.parse(strDate);
+            if (Utility.isAfterDateTime(l_scan_Date, tempexipredate)) {
+                expirestatus = "true";
+            }
+            if (!(exitrestatus_in_app.equalsIgnoreCase(expirestatus)))
+            {
+                mark_Punch_Card_Xml(response, "401", " Punch Card Expired", -1, pid, barcodeimage);
+                return;
+            }
             boolean b = timelimitcheck(down_id, restrict_min);
             if (!b) {
-                mark_Punch_Card_Xml(response, "01", "You just used a Punch. You must wait " + restrict_min + " minutes before using another.", -1, pid, barcodeimage);
+                mark_Punch_Card_Xml(response, "01", "You just used a Punch. You must wait " + restrict_min
+                        + " minutes before using another.", -1, pid, barcodeimage);
                 return;
             }
 
-            Vector punch_info = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", pid).elementAt(0);
+            Vector punch_info = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", pid)
+                    .elementAt(0);
             if (punch_info != null) {
                 Vector fields = new Vector();
                 fields.add("app_user_id");
@@ -416,8 +425,9 @@ public class punch extends HttpServlet {
                         remain = remain - 1;
                     }
                     if (is_mystery_punch.equalsIgnoreCase("true")) {
-                        if (remain > 1) { //mystery puch not allow
-                            mark_Punch_Card_Xml(response, "01", "Use all punch for unlock mystery punch.", -1, pid, barcodeimage);
+                        if (remain > 1) { // mystery puch not allow
+                            mark_Punch_Card_Xml(response, "01", "Use all punch for unlock mystery punch.", -1, pid,
+                                    barcodeimage);
                             return;
                         }
                     }
@@ -430,90 +440,94 @@ public class punch extends HttpServlet {
                     int totalused = total_punch - remain;
                     set_fields_value.add(remain);
                     if (!is_mystery_punch.equalsIgnoreCase("true")) {
-                        int res = DataAccessControler.updatetDataToTable("punchcard_download", "punch_card_downloadid", down_id, "punch_used", "" + remain);
+                        int res = DataAccessControler.updatetDataToTable("punchcard_download", "punch_card_downloadid",
+                                down_id, "punch_used", "" + remain);
                         if (res == -1) {
                             mark_Punch_Card_Xml(response, "01", " Failed to process request.", -1, pid, barcodeimage);
                             return;
                         }
                     }
-                    //  barcodevalue = createRandomInteger();
-                    //     String barcodevalue="12345";
+                    // barcodevalue = createRandomInteger();
+                    // String barcodevalue="12345";
 
-                    //boolean brcode_check_table = DataAccessControler.getchecker("punch_card_tracker", "barcode_value", barcodevalue);
-                    //while (brcode_check_table) {
-                    //  barcodevalue = createRandomInteger();
-                    // / brcode_check_table = DataAccessControler.getchecker("punch_card_tracker", "barcode_value", barcodevalue);
+                    // boolean brcode_check_table = DataAccessControler.getchecker("punch_card_tracker",
+                    // "barcode_value", barcodevalue);
+                    // while (brcode_check_table) {
+                    // barcodevalue = createRandomInteger();
+                    // / brcode_check_table = DataAccessControler.getchecker("punch_card_tracker", "barcode_value",
+                    // barcodevalue);
                     // }
                     tracker.add(is_mystery_punch);
-//                    if(is_mystery_punch.equalsIgnoreCase("true"))
-//                    {
-                    //      tracker.add(mysteryid);
-//                    }
+                    // if(is_mystery_punch.equalsIgnoreCase("true"))
+                    // {
+                    // tracker.add(mysteryid);
+                    // }
                     if (is_mystery_punch.equalsIgnoreCase("true")) {
                         mysteryid = userinfo.elementAt(8).toString();
                     }
-                    int res = DataAccessControler.insert_punchcard_tracker("punch_card_tracker", tracker, is_mystery_punch);
+                    int res = DataAccessControler.insert_punchcard_tracker("punch_card_tracker", tracker,
+                            is_mystery_punch);
                     DataAccess da = new DataAccess();
-                  
-                        da.insert_user_feeds(pid, userid, "Punched", "F", null);
-                  
-                    //barcodeimages
+
+                    da.insert_user_feeds(pid, userid, "Punched", "F", null);
+
+                    // barcodeimages
                     // String path = getServletContext().getRealPath("barcodeimages");
-                    //path = path + Constants.filereader + barcodevalue + ".jpg";
-                    //File barcodefile = new File(path);
+                    // path = path + Constants.filereader + barcodevalue + ".jpg";
+                    // File barcodefile = new File(path);
                     // Code128 barcode = new Code128();
 
-//                    try {
-//                        barcodecreate(path, barcodevalue);
-//                        //  barcode.setData(barcodevalue);
-////                        barcode.setX(3);
-////                        barcode.setY(100);
-//                        //barcode.setBarcodeHeight(100);
-//                        //barcode.setBarcodeWidth(100);
-//                        //    barcode.drawBarcode(barcodevalue);
-//                        //barcode.drawBarcode(path);
-//                        // BitMatrix matrix= cw.encode(barcodevalue, BarcodeFormat.CODE_39, 281,239, null);
-//                        // MatrixToImageWriter.writeToFile(matrix, "png",barcodefile);
-//                    } catch (Exception e) {
-//                        Constants.logger.error(e);
-//                    }
+                    // try {
+                    // barcodecreate(path, barcodevalue);
+                    // // barcode.setData(barcodevalue);
+                    // // barcode.setX(3);
+                    // // barcode.setY(100);
+                    // //barcode.setBarcodeHeight(100);
+                    // //barcode.setBarcodeWidth(100);
+                    // // barcode.drawBarcode(barcodevalue);
+                    // //barcode.drawBarcode(path);
+                    // // BitMatrix matrix= cw.encode(barcodevalue, BarcodeFormat.CODE_39, 281,239, null);
+                    // // MatrixToImageWriter.writeToFile(matrix, "png",barcodefile);
+                    // } catch (Exception e) {
+                    // Constants.logger.error(e);
+                    // }
 
                     // FileReader fr = new FileReader(barcodefile);
 
-                    //int len = (int) barcodefile.length();
-                    //byte[] filebyte = new byte[len];
-//                    int index = 0;
-//                    int byt;
-//                   // byte[] bytes = new byte[size];
-//            DataInputStream dis = new DataInputStream(new FileInputStream(barcodefile));
-//            int read = 0;
-//            int numRead = 0;
-//            while (read < filebyte.length && (numRead = dis.read(filebyte, read,
-//                    filebyte.length - read)) >= 0) {
-//                read = read + numRead;
-//            }
+                    // int len = (int) barcodefile.length();
+                    // byte[] filebyte = new byte[len];
+                    // int index = 0;
+                    // int byt;
+                    // // byte[] bytes = new byte[size];
+                    // DataInputStream dis = new DataInputStream(new FileInputStream(barcodefile));
+                    // int read = 0;
+                    // int numRead = 0;
+                    // while (read < filebyte.length && (numRead = dis.read(filebyte, read,
+                    // filebyte.length - read)) >= 0) {
+                    // read = read + numRead;
+                    // }
 
-//                    try {
-//                        while ((byt = fr.read()) != -1) {
-//                            filebyte[index] = (byte) byt;
-//                            index++;
-//                        }
-//                    } catch (Exception e) {
-//                        Constants.logger.error(e);
-//                    }
-//try{
-//                    File f = new File("c://temp1");
-//                    FileOutputStream fw = new FileOutputStream(f);
-//                    for (int inde = 0; inde <len; inde++) {
-//                        fw.write(filebyte[inde]);
-//                    }
-//                    fw.close();
-//                    }
-//
-//catch(Exception e)
-//{
-//System.out.print(e.toString());
-//}
+                    // try {
+                    // while ((byt = fr.read()) != -1) {
+                    // filebyte[index] = (byte) byt;
+                    // index++;
+                    // }
+                    // } catch (Exception e) {
+                    // Constants.logger.error(e);
+                    // }
+                    // try{
+                    // File f = new File("c://temp1");
+                    // FileOutputStream fw = new FileOutputStream(f);
+                    // for (int inde = 0; inde <len; inde++) {
+                    // fw.write(filebyte[inde]);
+                    // }
+                    // fw.close();
+                    // }
+                    //
+                    // catch(Exception e)
+                    // {
+                    // System.out.print(e.toString());
+                    // }
 
                     Base64 baseimage = new Base64();
                     // barcodeimage = new String(baseimage.encode(filebyte));
@@ -523,7 +537,9 @@ public class punch extends HttpServlet {
                     }
                     if (expirestatus.equalsIgnoreCase("false")) {
                         if (userinfo.elementAt(7).toString().equalsIgnoreCase("true")) {
-                            mark_Punch_Card_Xml(response, "00", "Punch used successfully", 1, pid, barcodeimage);//for free punch
+                            mark_Punch_Card_Xml(response, "00", "Punch used successfully", 1, pid, barcodeimage);// for
+                                                                                                                 // free
+                                                                                                                 // punch
                         } else {
                             mark_Punch_Card_Xml(response, "00", "Punch used successfully", totalused, pid, barcodeimage);
                         }
@@ -542,7 +558,8 @@ public class punch extends HttpServlet {
         }
     }
 
-    private void mark_Punch_Card_Xml(HttpServletResponse response, String statusCode, String statusMessage, int totalused, String pid, String barcodeimage) {
+    private void mark_Punch_Card_Xml(HttpServletResponse response, String statusCode, String statusMessage,
+            int totalused, String pid, String barcodeimage) {
         PrintWriter out = null;
         try {
             out = response.getWriter();
@@ -554,9 +571,8 @@ public class punch extends HttpServlet {
                         + "<statusMessage>" + statusMessage + "</statusMessage>"
                         + " <punchcardid>" + pid + "</punchcardid>"
                         + "<totalpunchesused>" + totalused + "</totalpunchesused>"
-                        //                        + "<mystery_punch_value>"+mystrypunch+"</mystery_punch_value>"
+                        // + "<mystery_punch_value>"+mystrypunch+"</mystery_punch_value>"
                         + "<barcodevalue></barcodevalue>";
-
 
                 res = res + "<barcodeimage></barcodeimage>"
                         + "</paidpunch-resp>";
@@ -575,15 +591,12 @@ public class punch extends HttpServlet {
 
     }
 
-    private void Search_By_XML_Response(Vector punchcard, String statusCode, String statusMessage, HttpServletResponse p_response) {
+    private void Search_By_XML_Response(Vector punchcard, String statusCode, String statusMessage,
+            HttpServletResponse p_response) {
 
         PrintWriter out = null;
         try {
             out = p_response.getWriter();
-
-
-
-
 
             String res = "";
             // Constants.logger.info("Respones userid   " + userid);
@@ -591,9 +604,11 @@ public class punch extends HttpServlet {
             Constants.logger.info("statusmessage" + statusMessage);
             p_response.setHeader("Content-Disposition", "attachement; filename= response.xml");
             if (statusCode.equalsIgnoreCase("01")) {
-                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>" + "<statusMessage>" + statusMessage + "</statusMessage>" + "</paidpunch-resp>";
+                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>"
+                        + "<statusMessage>" + statusMessage + "</statusMessage>" + "</paidpunch-resp>";
             } else {
-                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>" + "<statusMessage>" + statusMessage + "</statusMessage>"
+                res = "<?xml version='1.0' ?>" + "<paidpunch-resp>" + "<statusCode>" + statusCode + "</statusCode>"
+                        + "<statusMessage>" + statusMessage + "</statusMessage>"
                         + "<punchcardlist>";
                 for (int i = 0; i < punchcard.size(); i++) {
                     Vector card_list = (Vector) punchcard.elementAt(i);
@@ -603,7 +618,8 @@ public class punch extends HttpServlet {
                     l_imageData = (byte[]) card_list.elementAt(2);
                     Base64 baseimage = new Base64();
                     baseimage.encode(l_imageData);
-                    // int remainpunch = Integer.parseInt("" + card_list.elementAt(6)) - Integer.parseInt("" + card_list.elementAt(10));
+                    // int remainpunch = Integer.parseInt("" + card_list.elementAt(6)) - Integer.parseInt("" +
+                    // card_list.elementAt(10));
                     res = res + "<punchcard>"
                             + "<bussinessid>" + card_list.elementAt(0) + "</bussinessid>"
                             + "<bussinessname>" + card_list.elementAt(1) + "</bussinessname>"
@@ -632,7 +648,6 @@ public class punch extends HttpServlet {
             out.close();
         }
 
-
     }
 
     private void Search_By_JSON_Response(Vector res, String code, String message, HttpServletResponse p_response) {
@@ -642,7 +657,6 @@ public class punch extends HttpServlet {
             out = p_response.getWriter();
             JSONObject object = new JSONObject();
 
-
             p_response.setHeader("Content-Disposition", "attachement; filename= response.json");
             String jsonres = "{\"statusCode\":\"" + code + " \",\"statusMessage\":\"" + message + "\"";
             object.put("statusCode", code);
@@ -650,7 +664,6 @@ public class punch extends HttpServlet {
             JSONArray arrayObj = new JSONArray();
 
             if (code.equalsIgnoreCase("00")) {
-
 
                 for (int j = 0; j < res.size(); j++) {
                     JSONObject subnode = new JSONObject();
@@ -670,7 +683,9 @@ public class punch extends HttpServlet {
                     subnode.put("state", data.elementAt(8));
                     subnode.put("country", data.elementAt(9));
                     subnode.put("pincode", data.elementAt(10).toString());
-                     subnode.put("address", data.elementAt(11).toString()+" "+data.elementAt(7)+" "+data.elementAt(8)+" "+data.elementAt(9)+" "+data.elementAt(10).toString());
+                    subnode.put("address",
+                            data.elementAt(11).toString() + " " + data.elementAt(7) + " " + data.elementAt(8) + " "
+                                    + data.elementAt(9) + " " + data.elementAt(10).toString());
                     arrayObj.add(subnode);
                 }
                 object.put("paidpunch", arrayObj);
@@ -692,11 +707,11 @@ public class punch extends HttpServlet {
             java.util.Date l_scan_Date = dateFormat.parse(strDate);
             java.util.Date l_scan_Time = timeFormat.parse(strTime);
             int min = Integer.parseInt("-" + mint);
-//            min=0-min;
+            // min=0-min;
 
             java.util.Date befor_time = Utility.HoureAdd(l_scan_Time, min);
             strTime = befor_time.toString();
-            //l_scan_Time = timeFormat.parse(strTime);
+            // l_scan_Time = timeFormat.parse(strTime);
             java.sql.Time time = new java.sql.Time(befor_time.getTime());
             java.sql.Date Date = new java.sql.Date(l_scan_Date.getTime());
             strTime = time.toString();
@@ -716,7 +731,7 @@ public class punch extends HttpServlet {
         if (aStart > aEnd) {
             throw new IllegalArgumentException("Start cannot exceed End.");
         }
-        //get the range, casting to long to avoid overflow problems
+        // get the range, casting to long to avoid overflow problems
         long range = aEnd - (long) aStart + 1;
         // System.out.println("range>>>>>>>>>>>" + range);
         // compute a fraction of the range, 0 <= frac < range
@@ -729,34 +744,33 @@ public class punch extends HttpServlet {
 
     public void barcodecreate(String path, String barcodevalue) {
         try {
-// Create the barcode bean
+            // Create the barcode bean
             Code128Bean bean = new Code128Bean();
 
             final int dpi = 150;
-// Configure the barcode generator
+            // Configure the barcode generator
             bean.setModuleWidth(UnitConv.in2mm(1.0f / dpi)); // makes the narrow
 
-// bar
-// width exactly
-// one pixel202798
-
+            // bar
+            // width exactly
+            // one pixel202798
 
             bean.setFontSize(6);
 
             bean.setHeight(40);
             bean.setModuleWidth(0.9);
-// Open output file
+            // Open output file
             File outputFile = new File(path);
             FileOutputStream out = new FileOutputStream(outputFile);
             try {
-// Set up the canvas provider for monochrome JPEG output
+                // Set up the canvas provider for monochrome JPEG output
                 BitmapCanvasProvider canvas = new BitmapCanvasProvider(out,
                         "image/jpeg", dpi, BufferedImage.TYPE_BYTE_BINARY,
                         true, 0);
 
-// Generate the barcode
+                // Generate the barcode
                 bean.generateBarcode(canvas, barcodevalue);
-// Signal end of generation
+                // Signal end of generation
                 canvas.finish();
             } finally {
                 out.close();
