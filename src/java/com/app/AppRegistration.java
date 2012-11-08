@@ -35,7 +35,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class app_registration extends HttpServlet {
+public class AppRegistration extends HttpServlet {
 
     ServletConfig config = null;
     private Vector userdata, userinfo;
