@@ -86,17 +86,16 @@
     </context-param>
     <context-param>
         <param-name>JDBC_URL</param-name>
-        <param-value>jdbc:mysql://localhost:3306/paidpunch</param-value>
+        <param-value>jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchtest</param-value>
         <!--<param-value>jdbc:mysql://localhost:3306/paid_punch_test</param-value>-->
     </context-param>
     <context-param>
         <param-name>USERID</param-name>
-        <param-value>root</param-value>
+        <param-value>paidpunch</param-value>
     </context-param>
     <context-param>
         <param-name>PASSWORD</param-name>
-        <param-value>root</param-value>
-        <!--<param-value>X91TZKiQIO</param-value>-->
+        <param-value>Biscuit-1</param-value>
     </context-param>
     <servlet>
         <servlet-name>app_registration</servlet-name>
