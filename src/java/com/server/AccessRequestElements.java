@@ -1,6 +1,6 @@
 package com.server;
 
-public class aczreqElements {
+public class AccessRequestElements {
 
     private String txtype = "";
     private String username = "";
@@ -194,7 +194,7 @@ public class aczreqElements {
 
     private String orangeqrscannedvalue = "";
 
-    public aczreqElements() {
+    public AccessRequestElements() {
     }
 
     /**

@@ -1,9 +1,9 @@
 package merchant;
 
 import org.apache.commons.codec.binary.Base64;
-import com.app.punch;
+import com.app.Punch;
 import com.db.DataAccess;
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
 import com.server.SAXParserExample;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.util.Date;
@@ -31,7 +31,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class merchant_app extends HttpServlet {
+public class RedeemPunch extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -86,7 +86,7 @@ public class merchant_app extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String reqtype = arz.getTxtype();
             if (reqtype.equalsIgnoreCase("Redeem-REQ")) {
                 redeem(list, response);
@@ -154,7 +154,7 @@ public class merchant_app extends HttpServlet {
         String barcodevalue = "";
         String bussinessid = "";
         try {
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             barcodevalue = arz.getBarcodevalue();
             bussinessid = arz.getBusinessid();
             Vector rowdata = new Vector();
@@ -176,7 +176,7 @@ public class merchant_app extends HttpServlet {
                 invalidbarcode = props.getProperty("redeem.invaildbarcode");
                 validbarcode = props.getProperty("redeem.vaildbarcode");
                 Constants.logger.info(" " + barcodevalue + "  " + bussinessid);
-                boolean b = DataAccessControler.barcodechecker(bussinessid, barcodevalue);
+                boolean b = DataAccessController.barcodechecker(bussinessid, barcodevalue);
                 if (b) {
                     xml_write(response, "01", invalidbarcode);
                 } else {
@@ -191,7 +191,7 @@ public class merchant_app extends HttpServlet {
                     filedvalue.add(time);
                     filedvalue.add(date);
                     filedvalue.add("scan");
-                    int i = DataAccessControler.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue,
+                    int i = DataAccessController.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue,
                             filed, filedvalue);
 
                     if (i == -1) {
@@ -244,7 +244,7 @@ public class merchant_app extends HttpServlet {
         String bussinessid = "";
 
         try {
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             bussinessid = arz.getBusinessid();
 
             String path = context.getRealPath("appMessage.properties").toString();
@@ -255,10 +255,10 @@ public class merchant_app extends HttpServlet {
             String successmsg = props.getProperty("issue.success");
             PrintWriter out = response.getWriter();
             String issueno = RandomInteger();
-            boolean check_table = DataAccessControler.getchecker("marchant_code", "code", issueno);
+            boolean check_table = DataAccessController.getchecker("marchant_code", "code", issueno);
             while (check_table) {
                 issueno = RandomInteger();
-                check_table = DataAccessControler.getchecker("marchant_code", "code", issueno);
+                check_table = DataAccessController.getchecker("marchant_code", "code", issueno);
             }
             Vector rowdata = new Vector();
             rowdata.add(bussinessid);
@@ -266,7 +266,7 @@ public class merchant_app extends HttpServlet {
             rowdata.add(new java.sql.Date(new Date().getTime()));
             rowdata.add(new java.sql.Time(new Date().getTime()));
             rowdata.add("genrate");
-            int res = DataAccessControler.insert_issue_code("marchant_code", rowdata);
+            int res = DataAccessController.insert_issue_code("marchant_code", rowdata);
             if (res != -1) {
                 issue_xml_write(response, "00", successmsg, issueno);
             } else {
@@ -301,7 +301,7 @@ public class merchant_app extends HttpServlet {
 
     private void login(List list, HttpServletResponse response) {
         try {
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String path = context.getRealPath("appMessage.properties").toString();
             Properties props = new Properties();
             props.load(new FileInputStream(path));

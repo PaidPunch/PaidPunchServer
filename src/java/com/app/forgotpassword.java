@@ -1,7 +1,7 @@
 package com.app;
 
-import com.db.DataAccessControler;
-import com.jspservlets.signup_paidpunch_add;
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.PropertyConfigurator;
 import com.server.Constants;
 import com.server.SAXParserExample;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.io.StringReader;
 import javax.servlet.ServletInputStream;
 import org.xml.sax.InputSource;
@@ -27,7 +27,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class forgotpassword extends HttpServlet {
+public class ForgotPassword extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -79,12 +79,12 @@ public class forgotpassword extends HttpServlet {
 
             xmlparser.parseDocument(iSource);
             list = xmlparser.getData();
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String reqtype = arz.getTxtype();
             String email = arz.getEmail();
             // String email="sgelda7@gmail.com";
             try {
-                String password = DataAccessControler.getPassword(email);
+                String password = DataAccessController.getPassword(email);
 
                 if (password.equals("")) {
 
@@ -96,11 +96,11 @@ public class forgotpassword extends HttpServlet {
                     emailmessage = props.getProperty("forgotpassword.vaildemailid");
 
                 }
-                signup_paidpunch_add mail = new signup_paidpunch_add();
+                SignupAddPunch mail = new SignupAddPunch();
                 mail.sendEmail_For_forgotPassword(password, email);
                 forgotpasswordxml(response, "00", emailmessage + " " + email + " .");
             } catch (SQLException ex) {
-                Logger.getLogger(forgotpassword.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ForgotPassword.class.getName()).log(Level.SEVERE, null, ex);
             }
         } finally {
             out.close();

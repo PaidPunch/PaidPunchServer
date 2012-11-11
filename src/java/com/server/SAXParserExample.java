@@ -22,7 +22,7 @@ public class SAXParserExample extends DefaultHandler {
     List aczList = new ArrayList();
     String reqesttype = "";
     // to maintain context
-    private aczreqElements acz;
+    private AccessRequestElements acz;
 
     private String tempVal = "";
     String parameter_val = "";
@@ -82,7 +82,7 @@ public class SAXParserExample extends DefaultHandler {
         // tempVal = "";
         if (qName.equalsIgnoreCase("paidpunch-req")) {
             // create a new instance of employee
-            acz = new aczreqElements();
+            acz = new AccessRequestElements();
             // tempEmp.setType(attributes.getValue("type"));
         }
     }

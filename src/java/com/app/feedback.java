@@ -1,8 +1,8 @@
 package com.app;
 
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import com.server.SAXParserExample;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import com.server.Constants;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,7 +22,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class feedback extends HttpServlet {
+public class Feedback extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -80,7 +80,7 @@ public class feedback extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
 
             String reqtype = arz.getTxtype();
             if (reqtype.equalsIgnoreCase("SENDFEEDBACK-REQ")) {
@@ -141,7 +141,7 @@ public class feedback extends HttpServlet {
     }// </editor-fold>
 
     private void feebback_insertion(List list, HttpServletResponse response) {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         String userid = arz.getUserId();
         String feedbackdata = arz.getFeedbackText();
         Vector rowdata = new Vector();
@@ -156,7 +156,7 @@ public class feedback extends HttpServlet {
         boolean expirestatus = false;
 
         String sessionid = arz.getSessionid();
-        sessionhandler session = new sessionhandler();
+        SessionHandler session = new SessionHandler();
         boolean sessionverify = session.sessionidverify(userid, sessionid);
         if (!sessionverify)
         {
@@ -164,7 +164,7 @@ public class feedback extends HttpServlet {
             return;
         }
 
-        int res = DataAccessControler.insert_feedback_data("feedback", rowdata);
+        int res = DataAccessController.insert_feedback_data("feedback", rowdata);
         if (res == 1) {
             feedBack_Xml(response, "00", "Thank you for feedback.");
             return;

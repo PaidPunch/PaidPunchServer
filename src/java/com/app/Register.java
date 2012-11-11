@@ -4,8 +4,8 @@ import java.text.ParseException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.binary.Base64;
 import com.db.DataAccess;
-import com.db.DataAccessControler;
-import com.jspservlets.signup_paidpunch_add;
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
 import com.server.SAXParserExample;
 import com.server.Utility;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
@@ -35,7 +35,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class AppRegistration extends HttpServlet {
+public class Register extends HttpServlet {
 
     ServletConfig config = null;
     private Vector userdata, userinfo;
@@ -96,7 +96,7 @@ public class AppRegistration extends HttpServlet {
                 iSource.setEncoding("UTF-8");
                 example.parseDocument(iSource);
                 list = example.getData();
-                aczreqElements arz = (aczreqElements) list.get(0);
+                AccessRequestElements arz = (AccessRequestElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
                 if (reqtype.equalsIgnoreCase("REGISTER-REQ")) {
@@ -110,7 +110,7 @@ public class AppRegistration extends HttpServlet {
                     String sesstionid = arz.getSessionid();
                     // if sesstion id .
                     if (sesstionid.equalsIgnoreCase("")) {
-                        sessionhandler session = new sessionhandler();
+                        SessionHandler session = new SessionHandler();
                         sesstionid = session.genratesessionid();
 
                     }
@@ -141,7 +141,7 @@ public class AppRegistration extends HttpServlet {
                                 res);
                         return;
                     } else {
-                        userdata = DataAccessControler.getDataFromTable("app_user", "user_id", res);
+                        userdata = DataAccessController.getDataFromTable("app_user", "user_id", res);
                         userinfo = (Vector) userdata.elementAt(0);
                         userinfo.add(sesstionid);
                     }
@@ -176,18 +176,18 @@ public class AppRegistration extends HttpServlet {
         String scancode = "";
         java.util.Date punch_expire_Date;
         try {
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             userid = arz.getUserId();
             scancode = arz.getVerificationCode();
 
             String sessionid = arz.getSessionid();
-            sessionhandler session = new sessionhandler();
+            SessionHandler session = new SessionHandler();
             boolean b = session.sessionidverify(userid, sessionid);
             boolean isfreepunch = false;
             // boolean b = DataAccessControler.getUserValidation("app_user", "user_id", userid);
             String msg;
             if (b) {
-                Vector rowdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "qrcode", scancode)
+                Vector rowdata = (Vector) DataAccessController.getDataFromTable("punch_card", "qrcode", scancode)
                         .elementAt(0);
                 DataAccess da = new DataAccess();
 
@@ -216,7 +216,7 @@ public class AppRegistration extends HttpServlet {
                 } else {
 
                     String bid = "" + rowdata.elementAt(7);
-                    Vector businessdata = (Vector) DataAccessControler.getDataFromTable("business_users",
+                    Vector businessdata = (Vector) DataAccessController.getDataFromTable("business_users",
                             "business_userid", bid).elementAt(0);
                     String busn_provide_free_punch = "" + businessdata.elementAt(12);
 
@@ -319,7 +319,7 @@ public class AppRegistration extends HttpServlet {
         String password = "";
         String city = "";
         try {
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             if (arz.getName() == null || arz.getName().equalsIgnoreCase("(null)")
                     || arz.getName().equalsIgnoreCase("null"))
             {
@@ -375,11 +375,11 @@ public class AppRegistration extends HttpServlet {
             DataAccess dataaccess = new DataAccess();
             String res = dataaccess.UserRegistration(rowdata);
             if (res.equalsIgnoreCase("00")) {
-                Vector userdata = (Vector) DataAccessControler.getDataFromTable("app_user", colmid, data);
+                Vector userdata = (Vector) DataAccessController.getDataFromTable("app_user", colmid, data);
                 Vector userinfo = (Vector) userdata.elementAt(0);
                 regXml(response, res, userinfo);
                 // email send for app user conformation
-                signup_paidpunch_add mail = new signup_paidpunch_add();
+                SignupAddPunch mail = new SignupAddPunch();
                 mail.sendEmail_For_app_user("" + userinfo.elementAt(0), arz.getEmail());
 
                 return;
@@ -578,7 +578,7 @@ public class AppRegistration extends HttpServlet {
     }
 
     private void logOut(List list, HttpServletResponse response) {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         String userId = arz.getUserId();
         DataAccess da = new DataAccess();
         String res = da.logout(userId);
@@ -618,7 +618,7 @@ public class AppRegistration extends HttpServlet {
             java.sql.Date Date = new java.sql.Date(l_scan_Date.getTime());
             strTime = time.toString();
             strDate = Date.toString();
-            result = DataAccessControler.buy_code_verify(code, bus_id, strTime, strDate);
+            result = DataAccessController.buy_code_verify(code, bus_id, strTime, strDate);
 
         } catch (Exception ex) {
             Constants.logger.error(ex);

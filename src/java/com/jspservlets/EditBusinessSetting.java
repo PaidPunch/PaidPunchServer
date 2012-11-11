@@ -18,7 +18,7 @@ import java.sql.SQLException;
 /**
  * @author admin
  */
-public class edit_bus_setting extends HttpServlet {
+public class EditBusinessSetting extends HttpServlet {
 
     DBConnection db;
     Connection conn = null;
@@ -143,7 +143,7 @@ public class edit_bus_setting extends HttpServlet {
         try {
             processtimeRequestChange(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(edit_bus_setting.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EditBusinessSetting.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -165,7 +165,7 @@ public class edit_bus_setting extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(edit_bus_setting.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EditBusinessSetting.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

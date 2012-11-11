@@ -31,7 +31,7 @@ import javax.servlet.ServletContext;
 /**
  * @author admin
  */
-public class forgot_pass_mail_send extends HttpServlet {
+public class SendForgotPasswordMail extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;
@@ -245,9 +245,9 @@ public class forgot_pass_mail_send extends HttpServlet {
             processRequest(request, response);
 
         } catch (AddressException ex) {
-            Logger.getLogger(forgot_pass_mail_send.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendForgotPasswordMail.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException ex) {
-            Logger.getLogger(forgot_pass_mail_send.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendForgotPasswordMail.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

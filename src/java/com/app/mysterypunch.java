@@ -1,7 +1,7 @@
 package com.app;
 
 import com.db.DataAccess;
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
 import com.server.SAXParserExample;
-import com.server.aczreqElements;
-import com.server.mysteryBean;
+import com.server.AccessRequestElements;
+import com.server.MysteryBean;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class mysterypunch extends HttpServlet {
+public class MysteryPunch extends HttpServlet {
 
     static final int h = 5;
     static final int m = 3;
@@ -97,11 +97,11 @@ public class mysterypunch extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String reqtype = arz.getTxtype();
             if (reqtype.equalsIgnoreCase("Mystery-REQ")) {
 
-                sessionhandler session = new sessionhandler();
+                SessionHandler session = new SessionHandler();
                 boolean b = session.sessionidverify(arz.getUserId(), arz.getSessionid());
                 if (!b) {
                     mysteryxml(response, "400", "You have logged in from another device", "");
@@ -112,23 +112,23 @@ public class mysterypunch extends HttpServlet {
                 String punchcardid = arz.getPunchCardID();
                 String punchcarddownloadid = arz.getPunch_card_downloadid();
 
-                Vector punchcard_download = (Vector) DataAccessControler.getDataFromTable("punchcard_download",
+                Vector punchcard_download = (Vector) DataAccessController.getDataFromTable("punchcard_download",
                         "punch_card_downloadid", punchcarddownloadid).elementAt(0);
                 if (punchcard_download.elementAt(8) != null) {
                     String mysteryid = punchcard_download.elementAt(8).toString();
-                    Vector mystery_data = (Vector) DataAccessControler.getDataFromTable("mystery_punch", "mystery_id",
+                    Vector mystery_data = (Vector) DataAccessController.getDataFromTable("mystery_punch", "mystery_id",
                             mysteryid).elementAt(0);
                     String offer_data = mystery_data.elementAt(2).toString();
                     mysteryxml(response, "00", "successfully", offer_data);
                     return;
                 }
-                mysteryBean bean = create_mystery(userid, punchcardid);
+                MysteryBean bean = create_mystery(userid, punchcardid);
                 if (bean == null) {
                     mysteryxml(response, "01", "No offer.", "");
                     return;
                 }
                 System.out.print(bean.toString());
-                int res = DataAccessControler.updatetDataToTable("punchcard_download", "punch_card_downloadid",
+                int res = DataAccessController.updatetDataToTable("punchcard_download", "punch_card_downloadid",
                         punchcarddownloadid, "mystery_punchid", bean.getMysteryid());
                 if (res == 1) {
                     DataAccess da = new DataAccess();
@@ -199,8 +199,8 @@ public class mysterypunch extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private mysteryBean create_mystery(String userid, String punchcardid) {
-        ArrayList<mysteryBean> beanlist = new ArrayList<mysteryBean>();
+    private MysteryBean create_mystery(String userid, String punchcardid) {
+        ArrayList<MysteryBean> beanlist = new ArrayList<MysteryBean>();
 
         try {
             Vector field_name = new Vector();
@@ -209,15 +209,15 @@ public class mysterypunch extends HttpServlet {
             Vector field_value = new Vector();
             field_value.add(punchcardid);
             field_value.add("Y");
-            Vector mystry_data = DataAccessControler.getDataFromTable("mystery_punch", field_name, field_value);
+            Vector mystry_data = DataAccessController.getDataFromTable("mystery_punch", field_name, field_value);
             int size = mystry_data.size();
             if (size == 0) {
-                mysteryBean bean = null;
+                MysteryBean bean = null;
                 return bean;
             }
             size = size * h;
             for (int index = 0; index < mystry_data.size(); index++) {
-                mysteryBean bean = new mysteryBean();
+                MysteryBean bean = new MysteryBean();
                 Vector data = (Vector) mystry_data.elementAt(index);
                 bean.setMysteryid(data.elementAt(0).toString());
                 bean.setPunch_card_id(data.elementAt(1).toString());
@@ -255,7 +255,7 @@ public class mysterypunch extends HttpServlet {
                 break;
             }
         }
-        mysteryBean bean = beanlist.get(pos);
+        MysteryBean bean = beanlist.get(pos);
         return bean;
     }
 

@@ -3,7 +3,7 @@ package com.server;
 /**
  * @author qube26
  */
-public class mysteryBean {
+public class MysteryBean {
     String mysteryid, punch_card_id, offer, pro;
 
     public String getMysteryid() {

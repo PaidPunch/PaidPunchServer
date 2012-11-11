@@ -1,6 +1,6 @@
 package payment;
 
-import com.app.sessionhandler;
+import com.app.SessionHandler;
 import com.db.DataAccess;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
 import com.server.SAXParserExample;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.io.StringReader;
 import java.util.Vector;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -33,7 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * @author qube26
  */
-public class payment_detail extends HttpServlet {
+public class PaymentDetail extends HttpServlet {
 
     ServletConfig config = null;
     private Vector userdata, userinfo;
@@ -86,7 +86,7 @@ public class payment_detail extends HttpServlet {
 
                 example.parseDocument(iSource);
                 list = example.getData();
-                aczreqElements arz = (aczreqElements) list.get(0);
+                AccessRequestElements arz = (AccessRequestElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
                 if (reqtype.equalsIgnoreCase("profile-REQ")) {
@@ -175,11 +175,11 @@ public class payment_detail extends HttpServlet {
 
     private void deleteProfile(List list, HttpServletResponse response) {
         try {
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String userid = arz.getUserId();
 
             String sessionid = arz.getSessionid();
-            sessionhandler session = new sessionhandler();
+            SessionHandler session = new SessionHandler();
             boolean b = session.sessionidverify(userid, sessionid);
             Constants.logger.info("Delete profile");
             if (b)

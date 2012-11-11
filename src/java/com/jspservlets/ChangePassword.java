@@ -1,23 +1,29 @@
 package com.jspservlets;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import com.mysql.jdbc.Statement;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.Statement;
+import java.io.*;
+
+import java.util.*;
+
+import javax.servlet.*;
+
+import javax.servlet.http.*;
 
 /**
- * @author admin
+ * @author Shahid
  */
-public class login_validate extends HttpServlet {
-
+public class ChangePassword extends HttpServlet {
     ServletConfig config = null;
     ServletContext context;
     HttpSession session = null;
@@ -41,8 +47,8 @@ public class login_validate extends HttpServlet {
         try {
             /*
              * TODO output your page here out.println("<html>"); out.println("<head>");
-             * out.println("<title>Servlet login_validate</title>"); out.println("</head>"); out.println("<body>");
-             * out.println("<h1>Servlet login_validate at " + request.getContextPath () + "</h1>");
+             * out.println("<title>Servlet change_password</title>"); out.println("</head>"); out.println("<body>");
+             * out.println("<h1>Servlet change_password at " + request.getContextPath () + "</h1>");
              * out.println("</body>"); out.println("</html>");
              */
         } finally {
@@ -67,28 +73,7 @@ public class login_validate extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        session = request.getSession(true);
-        String code = "";
-        String email_id = "";
-        try {
-            code = request.getParameter("status");
-            System.out.println("Status Code : " + code);
-            email_id = request.getParameter("email");
-            session.setAttribute("username", email_id);
-            // password = request.getParameter("password");
-        } catch (Exception e) {
-
-        }
-        PrintWriter out = response.getWriter();
-        if (email_id != null) {
-            if (code.equalsIgnoreCase("6")) {
-                response.sendRedirect("business_admin_user.jsp");
-            }
-            else if (code.equalsIgnoreCase("7")) {
-                response.sendRedirect("business_user_report.jsp");
-            }
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -106,30 +91,41 @@ public class login_validate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // processRequest(request, response);
+        System.out.println("doPost ");
         try {
-            config = getServletConfig();
+            session = request.getSession(false);
 
+            config = getServletConfig();
             context = config.getServletContext();
         } catch (Exception e) {
 
         }
         com.server.Constants.loadJDBCConstants(context);
-        String code = "03";
-        String email_id = "", password = "";
+        String username = "", oldpassword = "", newpassword = "", code = "00";
         try {
-            email_id = request.getParameter("email");
-            password = request.getParameter("password");
+            username = session.getAttribute("username").toString();
+
+            if (username == null || username == "") {
+                response.sendRedirect("login.jsp");
+            }
+
         } catch (Exception e) {
 
         }
+
+        oldpassword = request.getParameter("oldpassword");
+        newpassword = request.getParameter("newpassword");
+        System.out.println("Old Password : " + oldpassword + "New Password : " + newpassword);
         PrintWriter out = response.getWriter();
-        if (email_id != null && password != null) {
-            code = getUserNamePassword(email_id, password);
+        if (oldpassword != null && newpassword != null) {
+
+            code = changePassword(username, oldpassword, newpassword);
+
         }
+        else {
 
+        }
         out.println(code);
-
     }
 
     /**
@@ -142,45 +138,37 @@ public class login_validate extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    public String getUserNamePassword(String email_id, String password) throws ServletException {
+    public String changePassword(String username, String oldpass, String newpass) throws ServletException {
         DBConnection db = null;
         Statement stmt = null;
         ResultSet rs = null;
-        String code = "03";
-        String passwd = "", role = "";
-        String isUserValidated = "N";
+        String codeFlag = "00";
+
         try {
             db = new DBConnection();
             stmt = db.stmt;
-            String query = "SELECT email_id,password,role,isemailverified from business_users where email_id='"
-                    + email_id + "'";
+            String query = "SELECT password from business_users where email_id='" + username + "'";
             rs = stmt.executeQuery(query);
             com.server.Constants.logger.info("The select query is " + query);
             // displaying records
-
+            String userpassword = "";
             if (rs.next()) {
-                // username = rs.getObject(1).toString();
-                passwd = rs.getObject(2).toString();
-                role = rs.getObject(3).toString();
-                isUserValidated = rs.getObject(4).toString();
-                if (password.equalsIgnoreCase(passwd)) {
-                    if (isUserValidated.equalsIgnoreCase("Y")) {
-                        if (role.equalsIgnoreCase("user")) {
-                            code = "07";
-                        }
-                        else if (role.equalsIgnoreCase("admin")) {
-                            code = "06";
-                        }
-                    } else {
-                        code = "02";
-                    }
+                userpassword = rs.getObject(1).toString();
+                if (userpassword.equals(oldpass)) {
+                    String updatePasswordQuery = "Update business_users set password = '" + newpass
+                            + "' where email_id ='" + username + "'";
+                    com.server.Constants.logger.info("The query is " + updatePasswordQuery);
+                    System.out.println("The query is " + updatePasswordQuery);
+                    stmt.executeUpdate(updatePasswordQuery);
+
+                    codeFlag = "02";
                 }
                 else {
-                    code = "05";
+                    codeFlag = "01";
                 }
             }
             else {
-                code = "04";
+                codeFlag = "00";
             }
 
         } catch (SQLException e) {
@@ -200,7 +188,7 @@ public class login_validate extends HttpServlet {
                 com.server.Constants.logger.error("Error in closing SQL in checksecretcode.java" + e.getMessage());
             }
         }
-        return code;
+        return codeFlag;
     }
 
 }

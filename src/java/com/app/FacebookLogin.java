@@ -1,8 +1,8 @@
 package com.app;
 
 import com.db.DataAccess;
-import com.db.DataAccessControler;
-import com.jspservlets.signup_paidpunch_add;
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
-import com.server.Feedbean;
+import com.server.FeedBean;
 import com.server.SAXParserExample;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -25,7 +25,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class FB_login extends HttpServlet {
+public class FacebookLogin extends HttpServlet {
 
     ServletConfig config = null;
     private Vector userdata, userinfo;
@@ -78,7 +78,7 @@ public class FB_login extends HttpServlet {
 
                 example.parseDocument(iSource);
                 list = example.getData();
-                aczreqElements arz = (aczreqElements) list.get(0);
+                AccessRequestElements arz = (AccessRequestElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
                 if (reqtype.equalsIgnoreCase("FB-LOGIN-REQ")) {
@@ -95,14 +95,14 @@ public class FB_login extends HttpServlet {
                     String isproifleid = "false";
                     if (res) {
                         da.fb_login(fbid, email, name, sessionid);
-                        Vector userinfo = DataAccessControler.getDataFromTable("app_user", "FBid", fbid);
+                        Vector userinfo = DataAccessController.getDataFromTable("app_user", "FBid", fbid);
                         app_user = (Vector) userinfo.get(0);
                         app_id = "" + app_user.get(0);
                         isproifleid = "" + app_user.get(13);
 
                     } else {
                         da.fb_Registration(fbid, email, name, sessionid);
-                        Vector userinfo = DataAccessControler.getDataFromTable("app_user", "FBid", fbid);
+                        Vector userinfo = DataAccessController.getDataFromTable("app_user", "FBid", fbid);
                         String temp = name;
                         String namearray[] = temp.split(" ");
                         String lastName = "";
@@ -124,7 +124,7 @@ public class FB_login extends HttpServlet {
 
                         app_user = (Vector) userinfo.get(0);
                         app_id = "" + app_user.get(0);
-                        signup_paidpunch_add emailsender = new signup_paidpunch_add();
+                        SignupAddPunch emailsender = new SignupAddPunch();
                         emailsender.sendConfirmationEmail(email, temp);
 
                     }
@@ -223,7 +223,7 @@ public class FB_login extends HttpServlet {
     }// </editor-fold>
 
     private void feeds(List list, HttpServletResponse response) {
-        ArrayList<Feedbean> feedlist = new ArrayList<Feedbean>();
+        ArrayList<FeedBean> feedlist = new ArrayList<FeedBean>();
         DataAccess da = new DataAccess();
         feedlist = da.getdownloadfeed();
         ArrayList<String> fbid = new ArrayList<String>();
@@ -237,7 +237,7 @@ public class FB_login extends HttpServlet {
         fbid.add("9890");
         fbid.add("1234");
         fbid.add("100002527741735");
-        ArrayList<Feedbean> frendlist = new ArrayList<Feedbean>();
+        ArrayList<FeedBean> frendlist = new ArrayList<FeedBean>();
         for (int i = 0; i < feedlist.size(); i++) {
             String temp = feedlist.get(i).getFbid();
             for (int j = 0; j < fbid.size(); j++) {

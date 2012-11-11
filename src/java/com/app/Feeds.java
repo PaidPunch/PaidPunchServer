@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
-import com.server.Feedbean;
+import com.server.FeedBean;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -49,7 +49,7 @@ public class Feeds extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
         List list;
-        ArrayList<Feedbean> frendlist = new ArrayList<Feedbean>();
+        ArrayList<FeedBean> frendlist = new ArrayList<FeedBean>();
         try {
             config = getServletConfig();
             context = config.getServletContext();
@@ -160,14 +160,14 @@ public class Feeds extends HttpServlet {
         return fbid;
     }
 
-    private ArrayList<Feedbean> feeds(ArrayList<String> fbid, HttpServletResponse response) {
-        ArrayList<Feedbean> feedlist = new ArrayList<Feedbean>();
+    private ArrayList<FeedBean> feeds(ArrayList<String> fbid, HttpServletResponse response) {
+        ArrayList<FeedBean> feedlist = new ArrayList<FeedBean>();
         try {
             DataAccess da = new DataAccess();
 
             feedlist = da.getdownloadfeed();
             Constants.logger.info("feed size" + feedlist.size());
-            ArrayList<Feedbean> frendlist = new ArrayList<Feedbean>();
+            ArrayList<FeedBean> frendlist = new ArrayList<FeedBean>();
             for (int i = 0; i < feedlist.size(); i++) {
                 if (feedlist.get(i).getIsfbaccount().equalsIgnoreCase("Y")) {
                     String temp = feedlist.get(i).getFbid();
@@ -214,7 +214,7 @@ public class Feeds extends HttpServlet {
         return feedlist;
     }
 
-    private void feed_Json_Response(String code, String msg, ArrayList<Feedbean> frendlist, HttpServletResponse response) {
+    private void feed_Json_Response(String code, String msg, ArrayList<FeedBean> frendlist, HttpServletResponse response) {
         PrintWriter out;
         Constants.logger.info("json response list" + frendlist.size());
         try {
@@ -233,7 +233,7 @@ public class Feeds extends HttpServlet {
                 {
                     for (int j = 0; j < frendlist.size(); j++) {
                         JSONObject subnode = new JSONObject();
-                        Feedbean bean = frendlist.get(j);
+                        FeedBean bean = frendlist.get(j);
                         // Vector data =new Vector();
 
                         // String bid = "" + data.elementAt(0);

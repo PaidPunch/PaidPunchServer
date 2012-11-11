@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataAccessControler {
+public class DataAccessController {
 
     public static Connection createConnection() {
         Connection l_conn = null;
@@ -882,7 +882,7 @@ public class DataAccessControler {
                 try {
                     l_conn.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(DataAccessControler.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DataAccessController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -1299,7 +1299,7 @@ public class DataAccessControler {
             try {
                 l_conn.close();
             } catch (SQLException ex) {
-                Logger.getLogger(DataAccessControler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DataAccessController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return l_result;
@@ -1340,7 +1340,7 @@ public class DataAccessControler {
             try {
                 l_conn.close();
             } catch (SQLException ex) {
-                Logger.getLogger(DataAccessControler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DataAccessController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;

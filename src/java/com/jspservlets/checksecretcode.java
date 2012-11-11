@@ -18,7 +18,7 @@ import javax.servlet.http.*;
 /**
  * @author admin
  */
-public class checksecretcode extends HttpServlet {
+public class CheckSecretCode extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;

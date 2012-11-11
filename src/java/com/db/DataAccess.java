@@ -10,8 +10,8 @@ import java.sql.SQLException;
 import com.server.Constants;
 
 import java.util.Vector;
-import com.db.DataAccessControler;
-import com.server.Feedbean;
+import com.db.DataAccessController;
+import com.server.FeedBean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -35,7 +35,7 @@ public class DataAccess {
         rowdata.add(password);
         String userid = "";
         try {
-            Vector dataFromTable = DataAccessControler.getDataFromTable("app_user");
+            Vector dataFromTable = DataAccessController.getDataFromTable("app_user");
             // DataAccessControler.getDataFromTable(result, ids, ids)
             for (int j = 0; j < dataFromTable.size(); j++) {
                 Vector data = (Vector) dataFromTable.elementAt(j);
@@ -63,7 +63,7 @@ public class DataAccess {
                             }
                             // int res = DataAccessControler.updatetDataToTable("app_user", "user_id", userid,
                             // "user_status", "Y");
-                            int res = DataAccessControler.updatetDataToTable("app_user", "user_id", userid,
+                            int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid,
                                     "sessionid", sessionid);
                             if (res == -1) {
                                 return "03";
@@ -89,7 +89,7 @@ public class DataAccess {
         // Vector ids = new Vector();
         String userid = "";
         try {
-            Vector dataFromTable = DataAccessControler.getDataFromTable("business_users");
+            Vector dataFromTable = DataAccessController.getDataFromTable("business_users");
 
             for (int j = 0; j < dataFromTable.size(); j++) {
                 Vector data = (Vector) dataFromTable.elementAt(j);
@@ -108,7 +108,7 @@ public class DataAccess {
                         rowdata.add(data.elementAt(1));
                         rowdata.add(data.elementAt(7));
 
-                        Vector puchdata = (Vector) DataAccessControler.getDataFromTable("punch_card",
+                        Vector puchdata = (Vector) DataAccessController.getDataFromTable("punch_card",
                                 "business_userid", userid).elementAt(0);
                         rowdata.add(puchdata.elementAt(2));
                         rowdata.add(puchdata.elementAt(3));
@@ -135,7 +135,7 @@ public class DataAccess {
 
         try {
 
-            int res = DataAccessControler.updatetDataToTable("app_user", "user_id", userid, "user_status", "N");
+            int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "user_status", "N");
             if (res == 1) {
                 return userid;
             }
@@ -151,11 +151,11 @@ public class DataAccess {
     public String UserRegistration(Vector rowdata) throws SQLException {
         String email = (String) rowdata.elementAt(1);
         String userid = "";
-        boolean b = DataAccessControler.getUserValidation("app_user", "email_id", email, "N");
+        boolean b = DataAccessController.getUserValidation("app_user", "email_id", email, "N");
         if (b) {
             return "01";
         }
-        int i = DataAccessControler.insertData("app_user", rowdata);
+        int i = DataAccessController.insertData("app_user", rowdata);
         if (i == -1) {
             return "02";
         } else {
@@ -167,7 +167,7 @@ public class DataAccess {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement("SELECT user_id FROM app_user a where fbid=?;");
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
@@ -206,7 +206,7 @@ public class DataAccess {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement("select * from punchcard_download where app_user_id=" + appuserid
                     + " and isfreepunch='true' and punch_card_id='" + punchid + "';");
@@ -262,7 +262,7 @@ public class DataAccess {
                     + fbid
                     + "');";
             Constants.logger.info("l_callStat ::{}" + l_query);
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement(l_query);
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
@@ -304,7 +304,7 @@ public class DataAccess {
             String l_query = "UPDATE app_user SET username=?,email_id=?,user_status=?,Date=?,Time=?,sessionid=? WHERE FBid ="
                     + fbid + ";";
             Constants.logger.info("l_callStat ::{}" + l_query);
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement(l_query);
             l_prepStat.setObject(1, name);
@@ -343,7 +343,7 @@ public class DataAccess {
         PreparedStatement l_prepStat = null;
         int result = -1;
         try {
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
         } catch (Exception e) {
             e.printStackTrace();
@@ -385,7 +385,7 @@ public class DataAccess {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement("select profile_id from app_user where user_id='" + userid + "';");
             // Constants.logger.info("l_callStat::{}"+l_prepStat.toString());
@@ -423,7 +423,7 @@ public class DataAccess {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement("Select LAST_INSERT_ID() from payment_details ;");
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
@@ -459,7 +459,7 @@ public class DataAccess {
         PreparedStatement l_prepStat = null;
         int result = -1;
         try {
-            DataAccessControler dac = new DataAccessControler();
+            DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
         } catch (Exception e) {
             e.printStackTrace();
@@ -494,11 +494,11 @@ public class DataAccess {
         return result;
     }
 
-    public ArrayList<Feedbean> getdownloadfeed() {
+    public ArrayList<FeedBean> getdownloadfeed() {
         Connection l_conn = null;
-        ArrayList<Feedbean> feedlist = new ArrayList<Feedbean>();
+        ArrayList<FeedBean> feedlist = new ArrayList<FeedBean>();
         PreparedStatement l_prepStat = null;
-        DataAccessControler dac = new DataAccessControler();
+        DataAccessController dac = new DataAccessController();
         try {
             l_conn = dac.createConnection();
             l_prepStat = l_conn
@@ -515,7 +515,7 @@ public class DataAccess {
             while (l_rs.next()) {
                 // Constants.logger.info("data fetched");
 
-                Feedbean bean = new Feedbean();
+                FeedBean bean = new FeedBean();
                 bean.setPunchcard_id(l_rs.getObject(2).toString());
 
                 bean.setApp_user_id(l_rs.getObject(3).toString());
@@ -526,7 +526,7 @@ public class DataAccess {
 
                     bean.setMystery_punchid(l_rs.getObject(6).toString());
                     String mysteryid = l_rs.getObject(6).toString().toString();
-                    Vector mysterydata = (Vector) DataAccessControler.getDataFromTable("mystery_punch", "mystery_id",
+                    Vector mysterydata = (Vector) DataAccessController.getDataFromTable("mystery_punch", "mystery_id",
                             mysteryid).elementAt(0);
                     bean.setAction("Mystery");
                     bean.setOffer(mysterydata.elementAt(2).toString());

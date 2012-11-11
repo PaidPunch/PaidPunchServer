@@ -1,7 +1,7 @@
 package com.app;
 
 import com.db.DataAccess;
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import com.server.SAXParserExample;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.xml.sax.InputSource;
 import com.server.Constants;
 import com.server.Utility;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -41,7 +41,7 @@ import org.krysalis.barcode4j.tools.UnitConv;
 /**
  * @author qube26
  */
-public class punch extends HttpServlet {
+public class Punch extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -100,7 +100,7 @@ public class punch extends HttpServlet {
 
                 example.parseDocument(iSource);
                 list = example.getData();
-                aczreqElements arz = (aczreqElements) list.get(0);
+                AccessRequestElements arz = (AccessRequestElements) list.get(0);
                 String reqtype = arz.getTxtype();
 
                 if (reqtype.equalsIgnoreCase("SEARCHBYBUSINESSNAME-REQ")) {
@@ -178,19 +178,19 @@ public class punch extends HttpServlet {
     }// </editor-fold>
 
     private void Punch_Card_List(List list, HttpServletResponse response) throws ParseException {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         String userid = arz.getUserId();
 
         String sessionid = arz.getSessionid();
         Vector card_list = null;
-        sessionhandler session = new sessionhandler();
+        SessionHandler session = new SessionHandler();
         boolean b = session.sessionidverify(userid, sessionid);
         if (!b) {
             Punch_Card_List_XML_Response(card_list, "400", "You have logged in from another device", response);
             return;
         }
 
-        card_list = DataAccessControler.punchcardlist(userid);
+        card_list = DataAccessController.punchcardlist(userid);
 
         if (card_list == null) {
             Punch_Card_List_XML_Response(card_list, "01", "Failed to process request", response);
@@ -200,19 +200,19 @@ public class punch extends HttpServlet {
     }
 
     private void Search_By_Busines_Name(List list, HttpServletResponse response) throws SQLException {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         // String buss_name=arz.getBusiness_name();
 
         Vector card_list = null;
         String sessionid = arz.getSessionid();
         String userid = arz.getUserId();
-        sessionhandler session = new sessionhandler();
+        SessionHandler session = new SessionHandler();
         boolean b = session.sessionidverify(userid, sessionid);
         if (!b) {
             Search_By_JSON_Response(card_list, "400", "You have logged in from another device", response);
             return;
         }
-        card_list = DataAccessControler.punches_search();
+        card_list = DataAccessController.punches_search();
 
         if (card_list == null) {
             Search_By_JSON_Response(card_list, "01", "Failed to process request", response);
@@ -331,7 +331,7 @@ public class punch extends HttpServlet {
             out.print(res);
 
         } catch (ParseException ex) {
-            Logger.getLogger(punch.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Punch.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Constants.logger.error(ex);
         } finally {
@@ -341,7 +341,7 @@ public class punch extends HttpServlet {
     }
 
     private void Mark_Punch_Card(List list, HttpServletResponse response, HttpServletRequest request) {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         String barcodeimage = null;
         String barcodevalue = "";
         String userid = arz.getUserId();
@@ -358,16 +358,16 @@ public class punch extends HttpServlet {
         String expirestatus = "false";
         try {
             String sessionid = arz.getSessionid();
-            sessionhandler session = new sessionhandler();
+            SessionHandler session = new SessionHandler();
             boolean sessionverify = session.sessionidverify(userid, sessionid);
             if (!sessionverify) {
                 mark_Punch_Card_Xml(response, "400", "You have logged in from another device", -1, pid, barcodeimage);
                 return;
             }
-            Vector userinfo = (Vector) DataAccessControler.getDataFromTable("punchcard_download",
+            Vector userinfo = (Vector) DataAccessController.getDataFromTable("punchcard_download",
                     "punch_card_downloadid", down_id).elementAt(0);
 
-            Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", pid)
+            Vector punchdata = (Vector) DataAccessController.getDataFromTable("punch_card", "punch_card_id", pid)
                     .elementAt(0);
             String restrict_min = "" + punchdata.elementAt(10);
 
@@ -392,7 +392,7 @@ public class punch extends HttpServlet {
                 return;
             }
 
-            Vector punch_info = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", pid)
+            Vector punch_info = (Vector) DataAccessController.getDataFromTable("punch_card", "punch_card_id", pid)
                     .elementAt(0);
             if (punch_info != null) {
                 Vector fields = new Vector();
@@ -440,7 +440,7 @@ public class punch extends HttpServlet {
                     int totalused = total_punch - remain;
                     set_fields_value.add(remain);
                     if (!is_mystery_punch.equalsIgnoreCase("true")) {
-                        int res = DataAccessControler.updatetDataToTable("punchcard_download", "punch_card_downloadid",
+                        int res = DataAccessController.updatetDataToTable("punchcard_download", "punch_card_downloadid",
                                 down_id, "punch_used", "" + remain);
                         if (res == -1) {
                             mark_Punch_Card_Xml(response, "01", " Failed to process request.", -1, pid, barcodeimage);
@@ -465,7 +465,7 @@ public class punch extends HttpServlet {
                     if (is_mystery_punch.equalsIgnoreCase("true")) {
                         mysteryid = userinfo.elementAt(8).toString();
                     }
-                    int res = DataAccessControler.insert_punchcard_tracker("punch_card_tracker", tracker,
+                    int res = DataAccessController.insert_punchcard_tracker("punch_card_tracker", tracker,
                             is_mystery_punch);
                     DataAccess da = new DataAccess();
 
@@ -716,7 +716,7 @@ public class punch extends HttpServlet {
             java.sql.Date Date = new java.sql.Date(l_scan_Date.getTime());
             strTime = time.toString();
             strDate = Date.toString();
-            result = DataAccessControler.getData_punch_card_tracker(down_id, strTime, strDate);
+            result = DataAccessController.getData_punch_card_tracker(down_id, strTime, strDate);
 
         } catch (SQLException ex) {
             Constants.logger.error(ex);

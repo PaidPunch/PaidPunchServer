@@ -39,7 +39,7 @@ import javax.mail.Message.RecipientType;
 /**
  * @author admin
  */
-public class signup_paidpunch_add extends HttpServlet {
+public class SignupAddPunch extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;
@@ -320,7 +320,7 @@ public class signup_paidpunch_add extends HttpServlet {
 
             fs = new FileInputStream(file);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(signup_paidpunch_add.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SignupAddPunch.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         int insertedUserId = 0;

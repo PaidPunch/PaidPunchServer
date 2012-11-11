@@ -1,7 +1,7 @@
 package com.app;
 
-import com.db.DataAccessControler;
-import com.jspservlets.signup_paidpunch_add;
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletConfig;
@@ -16,7 +16,7 @@ import java.util.Vector;
 /**
  * @author qube26
  */
-public class verifyappuser extends HttpServlet {
+public class VerifyAppUser extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,8 +28,8 @@ public class verifyappuser extends HttpServlet {
             ServletContext context = config.getServletContext();
             Constants.loadJDBCConstants(context);
             String userid = request.getParameter("userid");
-            int res = DataAccessControler.updatetDataToTable("app_user", "user_id", userid, "isemailverified", "Y");
-            Vector userdata = (Vector) DataAccessControler.getDataFromTable("app_user", "user_id", userid).elementAt(0);
+            int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "isemailverified", "Y");
+            Vector userdata = (Vector) DataAccessController.getDataFromTable("app_user", "user_id", userid).elementAt(0);
             String username = userdata.elementAt(1).toString();
             String email = userdata.elementAt(2).toString();
             String temp = username;
@@ -49,7 +49,7 @@ public class verifyappuser extends HttpServlet {
                 temp = temp + " ";
             }
             temp = temp.trim();
-            signup_paidpunch_add emailsender = new signup_paidpunch_add();
+            SignupAddPunch emailsender = new SignupAddPunch();
             emailsender.sendConfirmationEmail(email, temp);
 
             System.out.print(res);

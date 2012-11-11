@@ -1,6 +1,6 @@
 package merchant;
 
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import com.server.Constants;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author qube26
  */
-public class barcodeverify extends HttpServlet {
+public class VerifyBarcode extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -49,7 +49,7 @@ public class barcodeverify extends HttpServlet {
             Constants.logger.error("buss_id" + buss);
             Constants.logger.error("barcode_value" + barcodevalue);
             try {
-                boolean b = DataAccessControler.barcodechecker(buss, barcodevalue);
+                boolean b = DataAccessController.barcodechecker(buss, barcodevalue);
                 if (b) {
                     out.print("invalid barcode");
                 } else {
@@ -64,7 +64,7 @@ public class barcodeverify extends HttpServlet {
                     filedvalue.add(time);
                     filedvalue.add(date);
                     filedvalue.add("scan");
-                    int i = DataAccessControler.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue,
+                    int i = DataAccessController.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue,
                             filed, filedvalue);
 
                 }

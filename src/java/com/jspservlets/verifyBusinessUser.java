@@ -42,7 +42,7 @@ import org.apache.commons.codec.binary.Base64;
 /**
  * @author Shahid
  */
-public class verifyBusinessUser extends HttpServlet {
+public class VerifyBusinessUser extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;
@@ -150,7 +150,7 @@ public class verifyBusinessUser extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(verifyBusinessUser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VerifyBusinessUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -172,7 +172,7 @@ public class verifyBusinessUser extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(verifyBusinessUser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VerifyBusinessUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

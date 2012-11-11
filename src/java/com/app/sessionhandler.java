@@ -1,6 +1,6 @@
 package com.app;
 
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import com.server.Constants;
 import java.sql.SQLException;
 import java.util.Random;
@@ -10,13 +10,13 @@ import java.util.logging.Logger;
 /**
  * @author qube26
  */
-public class sessionhandler {
+public class SessionHandler {
     public boolean sessionidverify(String userid, String sessionid)
     {
         boolean verify = false;
         try {
 
-            verify = DataAccessControler.getDataTable("app_user", "user_id", "sessionid", userid, sessionid);
+            verify = DataAccessController.getDataTable("app_user", "user_id", "sessionid", userid, sessionid);
 
         } catch (SQLException ex) {
             Constants.logger.error(ex.toString());
@@ -29,7 +29,7 @@ public class sessionhandler {
         int verify = -1;
         try {
 
-            verify = DataAccessControler.updatetDataToTable("app_user", "user_id", userid, "sessionid", sessionid);
+            verify = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "sessionid", sessionid);
 
         } catch (Exception ex) {
             Constants.logger.error(ex.toString());

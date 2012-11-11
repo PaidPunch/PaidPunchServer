@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author Shahid
  */
-public class signup_business_emailcheck extends HttpServlet {
+public class SignupCheckEmail extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;

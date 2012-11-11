@@ -3,7 +3,7 @@ package com.server;
 /**
  * @author qube26
  */
-public class Feedbean {
+public class FeedBean {
     String fbid = "", action = "", name = "", price = "", buss_name = "", saveprice = "", date, time = "",
             mystery_punchid = "", punchcard_id = "", app_user_id = "", timestamp = "", ismysterypunch = "";
     String no_of_punches_per_card = "", value_of_each_punch = "", selling_price_of_punch_card = "",

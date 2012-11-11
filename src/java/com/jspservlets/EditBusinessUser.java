@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
 /**
  * @author Shahid
  */
-public class save_delete_business_admin extends HttpServlet {
+public class EditBusinessUser extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;

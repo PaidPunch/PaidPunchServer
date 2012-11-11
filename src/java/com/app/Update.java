@@ -1,6 +1,6 @@
 package com.app;
 
-import com.db.DataAccessControler;
+import com.db.DataAccessController;
 import com.server.SAXParserExample;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.xml.sax.InputSource;
 import com.server.Constants;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 
 /**
  * @author qube26
  */
-public class updation extends HttpServlet {
+public class Update extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -79,7 +79,7 @@ public class updation extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
 
             String reqtype = arz.getTxtype();
             if (reqtype.equalsIgnoreCase("EMAILUPDATE-REQ")) {
@@ -141,7 +141,7 @@ public class updation extends HttpServlet {
     }// </editor-fold>
 
     private void email_Updaton(List list, HttpServletResponse response) {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         String userid = arz.getUserId();
         String email = arz.getEmail();
         String mobileno = arz.getMobilenumber();
@@ -153,7 +153,7 @@ public class updation extends HttpServlet {
         fields_value.add(mobileno);
 
         String sessionid = arz.getSessionid();
-        sessionhandler session = new sessionhandler();
+        SessionHandler session = new SessionHandler();
         boolean sessionverify = session.sessionidverify(userid, sessionid);
         if (!sessionverify)
         {
@@ -161,7 +161,7 @@ public class updation extends HttpServlet {
             return;
         }
 
-        int res = DataAccessControler.updateDataToTable("app_user", "user_id", userid, fields, fields_value);
+        int res = DataAccessController.updateDataToTable("app_user", "user_id", userid, fields, fields_value);
         if (res == 1) {
             email_Updation_Xml(response, email, mobileno, "00", "Update Successful");
             return;
@@ -201,7 +201,7 @@ public class updation extends HttpServlet {
     }
 
     private void Password_updation(List list, HttpServletResponse response) {
-        aczreqElements arz = (aczreqElements) list.get(0);
+        AccessRequestElements arz = (AccessRequestElements) list.get(0);
         String userid = arz.getUserId();
         String oldpassword = arz.getOldPassword();
         String password = arz.getPassword();
@@ -218,7 +218,7 @@ public class updation extends HttpServlet {
         fields_value.add(password);
 
         String sessionid = arz.getSessionid();
-        sessionhandler session = new sessionhandler();
+        SessionHandler session = new SessionHandler();
         boolean sessionverify = session.sessionidverify(userid, sessionid);
         if (!sessionverify)
         {
@@ -226,7 +226,7 @@ public class updation extends HttpServlet {
             return;
         }
 
-        int res = DataAccessControler.updateDataToTable("app_user", pid, pid_value, fields, fields_value);
+        int res = DataAccessController.updateDataToTable("app_user", pid, pid_value, fields, fields_value);
         if (res == 1)
         {
             Password_updation_Xml(response, "00", "Your password is updated successfully.");

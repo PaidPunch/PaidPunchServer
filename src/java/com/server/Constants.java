@@ -6,7 +6,6 @@ import org.apache.log4j.*;
 import org.apache.log4j.PropertyConfigurator;
 import java.util.Properties;
 
-
 /**
  * @author user
  */

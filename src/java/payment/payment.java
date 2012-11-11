@@ -1,14 +1,14 @@
 package payment;
 
-import com.app.sessionhandler;
+import com.app.SessionHandler;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.binary.Base64;
 import com.db.DataAccess;
-import com.db.DataAccessControler;
-import com.jspservlets.signup_paidpunch_add;
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.server.Constants;
 import com.server.SAXParserExample;
 import com.server.Utility;
-import com.server.aczreqElements;
+import com.server.AccessRequestElements;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
@@ -38,7 +38,7 @@ import org.xml.sax.InputSource;
 /**
  * @author qube26
  */
-public class payment extends HttpServlet {
+public class Payment extends HttpServlet {
 
     ServletConfig config = null;
     private Vector userdata, userinfo;
@@ -91,7 +91,7 @@ public class payment extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String reqtype = arz.getTxtype();
 
             if (reqtype.equalsIgnoreCase("BUYBUSSINESSOFFER-REQ")) {
@@ -117,7 +117,7 @@ public class payment extends HttpServlet {
             String codeexpiremsg = props.getProperty("buy.punch.merchant.code.expire");
 
             // String successmsg = props.getProperty("issue.success");
-            aczreqElements arz = (aczreqElements) list.get(0);
+            AccessRequestElements arz = (AccessRequestElements) list.get(0);
             String userId = arz.getUserId();
             String sccancode = arz.getVerificationCode();
             String oreangecode = arz.getOrangeqrscannedvalue();
@@ -133,16 +133,16 @@ public class payment extends HttpServlet {
             Constants.logger.info("userid:" + userId);
             Constants.logger.info("punchcardid:" + punchcardid);
             Constants.logger.info("paymentid:" + paymentid);
-            sessionhandler session = new sessionhandler();
+            SessionHandler session = new SessionHandler();
             boolean sessionverify = session.sessionidverify(userId, sessionid);
             if (!(sessionverify)) {
                 buy_Punch(response, userdata, "400", "You have logged in from another device");
                 return;
             }
             // punch card exipre check and deactive bussn
-            Vector puch_card_data = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id",
+            Vector puch_card_data = (Vector) DataAccessController.getDataFromTable("punch_card", "punch_card_id",
                     punchcardid).elementAt(0);
-            Vector buss_data = (Vector) DataAccessControler.getDataFromTable("business_users", "business_userid",
+            Vector buss_data = (Vector) DataAccessController.getDataFromTable("business_users", "business_userid",
                     puch_card_data.elementAt(7).toString()).elementAt(0);
             String busi_enabled = buss_data.elementAt(14).toString();
             if (busi_enabled.equalsIgnoreCase("N")) {
@@ -188,7 +188,7 @@ public class payment extends HttpServlet {
                 payment_data.add(userId);
                 payment_data.add(transactionId);
                 payment_data.add(getwaymessage);
-                tid = DataAccessControler.insert_payment(payment_data);
+                tid = DataAccessController.insert_payment(payment_data);
                 if (!(code.equalsIgnoreCase("00"))) {
 
                     buy_Punch(response, userdata, code, getwaymessage);
@@ -213,12 +213,12 @@ public class payment extends HttpServlet {
             }
 
             // punch card valid or not
-            boolean b = DataAccessControler.getUserValidation("punch_card", "punch_card_id", punchcardid);
+            boolean b = DataAccessController.getUserValidation("punch_card", "punch_card_id", punchcardid);
             if (b) {
                 userdata = new Vector();
                 userdata.add(userId);
                 userdata.add(punchcardid);
-                Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id",
+                Vector punchdata = (Vector) DataAccessController.getDataFromTable("punch_card", "punch_card_id",
                         punchcardid).elementAt(0);
 
                 // no verifyer code modify on 19 jan 2012
@@ -285,7 +285,7 @@ public class payment extends HttpServlet {
                 userdata.add(isfreepunch);
                 userdata.add(punch_expire_Date);
                 // userdata.add(mystrypunchid);
-                int i = DataAccessControler.insert_punchcard_download("punchcard_download", userdata, isfreepunch);
+                int i = DataAccessController.insert_punchcard_download("punchcard_download", userdata, isfreepunch);
                 if (i != -1) {
                     DataAccess da = new DataAccess();
                     if (isfreepunch.equalsIgnoreCase("true"))

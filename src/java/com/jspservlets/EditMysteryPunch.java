@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 /**
  * @author admin
  */
-public class edit_mystery_punch extends HttpServlet {
+public class EditMysteryPunch extends HttpServlet {
 
     ServletConfig config = null;
     ServletContext context;
