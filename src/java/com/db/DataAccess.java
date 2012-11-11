@@ -1,21 +1,16 @@
 package com.db;
 
 import java.io.UnsupportedEncodingException;
-//import com.common.Utility;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import com.server.Constants;
-
-import java.util.Vector;
-import com.db.DataAccessController;
-import com.server.FeedBean;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Vector;
+
+import com.server.Constants;
+import com.server.FeedBean;
 
 /**
  * @author qube26

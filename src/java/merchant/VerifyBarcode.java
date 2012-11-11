@@ -1,14 +1,10 @@
 package merchant;
 
-import com.db.DataAccessController;
-import com.server.Constants;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,10 +12,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.db.DataAccessController;
+import com.server.Constants;
+
 /**
  * @author qube26
  */
 public class VerifyBarcode extends HttpServlet {
+
+    private static final long serialVersionUID = -5795357653999990393L;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -123,4 +124,5 @@ public class VerifyBarcode extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
 }

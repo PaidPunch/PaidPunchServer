@@ -1,38 +1,38 @@
 package com.jspservlets;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import com.mysql.jdbc.Statement;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Security;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.internet.AddressException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.Security;
-import java.util.Properties;
-import java.util.concurrent.Future;
-import javax.mail.*;
 
+import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.mysql.jdbc.Statement;
 
 /**
  * @author admin
  */
 public class SendForgotPasswordMail extends HttpServlet {
 
+    private static final long serialVersionUID = 3924747300296488756L;
     ServletConfig config = null;
     ServletContext context;
 

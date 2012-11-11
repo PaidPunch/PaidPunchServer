@@ -43,6 +43,8 @@ import org.krysalis.barcode4j.tools.UnitConv;
  */
 public class Punch extends HttpServlet {
 
+    private static final long serialVersionUID = 8018652746551544691L;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * 

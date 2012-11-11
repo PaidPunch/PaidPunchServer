@@ -1,27 +1,19 @@
 package payment;
 
-import com.app.SessionHandler;
-import com.db.DataAccess;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import com.server.Constants;
-import com.server.SAXParserExample;
-import com.server.AccessRequestElements;
 import java.io.StringReader;
+import java.util.List;
 import java.util.Vector;
+
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import net.authorize.CustomerProfileCommunication;
-import org.xml.sax.InputSource;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,11 +22,24 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.authorize.CustomerProfileCommunication;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import com.app.SessionHandler;
+import com.db.DataAccess;
+import com.server.AccessRequestElements;
+import com.server.Constants;
+import com.server.SAXParserExample;
+
 /**
  * @author qube26
  */
 public class PaymentDetail extends HttpServlet {
 
+    private static final long serialVersionUID = -4579389902624220314L;
     ServletConfig config = null;
     private Vector userdata, userinfo;
 

@@ -24,6 +24,8 @@ import org.xml.sax.InputSource;
  */
 public class Feedback extends HttpServlet {
 
+    private static final long serialVersionUID = 4900798195594466416L;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * 

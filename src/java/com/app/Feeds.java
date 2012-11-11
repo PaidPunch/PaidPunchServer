@@ -1,11 +1,10 @@
 package com.app;
 
-import com.db.DataAccess;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,20 +12,21 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.server.Constants;
-import com.server.FeedBean;
-import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.Vector;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
+import com.db.DataAccess;
+import com.server.Constants;
+import com.server.FeedBean;
 
 /**
  * @author qube26
  */
 public class Feeds extends HttpServlet {
 
+    private static final long serialVersionUID = 3798267969248139682L;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * 

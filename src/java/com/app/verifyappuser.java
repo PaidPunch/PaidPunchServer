@@ -1,22 +1,26 @@
 package com.app;
 
-import com.db.DataAccessController;
-import com.jspservlets.SignupAddPunch;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Vector;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
 import com.server.Constants;
-import java.util.Vector;
 
 /**
  * @author qube26
  */
 public class VerifyAppUser extends HttpServlet {
+
+    private static final long serialVersionUID = 4252480741460418814L;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

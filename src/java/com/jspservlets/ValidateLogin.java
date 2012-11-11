@@ -1,10 +1,10 @@
 package com.jspservlets;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import com.mysql.jdbc.Statement;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,11 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.mysql.jdbc.Statement;
+
 /**
  * @author admin
  */
 public class ValidateLogin extends HttpServlet {
 
+    private static final long serialVersionUID = -3598833580994613434L;
     ServletConfig config = null;
     ServletContext context;
     HttpSession session = null;

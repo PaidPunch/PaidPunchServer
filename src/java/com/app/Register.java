@@ -1,35 +1,34 @@
 package com.app;
 
-import java.text.ParseException;
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.binary.Base64;
-import com.db.DataAccess;
-import com.db.DataAccessController;
-import com.jspservlets.SignupAddPunch;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
+import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
+
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.xml.sax.InputSource;
+
+import com.db.DataAccess;
+import com.db.DataAccessController;
+import com.jspservlets.SignupAddPunch;
+import com.server.AccessRequestElements;
 import com.server.Constants;
 import com.server.SAXParserExample;
 import com.server.Utility;
-import com.server.AccessRequestElements;
-import java.io.FileInputStream;
-import java.io.StringReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Vector;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletInputStream;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.PropertyConfigurator;
-import org.xml.sax.InputSource;
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 /**
@@ -37,6 +36,7 @@ import org.xml.sax.InputSource;
  */
 public class Register extends HttpServlet {
 
+    private static final long serialVersionUID = 8523351195259620022L;
     ServletConfig config = null;
     private Vector userdata, userinfo;
 

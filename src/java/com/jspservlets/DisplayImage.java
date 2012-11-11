@@ -1,16 +1,17 @@
 package com.jspservlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.sql.*;
-import java.io.*;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
  */
 public class DisplayImage extends HttpServlet {
 
+    private static final long serialVersionUID = 8950476519729674101L;
     ServletConfig config = null;
     ServletContext context;
     HttpSession session = null;

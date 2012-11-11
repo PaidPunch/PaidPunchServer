@@ -1,38 +1,38 @@
 package merchant;
 
-import org.apache.commons.codec.binary.Base64;
-import com.app.Punch;
-import com.db.DataAccess;
-import com.db.DataAccessController;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Properties;
+import java.util.Vector;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.server.Constants;
-import com.server.SAXParserExample;
-import com.server.AccessRequestElements;
-import java.io.FileInputStream;
-import java.io.StringReader;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Vector;
-import javax.servlet.ServletInputStream;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.InputSource;
+
+import com.db.DataAccess;
+import com.db.DataAccessController;
+import com.server.AccessRequestElements;
+import com.server.Constants;
+import com.server.SAXParserExample;
 
 /**
  * @author qube26
  */
 public class RedeemPunch extends HttpServlet {
 
+    private static final long serialVersionUID = 3788263835328533827L;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * 

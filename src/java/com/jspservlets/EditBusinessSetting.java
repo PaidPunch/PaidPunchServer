@@ -2,24 +2,27 @@ package com.jspservlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * @author admin
  */
 public class EditBusinessSetting extends HttpServlet {
 
+    private static final long serialVersionUID = -2572245981349029141L;
     DBConnection db;
     Connection conn = null;
     PreparedStatement pstmt = null;

@@ -17,12 +17,10 @@ import javax.imageio.ImageIO;
 import java.awt.AlphaComposite;
 
 /**
- * @author Ranjan This class is use for create image of diffrent resolutions from input image bytes. Also return
- *         diffrent resolutions image bytes from input of image bytes.
- * 
+ * @author Ranjan This class is use for create image of different resolutions from input image bytes. Also return
+ *         different resolutions image bytes from input of image bytes.
  */
-public class ImageCreator
-{
+public class ImageCreator {
 
     public static boolean createImageFile(String p_imageNameWithPath, byte[] p_imageData) {
         Image l_image = Toolkit.getDefaultToolkit().createImage(p_imageData);

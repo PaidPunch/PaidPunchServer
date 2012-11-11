@@ -27,6 +27,7 @@ import org.xml.sax.InputSource;
  */
 public class FacebookLogin extends HttpServlet {
 
+    private static final long serialVersionUID = 7750955681431092195L;
     ServletConfig config = null;
     private Vector userdata, userinfo;
     /**

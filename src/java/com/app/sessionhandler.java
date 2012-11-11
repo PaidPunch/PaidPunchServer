@@ -1,16 +1,16 @@
 package com.app;
 
-import com.db.DataAccessController;
-import com.server.Constants;
 import java.sql.SQLException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import com.db.DataAccessController;
+import com.server.Constants;
 
 /**
  * @author qube26
  */
 public class SessionHandler {
+    
     public boolean sessionidverify(String userid, String sessionid)
     {
         boolean verify = false;

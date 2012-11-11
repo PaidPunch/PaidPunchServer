@@ -1,13 +1,12 @@
 package com.jspservlets;
 
-import java.sql.Time;
-import java.util.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import com.mysql.jdbc.Statement;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Date;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,11 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.mysql.jdbc.Statement;
+
 /**
  * @author Shahid
  */
 public class EditBusinessUser extends HttpServlet {
 
+    private static final long serialVersionUID = 1043796785316734017L;
     ServletConfig config = null;
     ServletContext context;
     HttpSession session = null;

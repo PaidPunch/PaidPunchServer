@@ -1,25 +1,29 @@
 package com.jspservlets;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
-import java.io.*;
-
-import java.util.*;
-
-import javax.servlet.*;
-
-import javax.servlet.http.*;
-
 
 /**
  * @author admin
  */
 public class CheckSecretCode extends HttpServlet {
 
+    private static final long serialVersionUID = 3898559334493263827L;
     ServletConfig config = null;
     ServletContext context;
     HttpSession session = null;

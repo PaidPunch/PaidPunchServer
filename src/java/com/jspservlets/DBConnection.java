@@ -1,18 +1,18 @@
 package com.jspservlets;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.ServletException;
 
 /**
  * @author admin
  */
 public class DBConnection {
+    
     public Connection con = null;
     public Statement stmt = null;
 

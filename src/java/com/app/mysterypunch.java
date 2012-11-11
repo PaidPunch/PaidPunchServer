@@ -1,29 +1,21 @@
 package com.app;
 
-import com.db.DataAccess;
-import com.db.DataAccessController;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import com.server.Constants;
-import com.server.SAXParserExample;
-import com.server.AccessRequestElements;
-import com.server.MysteryBean;
 import java.io.StringReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import org.xml.sax.InputSource;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,9 +26,18 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import com.db.DataAccess;
+import com.db.DataAccessController;
+import com.server.AccessRequestElements;
+import com.server.Constants;
+import com.server.MysteryBean;
+import com.server.SAXParserExample;
 
 public class MysteryPunch extends HttpServlet {
 
+    private static final long serialVersionUID = -2188585624150550446L;
     static final int h = 5;
     static final int m = 3;
     static final int l = 2;

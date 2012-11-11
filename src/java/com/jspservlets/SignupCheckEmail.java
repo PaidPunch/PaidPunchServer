@@ -1,39 +1,42 @@
 package com.jspservlets;
 
-import com.jspservlets.ImageCreator;
-import com.mysql.jdbc.Statement;
-import com.server.Constants;
 import java.io.DataInputStream;
-import java.io.FileNotFoundException;
-import javax.servlet.ServletConfig;
-import java.sql.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 
+import com.mysql.jdbc.Statement;
+
 /**
  * @author Shahid
  */
 public class SignupCheckEmail extends HttpServlet {
 
+    private static final long serialVersionUID = 3605892680799025043L;
     ServletConfig config = null;
     ServletContext context;
     HttpSession session = null;

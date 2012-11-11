@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
  */
 public class ForgotPassword extends HttpServlet {
 
+    private static final long serialVersionUID = -6419227793684835228L;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * 
