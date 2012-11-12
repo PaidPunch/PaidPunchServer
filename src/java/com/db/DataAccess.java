@@ -197,18 +197,16 @@ public class DataAccess {
 
     }
 
-    public boolean check_free_punch(String punchid, String appuserid) {
+    public boolean isFreePunch(String punchId, String appUserId) {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
             DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
-            l_prepStat = l_conn.prepareStatement("select * from punchcard_download where app_user_id=" + appuserid
-                    + " and isfreepunch='true' and punch_card_id='" + punchid + "';");
+            l_prepStat = l_conn.prepareStatement("select * from punchcard_download where app_user_id=" + appUserId
+                    + " and isfreepunch='true' and punch_card_id='" + punchId + "';");
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
-
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             ResultSet l_rs = l_prepStat.executeQuery();
             if (l_rs.next()) {
                 l_rs.close();
@@ -221,7 +219,6 @@ public class DataAccess {
                 l_conn.close();
                 return false;
             }
-
         } catch (SQLException e) {
             try {
                 l_prepStat.close();
@@ -233,14 +230,12 @@ public class DataAccess {
                 return false;
             }
         }
-
     }
 
-    public boolean fb_Registration(String fbid, String email, String name, String sessionid) {
+    public boolean fb_Registration(String fbid, String email, String name, String sessionId) {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
-
             java.sql.Time time = new java.sql.Time(new Date().getTime());
             java.sql.Date date = new java.sql.Date(new Date().getTime());
             String l_query = "insert into app_user(username,email_id,user_status,isemailverified,Date,Time,sessionid,isfbaccount,fbid)values('"
@@ -252,7 +247,7 @@ public class DataAccess {
                     + "','"
                     + time
                     + "','"
-                    + sessionid
+                    + sessionId
                     + "','Y','"
                     + fbid
                     + "');";
@@ -261,9 +256,7 @@ public class DataAccess {
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement(l_query);
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
-
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             int l_rs = l_prepStat.executeUpdate();
             if (l_rs != 0) {
                 l_prepStat.close();
@@ -274,7 +267,6 @@ public class DataAccess {
                 l_conn.close();
                 return false;
             }
-
         } catch (SQLException e) {
             try {
                 l_prepStat.close();
@@ -286,14 +278,12 @@ public class DataAccess {
                 return false;
             }
         }
-
     }
 
     public boolean fb_login(String fbid, String email, String name, String sessionid) {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
-
             java.sql.Time time = new java.sql.Time(new Date().getTime());
             java.sql.Date date = new java.sql.Date(new Date().getTime());
             String l_query = "UPDATE app_user SET username=?,email_id=?,user_status=?,Date=?,Time=?,sessionid=? WHERE FBid ="
@@ -308,16 +298,11 @@ public class DataAccess {
             l_prepStat.setObject(4, date);
             l_prepStat.setObject(5, time);
             l_prepStat.setObject(6, sessionid);
-
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
-
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             int l_rs = l_prepStat.executeUpdate();
             l_conn.close();
-            ;
             return true;
-
         } catch (SQLException e) {
             try {
                 l_prepStat.close();
@@ -329,11 +314,9 @@ public class DataAccess {
                 return false;
             }
         }
-
     }
 
     public static int update_profileid(String p_table, String userid, String profileid, String isprofilecreated) {
-
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         int result = -1;
@@ -343,25 +326,19 @@ public class DataAccess {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         String l_query;
-
         l_query = "update app_user  set isprofile_created=?,profile_id=? where user_id =? ;";
-
         Constants.logger.info("l_query.toString()::{}" + l_query.toString());
         try {
             l_prepStat = l_conn.prepareStatement(l_query.toString());
             l_prepStat.setObject(1, isprofilecreated);
             l_prepStat.setObject(2, profileid);
-
             l_prepStat.setObject(3, userid);
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
         } catch (SQLException e) {
             Constants.logger.error("", e);
         }
-
         Constants.logger.info("insert data in");
-
         try {
             result = l_prepStat.executeUpdate();
         } catch (SQLException e) {
@@ -376,15 +353,14 @@ public class DataAccess {
         return result;
     }
 
-    public Vector getprofileid(String userid) {
+    public Vector getProfileId(String userId) {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
             DataAccessController dac = new DataAccessController();
             l_conn = dac.createConnection();
-            l_prepStat = l_conn.prepareStatement("select profile_id from app_user where user_id='" + userid + "';");
+            l_prepStat = l_conn.prepareStatement("select profile_id from app_user where user_id='" + userId + "';");
             // Constants.logger.info("l_callStat::{}"+l_prepStat.toString());
-
             Vector profile = new Vector();
             ResultSet l_rs = l_prepStat.executeQuery();
             if (l_rs.next()) {
@@ -399,7 +375,6 @@ public class DataAccess {
                 l_conn.close();
                 return profile;
             }
-
         } catch (SQLException e) {
             try {
                 l_prepStat.close();
@@ -411,10 +386,9 @@ public class DataAccess {
                 return null;
             }
         }
-
     }
 
-    public String getpaymentID() {
+    public String getPaymentId() {
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         try {
@@ -422,9 +396,7 @@ public class DataAccess {
             l_conn = dac.createConnection();
             l_prepStat = l_conn.prepareStatement("Select LAST_INSERT_ID() from payment_details ;");
             // Constants.logger.info("l_callStat::{}"+l_prepStat);
-
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             ResultSet l_rs = l_prepStat.executeQuery();
             l_rs.next();
             String id = l_rs.getObject(1).toString();
@@ -432,7 +404,6 @@ public class DataAccess {
             l_prepStat.close();
             l_conn.close();
             return id;
-
         } catch (SQLException e) {
             try {
                 l_prepStat.close();
@@ -444,12 +415,10 @@ public class DataAccess {
                 return "";
             }
         }
-
     }
 
     public static int insert_user_feeds(String buss_id, String userid, String activity, String ismysterypunch,
             String mysteryid) {
-
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
         int result = -1;
@@ -459,7 +428,6 @@ public class DataAccess {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         String l_query;
         l_query = "insert into user_feeds (punchcard_id,user_id,activity,ismysterypunch,mystery_id)values(?,?,?,?,?);";
         Constants.logger.info("l_query.toString()::{}" + l_query.toString());
@@ -489,7 +457,7 @@ public class DataAccess {
         return result;
     }
 
-    public ArrayList<FeedBean> getdownloadfeed() {
+    public ArrayList<FeedBean> getDownloadFeed() {
         Connection l_conn = null;
         ArrayList<FeedBean> feedlist = new ArrayList<FeedBean>();
         PreparedStatement l_prepStat = null;
@@ -511,63 +479,47 @@ public class DataAccess {
                 // Constants.logger.info("data fetched");
 
                 FeedBean bean = new FeedBean();
-                bean.setPunchcard_id(l_rs.getObject(2).toString());
+                bean.setPunchCardId(l_rs.getObject(2).toString());
 
-                bean.setApp_user_id(l_rs.getObject(3).toString());
+                bean.setAppUserId(l_rs.getObject(3).toString());
                 bean.setAction(l_rs.getObject(4).toString());
                 String action = l_rs.getObject(4).toString();
-                if (action.equalsIgnoreCase("Mystery"))
-                {
-
-                    bean.setMystery_punchid(l_rs.getObject(6).toString());
+                if (action.equalsIgnoreCase("Mystery")) {
+                    bean.setMysteryPunchId(l_rs.getObject(6).toString());
                     String mysteryid = l_rs.getObject(6).toString().toString();
                     Vector mysterydata = (Vector) DataAccessController.getDataFromTable("mystery_punch", "mystery_id",
                             mysteryid).elementAt(0);
                     bean.setAction("Mystery");
                     bean.setOffer(mysterydata.elementAt(2).toString());
                 }
-                else
-                {
+                else {
                     bean.setAction(action);
                 }
-                if (l_rs.getObject(5) != null)
-                {
-                    bean.setIsmysterypunch(l_rs.getObject(5).toString());
+                if (l_rs.getObject(5) != null) {
+                    bean.setIsMysteryPunch(l_rs.getObject(5).toString());
                 }
-
-                if (l_rs.getObject(7) != null)
-                {
+                if (l_rs.getObject(7) != null) {
                     bean.setTimestamp(l_rs.getObject(7).toString());
                 }
-
-                if (l_rs.getObject(8) != null)
-                {
+                if (l_rs.getObject(8) != null) {
                     bean.setFbid(l_rs.getObject(8).toString());
                 }
-
                 bean.setName(l_rs.getObject(9).toString());
-                bean.setBuss_name(l_rs.getObject(10).toString());
-                bean.setNo_of_punches_per_card(l_rs.getObject(11).toString());
-                bean.setValue_of_each_punch(l_rs.getObject(12).toString());
-                bean.setSelling_price_of_punch_card(l_rs.getObject(13).toString());
-                bean.setEffective_discount(l_rs.getObject(14).toString());
+                bean.setBusinessName(l_rs.getObject(10).toString());
+                bean.setPunchesPerCard(l_rs.getObject(11).toString());
+                bean.setPunchValue(l_rs.getObject(12).toString());
+                bean.setPunchCardPrice(l_rs.getObject(13).toString());
+                bean.setEffectiveDiscount(l_rs.getObject(14).toString());
 
-                if (l_rs.getObject(15) == null)
-                {
-                    bean.setIsfbaccount("");
+                if (l_rs.getObject(15) == null) {
+                    bean.setIsFacebookAccount("");
+                } else {
+                    bean.setIsFacebookAccount(l_rs.getObject(15).toString());
                 }
-                else
-                {
-                    bean.setIsfbaccount(l_rs.getObject(15).toString());
+                if (l_rs.getObject(16) != null) {
+                    bean.setPunchDiscountValue(l_rs.getObject(16).toString());
                 }
-
-                if (l_rs.getObject(16) != null)
-                {
-                    bean.setDisc_value_of_each_punch(l_rs.getObject(16).toString());
-                }
-
-                bean.setIsmyfrend(false);
-
+                bean.setIsMyFriend(false);
                 feedlist.add(bean);
                 // Constants.logger.error("add in list");
             }

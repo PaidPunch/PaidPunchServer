@@ -13,10 +13,9 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
-public final class Utility
-{
-    public static Date addDays(Date date, int days)
-    {
+public final class Utility {
+    
+    public static Date addDays(Date date, int days) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, +days); // minus number would decrement the days
@@ -29,8 +28,7 @@ public final class Utility
             '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
 
-    public static int dateDiff(java.util.Calendar d1, java.util.Calendar d2)
-    {
+    public static int dateDiff(java.util.Calendar d1, java.util.Calendar d2) {
         /*
          * if (d1.after(d2)) { // swap dates so that d1 is start and d2 is end java.util.Calendar swap = d1; d1 = d2; d2
          * = swap; }
@@ -49,8 +47,7 @@ public final class Utility
         return days;
     }
 
-    public static int dateDiff(long d1, long d2)
-    {
+    public static int dateDiff(long d1, long d2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTimeInMillis(d1);
@@ -58,8 +55,7 @@ public final class Utility
         return dateDiff(cal1, cal2);
     }
 
-    public static int dateDiff(Date d1, Date d2)
-    {
+    public static int dateDiff(Date d1, Date d2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTime(d1);
@@ -97,7 +93,6 @@ public final class Utility
             Constants.logger.error("", e);
         }
         boolean result = (dateDiff(today, date) == 0);
-
         return result;
     }
 
@@ -125,7 +120,7 @@ public final class Utility
             /**
              * If dates are not in same year then year2 = year1 +1. Month of first date must be DEC and Month of 2nd
              * date must be JAN. First date must be last week of Month DEC and last week must be not a full week.
-             * Simialry 2nd must be first week of Month JAN and first week must be not a full week.
+             * Similarly 2nd must be first week of Month JAN and first week must be not a full week.
              */
         } else if (year2 == year1 + 1) {
             int week1 = l_cal1.get(Calendar.WEEK_OF_YEAR);
@@ -133,7 +128,6 @@ public final class Utility
 
             result = (week1 == week2);
         }
-
         return result;
     }
 
@@ -321,7 +315,6 @@ public final class Utility
         // int hour= cal1.HOUR;
         cal1.add(Calendar.MINUTE, min);
         return cal1.getTime();
-
     }
 
     public static boolean isAfterDateTime(Date time1, Date time2) {

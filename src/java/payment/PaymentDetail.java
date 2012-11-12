@@ -30,7 +30,7 @@ import org.xml.sax.InputSource;
 
 import com.app.SessionHandler;
 import com.db.DataAccess;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import com.server.SAXParserExample;
 
@@ -91,8 +91,8 @@ public class PaymentDetail extends HttpServlet {
 
                 example.parseDocument(iSource);
                 list = example.getData();
-                AccessRequestElements arz = (AccessRequestElements) list.get(0);
-                String reqtype = arz.getTxtype();
+                AccessRequest arz = (AccessRequest) list.get(0);
+                String reqtype = arz.getTxType();
 
                 if (reqtype.equalsIgnoreCase("profile-REQ")) {
                     // String cardtype=arz.getCardtype();
@@ -101,7 +101,7 @@ public class PaymentDetail extends HttpServlet {
                     Constants.logger.info("userID:" + arz.getUserId() + "   user name :" + arz.getName()
                             + " email ID: " + arz.getEmail());
                     Vector profile_data = profile.createCustomerProfileAuth(arz.getName(), arz.getEmail(),
-                            arz.getCardno(), arz.getExp_date(), arz.getCvv());
+                            arz.getCardNumber(), arz.getExpirationDate(), arz.getCvv());
                     Constants.logger.info("response from payment gatway");
                     Constants.logger.info("code :" + profile_data.elementAt(0).toString() + "  message:"
                             + profile_data.elementAt(2).toString() + "  profileid:"
@@ -136,7 +136,7 @@ public class PaymentDetail extends HttpServlet {
                 if (reqtype.equalsIgnoreCase("Get-Profile-REQ")) {
                     String userid = arz.getUserId();
                     DataAccess da = new DataAccess();
-                    Vector profile_info = da.getprofileid(userid);
+                    Vector profile_info = da.getProfileId(userid);
                     if (profile_info == null)
                     {
                         xml(response, "Failed to process request.Please try again.", "01");
@@ -180,10 +180,10 @@ public class PaymentDetail extends HttpServlet {
 
     private void deleteProfile(List list, HttpServletResponse response) {
         try {
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
+            AccessRequest arz = (AccessRequest) list.get(0);
             String userid = arz.getUserId();
 
-            String sessionid = arz.getSessionid();
+            String sessionid = arz.getSessionId();
             SessionHandler session = new SessionHandler();
             boolean b = session.sessionidverify(userid, sessionid);
             Constants.logger.info("Delete profile");
@@ -192,7 +192,7 @@ public class PaymentDetail extends HttpServlet {
                 Constants.logger.info("userid:" + userid);
 
                 DataAccess da = new DataAccess();
-                Vector profile_info = da.getprofileid(userid);
+                Vector profile_info = da.getProfileId(userid);
                 if (profile_info == null)
                 {
                     xml(response, "Failed to process request.Please try again.", "01");

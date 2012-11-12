@@ -67,7 +67,6 @@ public class VerifyBarcode extends HttpServlet {
                     filedvalue.add("scan");
                     int i = DataAccessController.updateDataToTable("punch_card_tracker", "barcode_value", barcodevalue,
                             filed, filedvalue);
-
                 }
             } catch (Exception ex) {
                 Constants.logger.error(ex);
@@ -77,8 +76,6 @@ public class VerifyBarcode extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -123,6 +120,6 @@ public class VerifyBarcode extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
     
 }

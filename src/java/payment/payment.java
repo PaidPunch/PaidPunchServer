@@ -29,7 +29,7 @@ import org.xml.sax.InputSource;
 import com.app.SessionHandler;
 import com.db.DataAccess;
 import com.db.DataAccessController;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import com.server.SAXParserExample;
 import com.server.Utility;
@@ -91,8 +91,8 @@ public class Payment extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            String reqtype = arz.getTxtype();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            String reqtype = arz.getTxType();
 
             if (reqtype.equalsIgnoreCase("BUYBUSSINESSOFFER-REQ")) {
                 try {
@@ -117,19 +117,19 @@ public class Payment extends HttpServlet {
             String codeexpiremsg = props.getProperty("buy.punch.merchant.code.expire");
 
             // String successmsg = props.getProperty("issue.success");
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
+            AccessRequest arz = (AccessRequest) list.get(0);
             String userId = arz.getUserId();
             String sccancode = arz.getVerificationCode();
-            String oreangecode = arz.getOrangeqrscannedvalue();
+            String oreangecode = arz.getOrangeQrScannedValue();
             byte[] decoded = Base64.decodeBase64(oreangecode.getBytes());
             String reangecode = new String(decoded);
-            String punchcardid = arz.getPunchCardID();
-            String sessionid = arz.getSessionid();
-            String isfreepunch = arz.getIsfreepunch();
+            String punchcardid = arz.getPunchCardId();
+            String sessionid = arz.getSessionId();
+            String isfreepunch = arz.getIsFreePunch();
             String tid = null;
             String mystrypunchid = null, value_mystery_punch = "";
             String amt = arz.getAmount();
-            String paymentid = arz.getPaymentid();
+            String paymentid = arz.getPaymentId();
             Constants.logger.info("userid:" + userId);
             Constants.logger.info("punchcardid:" + punchcardid);
             Constants.logger.info("paymentid:" + paymentid);
@@ -165,7 +165,7 @@ public class Payment extends HttpServlet {
 
             if (isfreepunch.equalsIgnoreCase("false")) {
                 DataAccess da = new DataAccess();
-                Vector profile_info = da.getprofileid(userId);
+                Vector profile_info = da.getProfileId(userId);
                 if (profile_info == null) {
                     buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
                     return;
@@ -202,7 +202,7 @@ public class Payment extends HttpServlet {
             // only one time purch free punch
             if (isfreepunch.equalsIgnoreCase("true")) {
                 DataAccess da = new DataAccess();
-                boolean freepunch_buy = da.check_free_punch(punchcardid, userId);
+                boolean freepunch_buy = da.isFreePunch(punchcardid, userId);
                 if (freepunch_buy) {
                     buy_Punch(response, userdata, "01", "You have already unlocked a free punch");
                     return;

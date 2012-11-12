@@ -77,8 +77,6 @@ public class SignupCheckEmail extends HttpServlet {
 
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -128,7 +126,6 @@ public class SignupCheckEmail extends HttpServlet {
          * name
          */
         out.println(code);
-
     }
 
     /**
@@ -177,7 +174,6 @@ public class SignupCheckEmail extends HttpServlet {
             try {
                 items = upload.parseRequest(request);
                 // com.server.Constants.logger.info("items: " + items);
-
             } catch (FileUploadException e) {
                 e.printStackTrace();
             }
@@ -217,7 +213,6 @@ public class SignupCheckEmail extends HttpServlet {
                     } else if (fieldname.equalsIgnoreCase("contactnumber")) {
                         contactnumber = fieldvalue;
                     }
-
                 } else {
                     try {
                         String itemName = item.getName();
@@ -271,9 +266,7 @@ public class SignupCheckEmail extends HttpServlet {
                             com.server.Constants.logger.info("********************FIle Uploaded Path" + path);
                             com.server.Constants.logger.info("********************Actual Uploaded Path"
                                     + actualFolderPath);
-
                         }
-
                     } catch (Exception e) {
                         com.server.Constants.logger.error("Error while uploading Logo Image : "
                                 + e.getMessage().toString());
@@ -313,13 +306,12 @@ public class SignupCheckEmail extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     public void compress_file(File newFile, String ImageString, String imagePath) throws FileNotFoundException,
             IOException {
 
         int size = (int) newFile.length();
-
         byte[] bytes = new byte[size];
         DataInputStream dis = new DataInputStream(new FileInputStream(newFile));
         int read = 0;
@@ -334,19 +326,15 @@ public class SignupCheckEmail extends HttpServlet {
         {
             FileOutputStream fos = new FileOutputStream(imagePath);
             // String strContent = "Write File using Java FileOutputStream example !";
-
             /*
              * To write byte array to a file, use void write(byte[] bArray) method of Java FileOutputStream class.
              * 
              * This method writes given byte array to a file.
              */
-
             fos.write(returnedbytes);
-
             /*
              * Close FileOutputStream using, void close() method of Java FileOutputStream class.
              */
-
             fos.close();
 
         } catch (FileNotFoundException ex) {
@@ -358,9 +346,7 @@ public class SignupCheckEmail extends HttpServlet {
         }
     }
 
-    public String getEmailBusiness(String emailid, String businessname) throws ServletException {// ,String
-                                                                                                 // businessname) throws
-                                                                                                 // ServletException{
+    public String getEmailBusiness(String emailid, String businessname) throws ServletException {
         DBConnection db = null;
         Statement stmt = null;
         ResultSet rs = null;

@@ -53,8 +53,6 @@ public class ValidateLogin extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -73,18 +71,18 @@ public class ValidateLogin extends HttpServlet {
 
         session = request.getSession(true);
         String code = "";
-        String email_id = "";
+        String email = "";
         try {
             code = request.getParameter("status");
             System.out.println("Status Code : " + code);
-            email_id = request.getParameter("email");
-            session.setAttribute("username", email_id);
+            email = request.getParameter("email");
+            session.setAttribute("username", email);
             // password = request.getParameter("password");
         } catch (Exception e) {
 
         }
         PrintWriter out = response.getWriter();
-        if (email_id != null) {
+        if (email != null) {
             if (code.equalsIgnoreCase("6")) {
                 response.sendRedirect("business_admin_user.jsp");
             }
@@ -119,20 +117,18 @@ public class ValidateLogin extends HttpServlet {
         }
         com.server.Constants.loadJDBCConstants(context);
         String code = "03";
-        String email_id = "", password = "";
+        String email = "", password = "";
         try {
-            email_id = request.getParameter("email");
+            email = request.getParameter("email");
             password = request.getParameter("password");
         } catch (Exception e) {
 
         }
         PrintWriter out = response.getWriter();
-        if (email_id != null && password != null) {
-            code = getUserNamePassword(email_id, password);
+        if (email != null && password != null) {
+            code = getUserNamePassword(email, password);
         }
-
         out.println(code);
-
     }
 
     /**
@@ -143,9 +139,9 @@ public class ValidateLogin extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
-    public String getUserNamePassword(String email_id, String password) throws ServletException {
+    public String getUserNamePassword(String email, String password) throws ServletException {
         DBConnection db = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -156,7 +152,7 @@ public class ValidateLogin extends HttpServlet {
             db = new DBConnection();
             stmt = db.stmt;
             String query = "SELECT email_id,password,role,isemailverified from business_users where email_id='"
-                    + email_id + "'";
+                    + email + "'";
             rs = stmt.executeQuery(query);
             com.server.Constants.logger.info("The select query is " + query);
             // displaying records

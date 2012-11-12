@@ -4,38 +4,42 @@ package com.server;
  * @author qube26
  */
 public class MysteryBean {
-    String mysteryid, punch_card_id, offer, pro;
+    
+    private String mysteryId = "";
+    private String offer = "";
+    private String pro = "";
+    private String punchCardId = "";
 
-    public String getMysteryid() {
-        return mysteryid;
-    }
-
-    public void setMysteryid(String mysteryid) {
-        this.mysteryid = mysteryid;
+    public String getMysteryId() {
+        return mysteryId;
     }
 
     public String getOffer() {
         return offer;
     }
 
-    public void setOffer(String offer) {
-        this.offer = offer;
-    }
-
     public String getPro() {
         return pro;
+    }
+
+    public String getPunchCardId() {
+        return punchCardId;
+    }
+
+    public void setMysteryId(String mysteryId) {
+        this.mysteryId = mysteryId;
+    }
+
+    public void setOffer(String offer) {
+        this.offer = offer;
     }
 
     public void setPro(String pro) {
         this.pro = pro;
     }
 
-    public String getPunch_card_id() {
-        return punch_card_id;
-    }
-
-    public void setPunch_card_id(String punch_card_id) {
-        this.punch_card_id = punch_card_id;
+    public void setPunchCardId(String punchCardId) {
+        this.punchCardId = punchCardId;
     }
 
 }

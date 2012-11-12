@@ -30,7 +30,7 @@ import org.xml.sax.InputSource;
 
 import com.db.DataAccess;
 import com.db.DataAccessController;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import com.server.MysteryBean;
 import com.server.SAXParserExample;
@@ -98,20 +98,20 @@ public class MysteryPunch extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            String reqtype = arz.getTxtype();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            String reqtype = arz.getTxType();
             if (reqtype.equalsIgnoreCase("Mystery-REQ")) {
 
                 SessionHandler session = new SessionHandler();
-                boolean b = session.sessionidverify(arz.getUserId(), arz.getSessionid());
+                boolean b = session.sessionidverify(arz.getUserId(), arz.getSessionId());
                 if (!b) {
                     mysteryxml(response, "400", "You have logged in from another device", "");
                     return;
                 }
 
                 String userid = arz.getUserId();
-                String punchcardid = arz.getPunchCardID();
-                String punchcarddownloadid = arz.getPunch_card_downloadid();
+                String punchcardid = arz.getPunchCardId();
+                String punchcarddownloadid = arz.getPunchCardDownloadId();
 
                 Vector punchcard_download = (Vector) DataAccessController.getDataFromTable("punchcard_download",
                         "punch_card_downloadid", punchcarddownloadid).elementAt(0);
@@ -130,12 +130,12 @@ public class MysteryPunch extends HttpServlet {
                 }
                 System.out.print(bean.toString());
                 int res = DataAccessController.updatetDataToTable("punchcard_download", "punch_card_downloadid",
-                        punchcarddownloadid, "mystery_punchid", bean.getMysteryid());
+                        punchcarddownloadid, "mystery_punchid", bean.getMysteryId());
                 if (res == 1) {
                     DataAccess da = new DataAccess();
                     // need some changes hear
 
-                    da.insert_user_feeds(punchcardid, userid, "Mystery", "Y", bean.getMysteryid());
+                    da.insert_user_feeds(punchcardid, userid, "Mystery", "Y", bean.getMysteryId());
                     mysteryxml(response, "00", "successfully", bean.getOffer());
                     return;
                 } else {
@@ -152,8 +152,6 @@ public class MysteryPunch extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -198,7 +196,7 @@ public class MysteryPunch extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private MysteryBean create_mystery(String userid, String punchcardid) {
         ArrayList<MysteryBean> beanlist = new ArrayList<MysteryBean>();
@@ -220,8 +218,8 @@ public class MysteryPunch extends HttpServlet {
             for (int index = 0; index < mystry_data.size(); index++) {
                 MysteryBean bean = new MysteryBean();
                 Vector data = (Vector) mystry_data.elementAt(index);
-                bean.setMysteryid(data.elementAt(0).toString());
-                bean.setPunch_card_id(data.elementAt(1).toString());
+                bean.setMysteryId(data.elementAt(0).toString());
+                bean.setPunchCardId(data.elementAt(1).toString());
                 bean.setOffer(data.elementAt(2).toString());
                 bean.setPro(data.elementAt(3).toString());
                 String mysterypr = data.elementAt(3).toString();

@@ -18,7 +18,7 @@ public class SAXParserExample extends DefaultHandler {
     List aczList = new ArrayList();
     String reqesttype = "";
     // to maintain context
-    private AccessRequestElements acz;
+    private AccessRequest acz;
 
     private String tempVal = "";
     String parameter_val = "";
@@ -39,14 +39,10 @@ public class SAXParserExample extends DefaultHandler {
     }
 
     public void parseDocument(InputSource in) {
-
-        // get a factory
         SAXParserFactory spf = SAXParserFactory.newInstance();
         try {
-
             // get a new instance of parser
             SAXParser sp = spf.newSAXParser();
-
             // parse the file and also register this class for call backs
             sp.parse(in, this);
 
@@ -78,7 +74,7 @@ public class SAXParserExample extends DefaultHandler {
         // tempVal = "";
         if (qName.equalsIgnoreCase("paidpunch-req")) {
             // create a new instance of employee
-            acz = new AccessRequestElements();
+            acz = new AccessRequest();
             // tempEmp.setType(attributes.getValue("type"));
         }
     }
@@ -94,11 +90,11 @@ public class SAXParserExample extends DefaultHandler {
         if (qName.equalsIgnoreCase("paidpunch-req")) {
             aczList.add(acz);
         } else if (qName.equalsIgnoreCase("txtype")) {
-            acz.setTxtype(parameter_val);
+            acz.setTxType(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("username")) {
-            acz.setUsername(parameter_val);
+            acz.setUserName(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("name")) {
@@ -114,7 +110,7 @@ public class SAXParserExample extends DefaultHandler {
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("mobilenumber")) {
-            acz.setMobilenumber(parameter_val);
+            acz.setMobileNumber(parameter_val);
 
             parameter_val = "";
         }
@@ -131,15 +127,15 @@ public class SAXParserExample extends DefaultHandler {
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("punchcardid")) {
-            acz.setPunchCardID(parameter_val);
+            acz.setPunchCardId(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("orangeqrscannedvalue")) {
-            acz.setOrangeqrscannedvalue(parameter_val);
+            acz.setOrangQrScannedValue(parameter_val);
             parameter_val = "";
 
         } else if (qName.equalsIgnoreCase("punch_card_downloadid")) {
-            acz.setPunch_card_downloadid(parameter_val);
+            acz.setPunchCardDownloadId(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("oldpassword")) {
@@ -156,18 +152,18 @@ public class SAXParserExample extends DefaultHandler {
             parameter_val = "";
         }
         else if (qName.equalsIgnoreCase("business_name")) {
-            acz.setBusiness_name(parameter_val);
+            acz.setBusinessName(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("sessionid")) {
-            acz.setSessionid(parameter_val);
+            acz.setSessionId(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("barcodevalue")) {
-            acz.setBarcodevalue(parameter_val);
+            acz.setBarcodeValue(parameter_val);
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("bussinessid")) {
-            acz.setBusinessid(parameter_val);
+            acz.setBusinessId(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("FBid")) {
@@ -175,7 +171,7 @@ public class SAXParserExample extends DefaultHandler {
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("isfreepunch")) {
-            acz.setIsfreepunch(parameter_val);
+            acz.isFreePunch(parameter_val);
             parameter_val = "";
 
         } else if (qName.equalsIgnoreCase("transactionid")) {
@@ -183,11 +179,11 @@ public class SAXParserExample extends DefaultHandler {
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("is_mystery_punch")) {
-            acz.setIs_mystery_punch(parameter_val);
+            acz.setIsMysteryPunch(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("cardno")) {
-            acz.setCardno(parameter_val);
+            acz.setCardNumber(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("cvv")) {
@@ -195,7 +191,7 @@ public class SAXParserExample extends DefaultHandler {
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("exp_date")) {
-            acz.setExp_date(parameter_val);
+            acz.setExpirationDate(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("amount")) {
@@ -203,15 +199,15 @@ public class SAXParserExample extends DefaultHandler {
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("paymentid")) {
-            acz.setPaymentid(parameter_val);
+            acz.setPaymentId(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("cardtype")) {
-            acz.setCardtype(parameter_val);
+            acz.setCardType(parameter_val);
 
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("expirestatus")) {
-            acz.setExpirestatus(parameter_val);
+            acz.setExpireStatus(parameter_val);
 
             parameter_val = "";
         }

@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.xml.sax.InputSource;
 import com.server.Constants;
 import com.server.Utility;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -102,8 +102,8 @@ public class Punch extends HttpServlet {
 
                 example.parseDocument(iSource);
                 list = example.getData();
-                AccessRequestElements arz = (AccessRequestElements) list.get(0);
-                String reqtype = arz.getTxtype();
+                AccessRequest arz = (AccessRequest) list.get(0);
+                String reqtype = arz.getTxType();
 
                 if (reqtype.equalsIgnoreCase("SEARCHBYBUSINESSNAME-REQ")) {
                     Search_By_Busines_Name(list, response);
@@ -130,8 +130,7 @@ public class Punch extends HttpServlet {
             out.close();
         }
 
-    }// <editor-fold defaultstate="collapsed"
-     // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    }
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -177,13 +176,13 @@ public class Punch extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private void Punch_Card_List(List list, HttpServletResponse response) throws ParseException {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         String userid = arz.getUserId();
 
-        String sessionid = arz.getSessionid();
+        String sessionid = arz.getSessionId();
         Vector card_list = null;
         SessionHandler session = new SessionHandler();
         boolean b = session.sessionidverify(userid, sessionid);
@@ -202,11 +201,11 @@ public class Punch extends HttpServlet {
     }
 
     private void Search_By_Busines_Name(List list, HttpServletResponse response) throws SQLException {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         // String buss_name=arz.getBusiness_name();
 
         Vector card_list = null;
-        String sessionid = arz.getSessionid();
+        String sessionid = arz.getSessionId();
         String userid = arz.getUserId();
         SessionHandler session = new SessionHandler();
         boolean b = session.sessionidverify(userid, sessionid);
@@ -343,23 +342,23 @@ public class Punch extends HttpServlet {
     }
 
     private void Mark_Punch_Card(List list, HttpServletResponse response, HttpServletRequest request) {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         String barcodeimage = null;
         String barcodevalue = "";
         String userid = arz.getUserId();
-        String pid = arz.getPunchCardID();
-        String down_id = arz.getPunch_card_downloadid();
-        String is_mystery_punch = arz.getIs_mystery_punch();
+        String pid = arz.getPunchCardId();
+        String down_id = arz.getPunchCardDownloadId();
+        String is_mystery_punch = arz.getIsMysteryPunch();
         String mysteryid = "", value_mystery_punch = "";
         String exitrestatus_in_app = "";
-        exitrestatus_in_app = arz.getExpirestatus();
+        exitrestatus_in_app = arz.getExpireStatus();
         if (exitrestatus_in_app.equalsIgnoreCase("") || exitrestatus_in_app.isEmpty())
         {
             exitrestatus_in_app = "false";
         }
         String expirestatus = "false";
         try {
-            String sessionid = arz.getSessionid();
+            String sessionid = arz.getSessionId();
             SessionHandler session = new SessionHandler();
             boolean sessionverify = session.sessionidverify(userid, sessionid);
             if (!sessionverify) {

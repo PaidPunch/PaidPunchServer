@@ -25,12 +25,11 @@ import org.xml.sax.InputSource;
 import com.db.DataAccess;
 import com.db.DataAccessController;
 import com.jspservlets.SignupAddPunch;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import com.server.SAXParserExample;
 import com.server.Utility;
 
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 /**
  * @author qube26
  */
@@ -90,35 +89,32 @@ public class Register extends HttpServlet {
                 xmldata = xmldata.trim();
                 // org.apache.commons.lang.StringEscapeUtils u=new org.apache.commons.lang.StringEscapeUtils();
                 // xmldata=StringEscapeUtils.unescapeXml(xmldata);
-
                 // xmldata = new String(xmldata.getBytes("UTF-8"), "UTF-8");
                 InputSource iSource = new InputSource(new StringReader(xmldata));
                 iSource.setEncoding("UTF-8");
                 example.parseDocument(iSource);
                 list = example.getData();
-                AccessRequestElements arz = (AccessRequestElements) list.get(0);
-                String reqtype = arz.getTxtype();
+                AccessRequest arz = (AccessRequest) list.get(0);
+                String reqtype = arz.getTxType();
 
                 if (reqtype.equalsIgnoreCase("REGISTER-REQ")) {
                     Constants.logger.info("XML File" + sb);
                     userregister(list, response);
-
                 }
                 if (reqtype.equalsIgnoreCase("LOGIN-REQ")) {
                     String username = "";
                     String password = "";
-                    String sesstionid = arz.getSessionid();
+                    String sessionId = arz.getSessionId();
                     // if sesstion id .
-                    if (sesstionid.equalsIgnoreCase("")) {
+                    if (sessionId.equalsIgnoreCase("")) {
                         SessionHandler session = new SessionHandler();
-                        sesstionid = session.genratesessionid();
-
+                        sessionId = session.generateSessionId();
                     }
                     username = arz.getName();
                     password = arz.getPassword();
-                    DataAccess dataaccess = new DataAccess();
+                    DataAccess dataAccess = new DataAccess();
                     String res = "";
-                    res = dataaccess.login(username, password, sesstionid);
+                    res = dataAccess.login(username, password, sessionId);
                     if (res.equalsIgnoreCase("02")) {
                         xmlloginORlogout(response, "02", "User not registered ", res);
                         return;
@@ -143,7 +139,7 @@ public class Register extends HttpServlet {
                     } else {
                         userdata = DataAccessController.getDataFromTable("app_user", "user_id", res);
                         userinfo = (Vector) userdata.elementAt(0);
-                        userinfo.add(sesstionid);
+                        userinfo.add(sessionId);
                     }
                     xmllogin(response, " Login Successful", userinfo);
 
@@ -172,27 +168,26 @@ public class Register extends HttpServlet {
     }
 
     private void BUSSINESSOFFER(List list, HttpServletResponse response) {
-        String userid = "";
-        String scancode = "";
+        String userId = "";
+        String verificationCode = "";
         java.util.Date punch_expire_Date;
         try {
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            userid = arz.getUserId();
-            scancode = arz.getVerificationCode();
-
-            String sessionid = arz.getSessionid();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            userId = arz.getUserId();
+            verificationCode = arz.getVerificationCode();
+            String sessionId = arz.getSessionId();
             SessionHandler session = new SessionHandler();
-            boolean b = session.sessionidverify(userid, sessionid);
-            boolean isfreepunch = false;
+            boolean b = session.sessionidverify(userId, sessionId);
+            boolean isFreePunch = false;
             // boolean b = DataAccessControler.getUserValidation("app_user", "user_id", userid);
             String msg;
             if (b) {
-                Vector rowdata = (Vector) DataAccessController.getDataFromTable("punch_card", "qrcode", scancode)
+                Vector rowdata = (Vector) DataAccessController.getDataFromTable("punch_card", "qrcode", verificationCode)
                         .elementAt(0);
                 DataAccess da = new DataAccess();
 
                 // user already purch free card
-                isfreepunch = da.check_free_punch("" + rowdata.elementAt(0), userid);
+                isFreePunch = da.isFreePunch("" + rowdata.elementAt(0), userId);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                 String strDate = dateFormat.format(new Date());
@@ -211,7 +206,7 @@ public class Register extends HttpServlet {
                     msg = "This card is no longer available";
 
                     Constants.logger.info(msg);
-                    getBusinesXml(response, rowdata, "02", msg, isfreepunch);
+                    getBusinesXml(response, rowdata, "02", msg, isFreePunch);
                     return;
                 } else {
 
@@ -221,13 +216,13 @@ public class Register extends HttpServlet {
                     String busn_provide_free_punch = "" + businessdata.elementAt(12);
 
                     // secoond time free punch not allow
-                    if (busn_provide_free_punch.endsWith("true") && isfreepunch == false)
+                    if (busn_provide_free_punch.endsWith("true") && isFreePunch == false)
                     {
-                        isfreepunch = true;
+                        isFreePunch = true;
                     }
                     else
                     {
-                        isfreepunch = false;
+                        isFreePunch = false;
                     }
                     String buss_name = "";
                     byte buss_logo[] = null;
@@ -243,13 +238,13 @@ public class Register extends HttpServlet {
                     String punchexpireDate = dateFormat.format(punch_expire_Date);
                     rowdata.add(punchexpireDate);
                     rowdata.add(imageurl);
-                    getBusinesXml(response, rowdata, "00", "Succesful", isfreepunch);
+                    getBusinesXml(response, rowdata, "00", "Succesful", isFreePunch);
                     return;
                 }
 
             } else {
                 Vector d = null;
-                getBusinesXml(response, d, "400", "You have logged in from another device", isfreepunch);
+                getBusinesXml(response, d, "400", "You have logged in from another device", isFreePunch);
                 return;
 
             }
@@ -319,7 +314,7 @@ public class Register extends HttpServlet {
         String password = "";
         String city = "";
         try {
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
+            AccessRequest arz = (AccessRequest) list.get(0);
             if (arz.getName() == null || arz.getName().equalsIgnoreCase("(null)")
                     || arz.getName().equalsIgnoreCase("null"))
             {
@@ -335,10 +330,10 @@ public class Register extends HttpServlet {
             {
                 arz.setPin("");
             }
-            if (arz.getMobilenumber() == null || arz.getMobilenumber().equalsIgnoreCase("(null)")
-                    || arz.getMobilenumber().equalsIgnoreCase("null"))
+            if (arz.getMobileNumber() == null || arz.getMobileNumber().equalsIgnoreCase("(null)")
+                    || arz.getMobileNumber().equalsIgnoreCase("null"))
             {
-                arz.setMobilenumber("");
+                arz.setMobileNumber("");
             }
 
             name = arz.getName();
@@ -350,7 +345,7 @@ public class Register extends HttpServlet {
 
             rowdata.add(arz.getEmail());
 
-            rowdata.add(arz.getMobilenumber());
+            rowdata.add(arz.getMobileNumber());
             rowdata.add(password);
             String pin = "";
             rowdata.add(arz.getPin());
@@ -578,7 +573,7 @@ public class Register extends HttpServlet {
     }
 
     private void logOut(List list, HttpServletResponse response) {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         String userId = arz.getUserId();
         DataAccess da = new DataAccess();
         String res = da.logout(userId);

@@ -153,8 +153,6 @@ public class EditMysteryPunch extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -199,9 +197,9 @@ public class EditMysteryPunch extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
-    public void updateMysteryPunches(int punchcardid, int mysteryId[], String mysteryValues[], int mysteryProb[],
+    public void updateMysteryPunches(int punchCardId, int mysteryId[], String mysteryValues[], int mysteryProb[],
             String isValidMystery[], String isMysteryPunch[], int no_of_punches_passed, int no_of_valid_punchesdb)
             throws ServletException, SQLException {
 
@@ -224,7 +222,7 @@ public class EditMysteryPunch extends HttpServlet {
                     // Constants.logger.info("Insert Query is "+INSERT_RECORD);
                     com.server.Constants.logger.info("The query is " + INSERT_RECORD);
                     pstmt = (PreparedStatement) conn.prepareStatement(INSERT_RECORD);
-                    pstmt.setInt(1, punchcardid);
+                    pstmt.setInt(1, punchCardId);
                     pstmt.setString(2, mysteryValues[j]);
                     pstmt.setInt(3, mysteryProb[j]);
                     pstmt.setString(4, isMysteryPunch[j]);
@@ -258,9 +256,8 @@ public class EditMysteryPunch extends HttpServlet {
                 db = new DBConnection();
                 conn = db.con;
                 stmt = db.stmt;
-
                 String diableMysteryQuery = "Update mystery_punch set mysterypunchvalid='N' where punch_card_id="
-                        + punchcardid + ";";
+                        + punchCardId + ";";
                 com.server.Constants.logger.info("The query is " + diableMysteryQuery);
                 System.out.println("The query is " + diableMysteryQuery);
                 stmt.executeUpdate(diableMysteryQuery);
@@ -297,26 +294,24 @@ public class EditMysteryPunch extends HttpServlet {
         }
     }
 
-    public void insertmysteryPunches(int punchcardid, int mysteryId[], String mysteryValues[], int mysteryProb[],
-            String isValidMystery[], int no_of_mysteries, String isMysteryPunch[]) throws ServletException,
+    public void insertMysteryPunches(int punchCardId, int mysterIds[], String mysteryValues[], int mysteryProb[],
+            String isValidMystery[], int numberOfMysteries, String isMysteryPunch[]) throws ServletException,
             SQLException {
-
         try {
             db = new DBConnection();
             conn = db.con;
             stmt = db.stmt;
-            for (int i = 0; i < no_of_mysteries; i++) {
+            for (int i = 0; i < numberOfMysteries; i++) {
                 String INSERT_RECORD = "Insert into mystery_punch(punch_card_id, value_of_myst_punch,probability, paidpunchmystery) values( ?, ?, ?, ?)";
                 // Constants.logger.info("Insert Query is "+INSERT_RECORD);
                 com.server.Constants.logger.info("The query is " + INSERT_RECORD);
                 pstmt = (PreparedStatement) conn.prepareStatement(INSERT_RECORD);
-                pstmt.setInt(1, punchcardid);
+                pstmt.setInt(1, punchCardId);
                 pstmt.setString(2, mysteryValues[i]);
                 pstmt.setInt(3, mysteryProb[i]);
                 pstmt.setString(4, isMysteryPunch[i]);
                 pstmt.executeUpdate();
             }
-
         } catch (SQLException sqle) {
             // Constants.logger.error("Error in Sql in AppDistributor Hits"+sqle.getMessage());
             throw new ServletException("SQL Exception.", sqle);
@@ -327,7 +322,6 @@ public class EditMysteryPunch extends HttpServlet {
                     // Constants.logger.info("Closing Prepared Statement ");
                     pstmt = null;
                 }
-
                 if (rs != null) {
                     rs.close();
                     // Constants.logger.info("Closing rs Statement ");
@@ -338,19 +332,16 @@ public class EditMysteryPunch extends HttpServlet {
                 // Constants.logger.error("Error in Sql in App Distributor Hits"+e.getMessage());
             }
         }
-
     }
 
-    public void deletemysteryPunches(int punch_card_id) throws ServletException {
+    public void deleteMysteryPunches(int punchCardId) throws ServletException {
         try {
             db = new DBConnection();
             stmt = db.stmt;
-
-            String deleteMysteryQuery = "delete from mystery_punch where punch_card_id = " + punch_card_id;
+            String deleteMysteryQuery = "delete from mystery_punch where punch_card_id = " + punchCardId;
             com.server.Constants.logger.info("The query is " + deleteMysteryQuery);
             System.out.println("The query is " + deleteMysteryQuery);
             stmt.executeUpdate(deleteMysteryQuery);
-
         } catch (SQLException e) {
             System.out.println("Error" + e);
             com.server.Constants.logger.error("Error in Sql in savedeletebusiness.java in deletBusiness "
@@ -364,7 +355,6 @@ public class EditMysteryPunch extends HttpServlet {
                     rs = null;
                 }
                 db.closeConnection();
-
             } catch (SQLException e) {
                 com.server.Constants.logger.error("Error in Sql in savedeletebusiness.java in deletBusiness"
                         + e.getMessage());

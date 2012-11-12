@@ -2,7 +2,7 @@ package com.app;
 
 import com.db.DataAccessController;
 import com.server.SAXParserExample;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,7 +46,6 @@ public class Feedback extends HttpServlet {
         Vector card_list = null;
 
         try {
-
             response.setContentType("text/html;charset=UTF-8");
 
             ServletContext context;
@@ -63,7 +62,6 @@ public class Feedback extends HttpServlet {
             }
 
             ServletInputStream in = request.getInputStream();
-
             SAXParserExample example = new SAXParserExample();
 
             int info;
@@ -74,7 +72,6 @@ public class Feedback extends HttpServlet {
                 sb.append(temp);
             }
             Constants.logger.info("-------------paid_punch---------------");
-
             Constants.logger.info("XML File" + sb);
             String xmldata = new String(sb);
             xmldata = xmldata.trim();
@@ -82,20 +79,19 @@ public class Feedback extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
+            AccessRequest arz = (AccessRequest) list.get(0);
 
-            String reqtype = arz.getTxtype();
+            String reqtype = arz.getTxType();
             if (reqtype.equalsIgnoreCase("SENDFEEDBACK-REQ")) {
                 feebback_insertion(list, response);
                 return;
             }
 
         } catch (Exception e) {
+            
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -140,10 +136,10 @@ public class Feedback extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private void feebback_insertion(List list, HttpServletResponse response) {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         String userid = arz.getUserId();
         String feedbackdata = arz.getFeedbackText();
         Vector rowdata = new Vector();
@@ -156,16 +152,13 @@ public class Feedback extends HttpServlet {
         rowdata.add(time);
 
         boolean expirestatus = false;
-
-        String sessionid = arz.getSessionid();
+        String sessionid = arz.getSessionId();
         SessionHandler session = new SessionHandler();
         boolean sessionverify = session.sessionidverify(userid, sessionid);
-        if (!sessionverify)
-        {
+        if (!sessionverify) {
             feedBack_Xml(response, "400", "You have logged in from another device");
             return;
         }
-
         int res = DataAccessController.insert_feedback_data("feedback", rowdata);
         if (res == 1) {
             feedBack_Xml(response, "00", "Thank you for feedback.");
@@ -174,7 +167,6 @@ public class Feedback extends HttpServlet {
             feedBack_Xml(response, "01", "Failed to submit feedback.Please try again...");
             return;
         }
-
     }
 
     private void feedBack_Xml(HttpServletResponse p_response, String statusCode, String statusMessage) {

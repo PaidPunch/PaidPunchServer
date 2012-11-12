@@ -41,17 +41,16 @@ public class DisplayImage extends HttpServlet {
 
         try {
             session = request.getSession(false);
-
             config = getServletConfig();
             context = config.getServletContext();
         } catch (Exception e) {
 
         }
         com.server.Constants.loadJDBCConstants(context);
-        int business_userID = 0;
+        int businessUserId = 0;
 
         try {
-            business_userID = Integer.parseInt(request.getParameter("bussid"));
+            businessUserId = Integer.parseInt(request.getParameter("bussid"));
         } catch (Exception e) {
 
         }
@@ -63,14 +62,13 @@ public class DisplayImage extends HttpServlet {
         try {
             db = new DBConnection();
             stmt = db.stmt;
-            String query = "select bussiness_logo from business_users where business_userid=" + business_userID;
+            String query = "select bussiness_logo from business_users where business_userid=" + businessUserId;
             rs = stmt.executeQuery(query);
             String imgLen = "";
             if (rs.next()) {
                 imgLen = rs.getString(1);
                 System.out.println(imgLen.length());
             }
-
             rs = stmt.executeQuery(query);
             if (rs.next()) {
                 int len = imgLen.length();
@@ -103,8 +101,6 @@ public class DisplayImage extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -149,6 +145,6 @@ public class DisplayImage extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    }
+    
 }

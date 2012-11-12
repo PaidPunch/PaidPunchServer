@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.PropertyConfigurator;
 import com.server.Constants;
 import com.server.SAXParserExample;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import java.io.StringReader;
 import javax.servlet.ServletInputStream;
 import org.xml.sax.InputSource;
@@ -80,8 +80,8 @@ public class ForgotPassword extends HttpServlet {
 
             xmlparser.parseDocument(iSource);
             list = xmlparser.getData();
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            String reqtype = arz.getTxtype();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            String reqtype = arz.getTxType();
             String email = arz.getEmail();
             // String email="sgelda7@gmail.com";
             try {
@@ -108,8 +108,6 @@ public class ForgotPassword extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -154,7 +152,7 @@ public class ForgotPassword extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private void forgotpasswordxml(HttpServletResponse p_response, String statusCode, String statusMessage)
             throws IOException {

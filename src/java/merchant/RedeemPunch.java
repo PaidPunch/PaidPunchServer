@@ -23,7 +23,7 @@ import org.xml.sax.InputSource;
 
 import com.db.DataAccess;
 import com.db.DataAccessController;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import com.server.SAXParserExample;
 
@@ -86,8 +86,8 @@ public class RedeemPunch extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            String reqtype = arz.getTxtype();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            String reqtype = arz.getTxType();
             if (reqtype.equalsIgnoreCase("Redeem-REQ")) {
                 redeem(list, response);
 
@@ -102,8 +102,6 @@ public class RedeemPunch extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -148,15 +146,15 @@ public class RedeemPunch extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private void redeem(List list, HttpServletResponse response) {
         String barcodevalue = "";
         String bussinessid = "";
         try {
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            barcodevalue = arz.getBarcodevalue();
-            bussinessid = arz.getBusinessid();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            barcodevalue = arz.getBarCodeValue();
+            bussinessid = arz.getBusinessId();
             Vector rowdata = new Vector();
             rowdata.add(barcodevalue);
             rowdata.add(bussinessid);
@@ -206,23 +204,18 @@ public class RedeemPunch extends HttpServlet {
             }
 
         } catch (Exception e) {
-
             Constants.logger.error(e);
-
         }
         try {
             Vector userinfo = null;
-
         } catch (Exception ex) {
             Constants.logger.error(ex);
         }
-
     }
 
     private void xml_write(HttpServletResponse p_response, String statusCode, String statusMessage) throws IOException {
         try {
             PrintWriter out = p_response.getWriter();
-
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
             // String res = "<?xml version='1.0' ?>"
@@ -240,12 +233,10 @@ public class RedeemPunch extends HttpServlet {
     }
 
     private void issue(List list, HttpServletResponse response) {
-
         String bussinessid = "";
-
         try {
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
-            bussinessid = arz.getBusinessid();
+            AccessRequest arz = (AccessRequest) list.get(0);
+            bussinessid = arz.getBusinessId();
 
             String path = context.getRealPath("appMessage.properties").toString();
             Properties props = new Properties();
@@ -273,6 +264,7 @@ public class RedeemPunch extends HttpServlet {
                 issue_xml_write(response, "01", failuremsg, issueno);
             }
         } catch (Exception e) {
+            
         }
     }
 
@@ -301,7 +293,7 @@ public class RedeemPunch extends HttpServlet {
 
     private void login(List list, HttpServletResponse response) {
         try {
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
+            AccessRequest arz = (AccessRequest) list.get(0);
             String path = context.getRealPath("appMessage.properties").toString();
             Properties props = new Properties();
             props.load(new FileInputStream(path));
@@ -328,7 +320,6 @@ public class RedeemPunch extends HttpServlet {
         } catch (IOException ex) {
             Constants.logger.equals(ex);
         }
-
     }
 
     private void xmlloginORlogout(HttpServletResponse p_response, String statusCode, String statusMessage, String userid)
@@ -350,7 +341,6 @@ public class RedeemPunch extends HttpServlet {
         } catch (Exception e) {
             Constants.logger.error(e);
         }
-
     }
 
     private void xmllogin(HttpServletResponse p_response, String mesage, Vector userdata) {
@@ -389,7 +379,6 @@ public class RedeemPunch extends HttpServlet {
         } catch (Exception e) {
             Constants.logger.error(e);
         }
-
     }
 
     public static String RandomInteger() {

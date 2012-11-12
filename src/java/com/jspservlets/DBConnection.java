@@ -18,13 +18,11 @@ public class DBConnection {
 
     public DBConnection() throws ServletException {
         try {
-
             // Constants.logger.info("Making Connection With Database ");
             Class.forName(com.server.Constants.JDBC_DRIVER);
             con = (Connection) DriverManager.getConnection(com.server.Constants.JDBC_URL, com.server.Constants.USERID,
                     com.server.Constants.PASSWORD);
             stmt = (Statement) con.createStatement();
-
         } catch (SQLException e) {
             com.server.Constants.logger.error("Error in Sql" + e.getMessage());
             throw new ServletException("SQL Exception.", e);
@@ -47,7 +45,6 @@ public class DBConnection {
                 stmt.close();
                 stmt = null;
             }
-
             if (con != null) {
                 con.close();
                 con = null;

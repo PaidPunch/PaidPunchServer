@@ -3,7 +3,6 @@ package com.app;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -48,7 +47,6 @@ public class Feeds extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         response.setContentType("text/html;charset=UTF-8");
-        List list;
         ArrayList<FeedBean> frendlist = new ArrayList<FeedBean>();
         try {
             config = getServletConfig();
@@ -70,10 +68,10 @@ public class Feeds extends HttpServlet {
             }
             Constants.logger.info(sb);
 
-            ArrayList<String> fbid = new ArrayList<String>();
-            fbid = frendListParser(sb);
+            ArrayList<String> facebookIds = new ArrayList<String>();
+            facebookIds = parseFriendList(sb);
 
-            frendlist = feeds(fbid, response);
+            frendlist = feeds(facebookIds, response);
             feed_Json_Response("00", "successful", frendlist, response);
         } catch (Exception e) {
             feed_Json_Response("01", "could not fetch your facebook friend. Please try again.", frendlist, response);
@@ -83,8 +81,6 @@ public class Feeds extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -129,12 +125,12 @@ public class Feeds extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
-    private ArrayList<String> frendListParser(StringBuffer sb) {
+    private ArrayList<String> parseFriendList(StringBuffer sb) {
         String data = sb.toString();
         JSONObject json = null;
-        ArrayList<String> fbid = new ArrayList<String>();
+        ArrayList<String> facebookIds = new ArrayList<String>();
         try {
             json = (JSONObject) JSONSerializer.toJSON(data);
         } catch (net.sf.json.JSONException e) {
@@ -145,35 +141,31 @@ public class Feeds extends HttpServlet {
                 Constants.logger.error(exe.toString());
             }
         }
-        if (json != null)
-        {
+        if (json != null) {
             JSONArray nameArray = json.names();
             JSONArray valArray = json.toJSONArray(nameArray);
-            JSONArray frendarray = valArray.getJSONArray(0);
-            for (int i = 0; i < frendarray.size(); i++) {
-                // frendarray.getJSONArray(i);
-                JSONObject innerarray = frendarray.getJSONObject(i);
-                // Constants.logger.info("line no: " + i + " " + innerarray.getString("id"));
-                fbid.add(innerarray.getString("id"));
+            JSONArray friendJsonArray = valArray.getJSONArray(0);
+            for (int i = 0; i < friendJsonArray.size(); i++) {
+                JSONObject innerarray = friendJsonArray.getJSONObject(i);
+                facebookIds.add(innerarray.getString("id"));
             }
         }
-        return fbid;
+        return facebookIds;
     }
 
     private ArrayList<FeedBean> feeds(ArrayList<String> fbid, HttpServletResponse response) {
         ArrayList<FeedBean> feedlist = new ArrayList<FeedBean>();
         try {
             DataAccess da = new DataAccess();
-
-            feedlist = da.getdownloadfeed();
+            feedlist = da.getDownloadFeed();
             Constants.logger.info("feed size" + feedlist.size());
-            ArrayList<FeedBean> frendlist = new ArrayList<FeedBean>();
+            ArrayList<FeedBean> friends = new ArrayList<FeedBean>();
             for (int i = 0; i < feedlist.size(); i++) {
                 if (feedlist.get(i).getIsfbaccount().equalsIgnoreCase("Y")) {
                     String temp = feedlist.get(i).getFbid();
                     for (int j = 0; j < fbid.size(); j++) {
                         if (temp.equalsIgnoreCase(fbid.get(j))) {
-                            feedlist.get(i).setIsmyfrend(true);
+                            feedlist.get(i).setIsMyFriend(true);
                             // frendlist.add(feedlist.get(i));
                             // feedlist.remove(i);
                         }
@@ -185,27 +177,24 @@ public class Feeds extends HttpServlet {
                 String temp = feedlist.get(i).getName();
                 String namearray[] = temp.split(" ");
                 String lastName = "";
-                if (namearray.length > 1)
-                {
+                if (namearray.length > 1) {
                     lastName = namearray[namearray.length - 1];
                     char firstChar = lastName.charAt(0);
                     lastName = "" + firstChar;
                     namearray[namearray.length - 1] = lastName.toUpperCase();
                 }
                 temp = "";
-                for (int index = 0; index <= namearray.length - 1; index++)
-                {
+                for (int index = 0; index <= namearray.length - 1; index++) {
                     temp = temp + namearray[index];
                     temp = temp + " ";
                 }
                 temp = temp.trim();
-                if (namearray.length > 1)
-                {
+                if (namearray.length > 1) {
                     temp = temp + ".";
                 }
                 feedlist.get(i).setName(temp);
             }
-            Constants.logger.info(frendlist.size());
+            Constants.logger.info(friends.size());
 
             return feedlist;
         } catch (Exception e) {
@@ -225,42 +214,35 @@ public class Feeds extends HttpServlet {
             // String jsonres = "{\"statusCode\":\"" + 00 + " \",\"statusMessage\":\"" + "successful" + "\"";
             object.put("statusCode", code);
             object.put("statusMessage", msg);
-            if (code.equalsIgnoreCase("00"))
-            {
+            if (code.equalsIgnoreCase("00")) {
                 JSONArray arrayObj = new JSONArray();
                 Constants.logger.info("json Object created ");
-
                 {
                     for (int j = 0; j < frendlist.size(); j++) {
                         JSONObject subnode = new JSONObject();
                         FeedBean bean = frendlist.get(j);
                         // Vector data =new Vector();
-
                         // String bid = "" + data.elementAt(0);
                         int noofpunch = Integer.parseInt(bean.getNo_of_punches_per_card());
-                        float value = Float.parseFloat(bean.getValue_of_each_punch());
-                        float sell = Float.parseFloat(bean.getSelling_price_of_punch_card());
+                        float value = Float.parseFloat(bean.getPunchValue());
+                        float sell = Float.parseFloat(bean.getPunchCardPrice());
                         float dis_card = (noofpunch * value) - sell;
-                        float actual_value_of_punch = Float.parseFloat(bean.getDisc_value_of_each_punch());
-                        String bname = "" + bean.getBuss_name();
+                        float actual_value_of_punch = Float.parseFloat(bean.getPunchDiscountValue());
                         // String qrcode = "" + data.elementAt(2);
                         subnode.put("fbid", bean.getFbid());
                         subnode.put("action", bean.getAction());
                         subnode.put("name", bean.getName());
                         subnode.put("price", noofpunch * value);
-                        subnode.put("buss_name", bean.getBuss_name());
+                        subnode.put("buss_name", bean.getBusinessName());
                         subnode.put("no_of_punches", bean.getNo_of_punches_per_card());
-                        subnode.put("Value_of_each_punch", bean.getValue_of_each_punch());
-                        subnode.put("actual_value_of_punch", bean.getDisc_value_of_each_punch());
-                        subnode.put("selling_price", bean.getSelling_price_of_punch_card());
+                        subnode.put("Value_of_each_punch", bean.getPunchValue());
+                        subnode.put("actual_value_of_punch", bean.getPunchDiscountValue());
+                        subnode.put("selling_price", bean.getPunchCardPrice());
                         subnode.put("offer", bean.getOffer());
-
-                        subnode.put("isfriend", bean.isIsmyfrend());
+                        subnode.put("isfriend", bean.isMyFriend());
                         subnode.put("timestamp", bean.getTimestamp());
-
                         subnode.put("discount_value_of_each_punch", value - actual_value_of_punch);
                         subnode.put("discount_on_card", dis_card);
-
                         arrayObj.add(subnode);
                     }
                     object.put("feedlist", arrayObj);

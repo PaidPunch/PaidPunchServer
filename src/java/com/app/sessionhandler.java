@@ -37,7 +37,7 @@ public class SessionHandler {
         return verify;
     }
 
-    public String genratesessionid()
+    public String generateSessionId()
     {
         String sessionid = "";
         sessionid = createRandomInteger();

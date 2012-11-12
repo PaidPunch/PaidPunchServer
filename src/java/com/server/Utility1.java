@@ -21,8 +21,7 @@ public final class Utility1 {
             '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
 
-    public static int dateDiff(java.util.Calendar d1, java.util.Calendar d2)
-    {
+    public static int dateDiff(java.util.Calendar d1, java.util.Calendar d2) {
         /*
          * if (d1.after(d2)) { // swap dates so that d1 is start and d2 is end java.util.Calendar swap = d1; d1 = d2; d2
          * = swap; }
@@ -41,8 +40,7 @@ public final class Utility1 {
         return days;
     }
 
-    public static int dateDiff(long d1, long d2)
-    {
+    public static int dateDiff(long d1, long d2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTimeInMillis(d1);
@@ -50,8 +48,7 @@ public final class Utility1 {
         return dateDiff(cal1, cal2);
     }
 
-    public static int dateDiff(Date d1, Date d2)
-    {
+    public static int dateDiff(Date d1, Date d2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTime(d1);
@@ -75,7 +72,6 @@ public final class Utility1 {
         Calendar now = Calendar.getInstance();
         now.set(Calendar.SECOND, 0);
         now.set(Calendar.MILLISECOND, 0);
-
         return cal_date.before(now);
     }
 
@@ -89,7 +85,6 @@ public final class Utility1 {
             Constants.logger.error("", e);
         }
         boolean result = (dateDiff(today, date) == 0);
-
         return result;
     }
 

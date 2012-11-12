@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.xml.sax.InputSource;
 
 import com.db.DataAccessController;
-import com.server.AccessRequestElements;
+import com.server.AccessRequest;
 import com.server.Constants;
 import com.server.SAXParserExample;
 
@@ -82,9 +82,9 @@ public class Update extends HttpServlet {
 
             example.parseDocument(iSource);
             list = example.getData();
-            AccessRequestElements arz = (AccessRequestElements) list.get(0);
+            AccessRequest arz = (AccessRequest) list.get(0);
 
-            String reqtype = arz.getTxtype();
+            String reqtype = arz.getTxType();
             if (reqtype.equalsIgnoreCase("EMAILUPDATE-REQ")) {
                 email_Updaton(list, response);
             }
@@ -144,10 +144,10 @@ public class Update extends HttpServlet {
     }// </editor-fold>
 
     private void email_Updaton(List list, HttpServletResponse response) {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         String userid = arz.getUserId();
         String email = arz.getEmail();
-        String mobileno = arz.getMobilenumber();
+        String mobileno = arz.getMobileNumber();
         Vector fields = new Vector();
         fields.add("email_id");
         fields.add("mobile_no");
@@ -155,7 +155,7 @@ public class Update extends HttpServlet {
         fields_value.add(email);
         fields_value.add(mobileno);
 
-        String sessionid = arz.getSessionid();
+        String sessionid = arz.getSessionId();
         SessionHandler session = new SessionHandler();
         boolean sessionverify = session.sessionidverify(userid, sessionid);
         if (!sessionverify)
@@ -204,7 +204,7 @@ public class Update extends HttpServlet {
     }
 
     private void Password_updation(List list, HttpServletResponse response) {
-        AccessRequestElements arz = (AccessRequestElements) list.get(0);
+        AccessRequest arz = (AccessRequest) list.get(0);
         String userid = arz.getUserId();
         String oldpassword = arz.getOldPassword();
         String password = arz.getPassword();
@@ -220,7 +220,7 @@ public class Update extends HttpServlet {
         Vector fields_value = new Vector();
         fields_value.add(password);
 
-        String sessionid = arz.getSessionid();
+        String sessionid = arz.getSessionId();
         SessionHandler session = new SessionHandler();
         boolean sessionverify = session.sessionidverify(userid, sessionid);
         if (!sessionverify)

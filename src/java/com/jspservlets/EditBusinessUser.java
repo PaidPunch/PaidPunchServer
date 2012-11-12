@@ -56,8 +56,6 @@ public class EditBusinessUser extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -94,9 +92,7 @@ public class EditBusinessUser extends HttpServlet {
         if (businessId != null && expiryDate != null) {
             code = updateExpiryDate(businessId, expiryDate);
         }
-
         out.println(code);
-
     }
 
     /**
@@ -150,7 +146,7 @@ public class EditBusinessUser extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     public String updateExpiryDate(String businessid, String expdate) throws ServletException {
         DBConnection db = null;

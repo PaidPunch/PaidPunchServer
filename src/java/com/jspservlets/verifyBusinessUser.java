@@ -53,16 +53,16 @@ public class VerifyBusinessUser extends HttpServlet {
     String RESULT = "";
     String RESULT1 = "";
     String images_path = "";
-    int no_of_punches_per_card = 0;
-    float discountvalue = 0, value_of_each_punch = 0;;
+    int punchesPerCard = 0;
+    float discountvalue = 0, punchValue = 0;;
     int disc = 0;
     // String acutalvalue = "" + 7;
     // String discountvalue = "" + 10;
-    float sp_of_PunchCard = 0;
+    float punchCardPrice = 0;
     float cost_price = 0;
     // String orange_qrcode_value = "";
-    String flyerqrCode = "";
-    String bussname = "";
+    String flyerQrCode = "";
+    String businessName = "";
     Document document = null;
     String send = "";
     PdfWriter writer = null;
@@ -91,33 +91,27 @@ public class VerifyBusinessUser extends HttpServlet {
 
         }
         com.server.Constants.loadJDBCConstants(context);
-
-        String bususerid = "", email_id = "";
+        String businessUserId = "";
+        String email = "";
 
         PrintWriter out = response.getWriter();
         try {
-            bususerid = request.getParameter("uid");
-            // bususerid = "2";
-            email_id = request.getParameter("email");
-            // email_id = "shahid1311@gmail.com";
-
-            com.server.Constants.logger.info("The Business User with UserId=" + bususerid + " and Email=" + email_id);
-
-            getBusinessInfo(bususerid);
-            RESULT = com.server.Constants.Pdf_Write_Path + bussname + "_flyer.pdf";
+            businessUserId = request.getParameter("uid");
+            email = request.getParameter("email");
+            com.server.Constants.logger.info("The Business User with UserId=" + businessUserId + " and Email=" + email);
+            getBusinessInfo(businessUserId);
+            RESULT = com.server.Constants.Pdf_Write_Path + businessName + "_flyer.pdf";
             com.server.Constants.logger.info("Pdf_Path : " + RESULT);
             // RESULT1 = com.server.Constants.Pdf_Write_Path+bussname+"_orangecode.pdf";
             images_path = com.server.Constants.imagePath;
             com.server.Constants.logger.info("Images Path for pdf : " + images_path);
             try {
-
                 // createFlyerPdf(RESULT);
                 // createOrangeQRPdf(RESULT1);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            boolean flag = userVerified(bususerid, email_id);
+            boolean flag = userVerified(businessUserId, email);
             if (flag) {
                 response.sendRedirect("login.jsp");
             }
@@ -129,8 +123,6 @@ public class VerifyBusinessUser extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * 
@@ -183,37 +175,35 @@ public class VerifyBusinessUser extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
-    public void getBusinessInfo(String bussiness_id) throws ServletException, UnsupportedEncodingException {
+    public void getBusinessInfo(String businessId) throws ServletException, UnsupportedEncodingException {
         ResultSet rs = null;
         try {
             db = new DBConnection();
             st = db.stmt;
-            String query = "Select business_name from business_users where business_userid =" + bussiness_id;
+            String query = "Select business_name from business_users where business_userid =" + businessId;
             com.server.Constants.logger.info("The query is " + query);
             System.out.println("The query is " + query);
             rs = st.executeQuery(query);
             if (rs.next()) {
-                bussname = rs.getString(1);
+                businessName = rs.getString(1);
             }
 
-            String query1 = "Select * from punch_card where business_userid =" + bussiness_id;
+            String query1 = "Select * from punch_card where business_userid =" + businessId;
             com.server.Constants.logger.info("The query is " + query1);
             System.out.println("The query is " + query1);
             rs = st.executeQuery(query1);
             if (rs.next()) {
-                no_of_punches_per_card = rs.getInt("no_of_punches_per_card");
-                value_of_each_punch = rs.getFloat("value_of_each_punch");
-                sp_of_PunchCard = rs.getFloat("selling_price_of_punch_card");
+                punchesPerCard = rs.getInt("no_of_punches_per_card");
+                punchValue = rs.getFloat("value_of_each_punch");
+                punchCardPrice = rs.getFloat("selling_price_of_punch_card");
                 discountvalue = rs.getFloat("effective_discount");
-
-                flyerqrCode = rs.getString("qrcode");
+                flyerQrCode = rs.getString("qrcode");
             }
 
-            send = URLEncoder.encode(flyerqrCode, "UTF-8");
-
-            cost_price = no_of_punches_per_card * value_of_each_punch;
+            send = URLEncoder.encode(flyerQrCode, "UTF-8");
+            cost_price = punchesPerCard * punchValue;
             disc = (int) discountvalue;
 
         } catch (SQLException sqle) {
@@ -339,12 +329,12 @@ public class VerifyBusinessUser extends HttpServlet {
 
         table.addCell(getDataCell(blankcell));
 
-        String text_two = "Pay the Cashier $" + sp_of_PunchCard + " and receive " + no_of_punches_per_card + " $"
-                + value_of_each_punch + " vouchers of store credit ($" + cost_price + " value)";
+        String text_two = "Pay the Cashier $" + punchCardPrice + " and receive " + punchesPerCard + " $"
+                + punchValue + " vouchers of store credit ($" + cost_price + " value)";
         table.addCell(getDataCell(text_two));
 
         table.addCell(getDataCell(blankcell));
-        String text_three = "Every time you visit us, open the PaidPunch app and use a $" + value_of_each_punch
+        String text_three = "Every time you visit us, open the PaidPunch app and use a $" + punchValue
                 + " PaidPunch towards your purchase";
         table.addCell(getDataCell(text_three));
 
@@ -362,7 +352,7 @@ public class VerifyBusinessUser extends HttpServlet {
         // table.setWidthPercentage(100);
 
         // add the name of the month
-        String off_text = "$" + value_of_each_punch + "\nOFF";
+        String off_text = "$" + punchValue + "\nOFF";
         table.addCell(getOffCell(off_text));
         // complete the table
         table.completeRow();
@@ -409,7 +399,7 @@ public class VerifyBusinessUser extends HttpServlet {
         table.setHorizontalAlignment(Element.ALIGN_LEFT);
 
         table.setTotalWidth(450);
-        String busname = "Issuing QR Code for " + bussname;
+        String busname = "Issuing QR Code for " + businessName;
         table.addCell(getIssuingText(busname));
 
         // complete the table
@@ -520,7 +510,7 @@ public class VerifyBusinessUser extends HttpServlet {
         title11.add(new Chunk(" at ", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(244, 123,
                 39))));
 
-        title11.add(new Chunk(bussname, FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129, 130,
+        title11.add(new Chunk(businessName, FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129, 130,
                 133))));
         cell.addElement(title11);
 
