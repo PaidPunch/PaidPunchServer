@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `app_user` (
   `profile_id` varchar(45) DEFAULT NULL,
   `card_type` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`sessionid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=503 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `business_users` (
   `modification_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `busi_enabled` varchar(1) NOT NULL DEFAULT 'Y',
   PRIMARY KEY (`business_userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `bussiness_address` (
   PRIMARY KEY (`address_id`),
   KEY `FK_bussiness_address_1` (`business_id`),
   CONSTRAINT `FK_bussiness_address_1` FOREIGN KEY (`business_id`) REFERENCES `business_users` (`business_userid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `city` (
   `CountryCode` char(3) NOT NULL DEFAULT '',
   `District` char(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=616 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `country` (
   `country_name` varchar(100) DEFAULT NULL,
   `country_code` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`country_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=234 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `payment_details` (
   `response` varchar(45) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`payment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124331 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `punch_card` (
   PRIMARY KEY (`punch_card_id`) USING BTREE,
   KEY `business_userid` (`business_userid`),
   CONSTRAINT `FK_punch_card_1` FOREIGN KEY (`business_userid`) REFERENCES `business_users` (`business_userid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=500 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `mystery_punch` (
   PRIMARY KEY (`mystery_id`),
   KEY `FK_mystery_punch_1` (`punch_card_id`),
   CONSTRAINT `FK_mystery_punch_1` FOREIGN KEY (`punch_card_id`) REFERENCES `punch_card` (`punch_card_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=279 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `punch_card_tracker` (
   KEY `FK_punch_card_tracker_2` (`punch_card_id`),
   CONSTRAINT `FK_punch_card_tracker_1` FOREIGN KEY (`punch_card_id`) REFERENCES `punch_card` (`punch_card_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_punch_card_tracker_2` FOREIGN KEY (`app_user_id`) REFERENCES `app_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1671 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `punchcard_download` (
   CONSTRAINT `FK_punchcard_download_2` FOREIGN KEY (`app_user_id`) REFERENCES `app_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_punchcard_download_3` FOREIGN KEY (`payment_id`) REFERENCES `payment_details` (`payment_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_punchcard_download_4` FOREIGN KEY (`mystery_punchid`) REFERENCES `mystery_punch` (`mystery_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1186 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `secretcode` (
   `code_value` varchar(45) NOT NULL,
   `code_used` varchar(5) NOT NULL,
   PRIMARY KEY (`code_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -220,6 +220,7 @@ CREATE TABLE IF NOT EXISTS `user_feeds` (
   CONSTRAINT `FK_user_feeds_1` FOREIGN KEY (`punchcard_id`) REFERENCES `punch_card` (`punch_card_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_user_feeds_2` FOREIGN KEY (`user_id`) REFERENCES `app_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_user_feeds_3` FOREIGN KEY (`mystery_id`) REFERENCES `mystery_punch` (`mystery_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2687 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 
