@@ -99,7 +99,7 @@
     </context-param>
     <servlet>
         <servlet-name>Registration</servlet-name>
-        <servlet-class>com.app.Registration</servlet-class>
+        <servlet-class>com.app.Register</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SendForgotPasswordMail</servlet-name>
@@ -120,6 +120,10 @@
     <servlet>
         <servlet-name>SignupAddPunch</servlet-name>
         <servlet-class>com.jspservlets.SignupAddPunch</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Products</servlet-name>
+        <servlet-class>com.app.Products</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Punch</servlet-name>
@@ -194,7 +198,7 @@
         <servlet-class>com.app.Feeds</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Register</servlet-name>
+        <servlet-name>Registration</servlet-name>
         <url-pattern>/Register</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -216,6 +220,10 @@
     <servlet-mapping>
         <servlet-name>SignupAddPunch</servlet-name>
         <url-pattern>/SignupAddPunch</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Products</servlet-name>
+        <url-pattern>/Products</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Punch</servlet-name>

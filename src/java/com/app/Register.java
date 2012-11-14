@@ -56,9 +56,6 @@ public class Register extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        // ServletContext context;
-        String msg;
         try {
             response.setContentType("text/html;charset=UTF-8");
             List list;
@@ -309,10 +306,7 @@ public class Register extends HttpServlet {
 
     private void userregister(List list, HttpServletResponse response) {
         String name = "";
-        String email = "";
-        String mobilenumber = "";
         String password = "";
-        String city = "";
         try {
             AccessRequest arz = (AccessRequest) list.get(0);
             if (arz.getName() == null || arz.getName().equalsIgnoreCase("(null)")
@@ -551,27 +545,7 @@ public class Register extends HttpServlet {
             Constants.logger.error(ex);
         }
     }
-
-    private void buy_Punch(HttpServletResponse p_response, Vector userdata, String statusCode, String statusMessage) {
-        try {
-            PrintWriter out = p_response.getWriter();
-            // Constants.logger.info("Respones userid   " + userid);
-            Constants.logger.info("statuscode" + statusCode);
-            Constants.logger.info("statusmessage" + statusMessage);
-
-            p_response.setHeader("Content-Disposition", "attachement; filename= response.xml");
-            String res = "<?xml version='1.0' ?>"
-                    + "<paidpunch-resp>"
-                    + "<statusCode>" + statusCode + "</statusCode>"
-                    + "<statusMessage>" + statusMessage + "</statusMessage>"
-                    + "</paidpunch-resp>";
-            out.print(res);
-            Constants.logger.info(res);
-        } catch (Exception e) {
-            Constants.logger.error(e);
-        }
-    }
-
+    
     private void logOut(List list, HttpServletResponse response) {
         AccessRequest arz = (AccessRequest) list.get(0);
         String userId = arz.getUserId();
@@ -593,177 +567,4 @@ public class Register extends HttpServlet {
         }
 
     }
-
-    private boolean timelimitcheck(String code, String bus_id, String mint) throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        boolean result = true;
-        String strDate = dateFormat.format(new Date());
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        String strTime = timeFormat.format(new Date());
-        try {
-            java.util.Date l_scan_Date = dateFormat.parse(strDate);
-            java.util.Date l_scan_Time = timeFormat.parse(strTime);
-            int min = Integer.parseInt("-" + mint);
-            // min=0-min;
-
-            java.util.Date befor_time = Utility.HoureAdd(l_scan_Time, min);
-            strTime = befor_time.toString();
-            // l_scan_Time = timeFormat.parse(strTime);
-            java.sql.Time time = new java.sql.Time(befor_time.getTime());
-            java.sql.Date Date = new java.sql.Date(l_scan_Date.getTime());
-            strTime = time.toString();
-            strDate = Date.toString();
-            result = DataAccessController.buy_code_verify(code, bus_id, strTime, strDate);
-
-        } catch (Exception ex) {
-            Constants.logger.error(ex);
-        }
-        return (result);
-    }
-
-    /// request move to payment servlet
-//    private void buy_Bussiness_Offer(List list, HttpServletResponse response) throws ParseException {
-//        try {
-//            String path = context.getRealPath("appMessage.properties").toString();
-//            Properties props = new Properties();
-//            props.load(new FileInputStream(path));
-//            PropertyConfigurator.configure(props);
-//            String wrongnoenter = props.getProperty("buy.punch.wrong.entered");
-//           String codeexpiremsg = props.getProperty("buy.punch.merchant.code.expire");
-//
-//
-//
-//            //  String successmsg = props.getProperty("issue.success");
-//            aczreqElements arz = (aczreqElements) list.get(0);
-//            String userId = arz.getUserId();
-//            String sccancode = arz.getVerificationCode();
-//            String oreangecode = arz.getOrangeqrscannedvalue();
-//            byte[] decoded = Base64.decodeBase64(oreangecode.getBytes());
-//            String reangecode = new String(decoded);
-//            String punchcardid = arz.getPunchCardID();
-//            String sessionid = arz.getSessionid();
-//            String isfreepunch=arz.getIsfreepunch();
-//            String tid;
-//            String mystrypunchid=null,value_mystery_punch="";
-//
-//            //only one time purch free punch
-//            if(isfreepunch.equalsIgnoreCase("true"))
-//            { DataAccess da=new DataAccess();
-//                 boolean freepunch_buy=da.check_free_punch(punchcardid,userId);
-//                 if(freepunch_buy)
-//                 {buy_Punch(response, userdata, "01", "You have already purched, free punch. ");
-//                     return;
-//                 }
-//            }
-//            if(arz.getTid().isEmpty())
-//            {
-//                tid=""+0;
-//            }else
-//            {
-//                tid=""+arz.getTid();
-//            }
-//            sessionhandler session = new sessionhandler();
-//            boolean sessionverify = session.sessionidverify(userId, sessionid);
-//            if (sessionverify) {
-//                boolean b = DataAccessControler.getUserValidation("punch_card", "punch_card_id", punchcardid);
-//                if (b) {
-//                    userdata = new Vector();
-//                    userdata.add(userId);
-//                    userdata.add(punchcardid);
-//                    Vector punchdata = (Vector) DataAccessControler.getDataFromTable("punch_card", "punch_card_id", punchcardid).elementAt(0);
-//
-//                    //no verifyer  code modify on 19 jan 2012
-//
-//
-//                    //String vrifyno = "" + punchdata.elementAt(7);
-//
-////                    13 mar 2012
-////                    boolean no_check = DataAccessControler.buy_punch_verifyer("marchant_code", oreangecode, arz.getPunchCardID());
-////                    if (no_check) {
-////                        buy_Punch(response, userdata, "02", wrongnoenter);
-////                        return;
-////
-////                    }
-////                    boolean timecheck = timelimitcheck(oreangecode, punchcardid, Constants.merchant_code_validate_time);
-////                    if (timecheck) {
-////                        buy_Punch(response, userdata, "02",codeexpiremsg);
-////                        return;
-////                    }
-//
-////                    if((""+punchdata.elementAt(11)).equalsIgnoreCase("true"))
-////                    {
-////                          DataAccess da=new DataAccess();
-////                              Vector mystery_data=DataAccessControler.getDataFromTable("mystery_punch", "punch_card_id", punchcardid);
-////                             Vector mystery_info=(Vector) mystery_data.elementAt(0);
-////                            mystrypunchid =""+mystery_info.elementAt(0);
-////                       value_mystery_punch=""+mystery_info.elementAt(2);
-////
-////                    }
-//                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//
-//                String strDate = dateFormat.format(new Date());
-//                       java.util.Date l_scan_Date = dateFormat.parse(strDate);
-//                    int validdays=Integer.parseInt(punchdata.elementAt(13).toString());
-//                Date expire_time_in_long = Utility.addDays(l_scan_Date, validdays);
-//                    strDate = dateFormat.format(expire_time_in_long);
-//             Date punch_expire_Date = dateFormat.parse(strDate);
-//
-//                    java.util.Date match_Start_Date = new java.util.Date(((java.sql.Date) punchdata.elementAt(5)).getTime());
-//                   strDate = dateFormat.format(new Date());
-//                   l_scan_Date = dateFormat.parse(strDate);
-////                    if (Utility.isAfterDateTime(l_scan_Date, match_Start_Date)) {
-////                        buy_Punch(response, userdata, "01", "Expired");
-////                        return;
-////                    }
-//                    SimpleDateFormat timeFormat = new SimpleDateFormat("HHmm");
-//                    String strTime = timeFormat.format(new Date());
-//
-//                    java.util.Date sqlTime = timeFormat.parse(strTime);
-//                    java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
-//
-//                    //no of punchs
-//                    if(isfreepunch.equalsIgnoreCase("true"))
-//                    {
-//                    userdata.add("1");
-//
-//                    }
-//                    else
-//                    {
-//                    userdata.add(punchdata.elementAt(2));
-//
-//                    }
-//                    userdata.add(sqlDate);
-//                    userdata.add(sqlTime);
-//                    if(isfreepunch.equalsIgnoreCase("false"))
-//                    {
-//                        userdata.add(tid);
-//                    }
-//                        userdata.add(isfreepunch);
-//                         userdata.add(punch_expire_Date);
-////                        userdata.add(mystrypunchid);
-//                    int i = DataAccessControler.insert_punchcard_download("punchcard_download", userdata,isfreepunch);
-//                    if (i != -1) {
-//                        DataAccess da=new DataAccess();
-//                         da.insert_user_feeds(punchcardid, userId, "bought", "F", null);
-//                        buy_Punch(response, userdata, "00", "Succesful");
-//                        return;
-//                    } else {
-//                        buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
-//                        return;
-//                    }
-//                } else {
-//                    buy_Punch(response, userdata, "01", "Punch Card Expired");
-//                }
-//
-//            } else {
-//                buy_Punch(response, userdata, "400", "You have logged in from another device");
-//
-//            }
-//        } catch (Exception ex) {
-//            Constants.logger.error(ex);
-//            buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
-//            return;
-//        }
-//    }
-// this function call when user regesration
 }
