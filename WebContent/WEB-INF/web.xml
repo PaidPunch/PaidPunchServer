@@ -98,7 +98,7 @@
         <param-value>Biscuit-1</param-value>
     </context-param>
     <servlet>
-        <servlet-name>Registration</servlet-name>
+        <servlet-name>Register</servlet-name>
         <servlet-class>com.app.Register</servlet-class>
     </servlet>
     <servlet>
@@ -198,28 +198,28 @@
         <servlet-class>com.app.Feeds</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Registration</servlet-name>
-        <url-pattern>/Register</url-pattern>
+        <servlet-name>Register</servlet-name>
+        <url-pattern>/app_registration</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SendForgotPasswordMail</servlet-name>
-        <url-pattern>/SendForgotPasswordMail</url-pattern>
+        <url-pattern>/forgot_pass</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CheckSecretCode</servlet-name>
-        <url-pattern>/CheckSecretCode</url-pattern>
+        <url-pattern>/checksecretcode</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SignupCheckEmail</servlet-name>
-        <url-pattern>/SignupCheckEmail</url-pattern>
+        <url-pattern>/signup_business_email</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ValidateLogin</servlet-name>
-        <url-pattern>/ValidateLogin</url-pattern>
+        <url-pattern>/login_validate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SignupAddPunch</servlet-name>
-        <url-pattern>/SignupAddPunch</url-pattern>
+        <url-pattern>/signup_paidpunch_add</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Products</servlet-name>
@@ -227,27 +227,27 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Punch</servlet-name>
-        <url-pattern>/Punch</url-pattern>
+        <url-pattern>/punch</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Update</servlet-name>
-        <url-pattern>/Update</url-pattern>
+        <url-pattern>/updation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Feedback</servlet-name>
-        <url-pattern>/Feedback</url-pattern>
+        <url-pattern>/feedback</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VerifyBusinessUser</servlet-name>
-        <url-pattern>/VerifyBusinessUser</url-pattern>
+        <url-pattern>/verifybususer</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ChangePassword</servlet-name>
-        <url-pattern>/ChangePassword</url-pattern>
+        <url-pattern>/change_pass</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditBusinessUser</servlet-name>
-        <url-pattern>/EditBusinessUser</url-pattern>
+        <url-pattern>/save_delete_admin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DisplayImage</servlet-name>
@@ -255,43 +255,43 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VerifyAppUser</servlet-name>
-        <url-pattern>/VerifyAppUser</url-pattern>
+        <url-pattern>/verifyappuser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditBusinessSetting</servlet-name>
-        <url-pattern>/EditBusinessSetting</url-pattern>
+        <url-pattern>/edit_bus_setting</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ForgotPassword</servlet-name>
-        <url-pattern>/ForgotPassword</url-pattern>
+        <url-pattern>/forgotpassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VerifyBarcode</servlet-name>
-        <url-pattern>/VerifyBarcode</url-pattern>
+        <url-pattern>/barcodeverify</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RedeemPunch</servlet-name>
-        <url-pattern>/RedeemPunch</url-pattern>
+        <url-pattern>/Redeem_punch</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FacebookLogin</servlet-name>
-        <url-pattern>/FacebookLogin</url-pattern>
+        <url-pattern>/FB_login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>MysteryPunch</servlet-name>
-        <url-pattern>/MysteryPunch</url-pattern>
+        <url-pattern>/mysterypunch</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PaymentDetail</servlet-name>
-        <url-pattern>/PaymentDetail</url-pattern>
+        <url-pattern>/payment_detail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Payment</servlet-name>
-        <url-pattern>/Payment</url-pattern>
+        <url-pattern>/payment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditMysteryPunch</servlet-name>
-        <url-pattern>/EditMysteryPunch</url-pattern>
+        <url-pattern>/edit_mystery_punch</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
       <servlet-name>Feeds</servlet-name>
