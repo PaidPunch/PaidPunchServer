@@ -44,7 +44,6 @@ public class Feedback extends HttpServlet {
         PrintWriter out = response.getWriter();
         ServletConfig config = null;
         Vector card_list = null;
-
         try {
             response.setContentType("text/html;charset=UTF-8");
 
@@ -86,7 +85,6 @@ public class Feedback extends HttpServlet {
                 feebback_insertion(list, response);
                 return;
             }
-
         } catch (Exception e) {
             
         }

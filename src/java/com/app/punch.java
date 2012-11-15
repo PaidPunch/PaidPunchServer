@@ -65,25 +65,20 @@ public class Punch extends HttpServlet {
         Vector card_list = null;
 
         try {
-
             response.setContentType("text/html;charset=UTF-8");
-
             ServletContext context;
             String msg;
-
             response.setContentType("text/html;charset=UTF-8");
             List list;
             try {
                 config = getServletConfig();
                 context = config.getServletContext();
                 Constants.loadJDBCConstants(context);
-
             } catch (Exception e) {
                 Constants.logger.error(e);
             }
             try {
                 ServletInputStream in = request.getInputStream();
-
                 SAXParserExample example = new SAXParserExample();
 
                 int info;
@@ -94,7 +89,6 @@ public class Punch extends HttpServlet {
                     sb.append(temp);
                 }
                 Constants.logger.info("-------------paid_punch---------------");
-
                 Constants.logger.info("XML File" + sb);
                 String xmldata = new String(sb);
                 xmldata = xmldata.trim();
@@ -114,22 +108,18 @@ public class Punch extends HttpServlet {
                 if (reqtype.equalsIgnoreCase("MARKPUNCHUSED-REQ")) {
                     Mark_Punch_Card(list, response, request);
                 }
-
             } catch (Exception e) {
                 Punch_Card_List_XML_Response(card_list, "01", "Failure", response);
                 Constants.logger.error(e);
             } finally {
-
                 out.close();
             }
-
         } catch (Exception e) {
             Punch_Card_List_XML_Response(card_list, "01", "Failure", response);
             Constants.logger.error(e);
         } finally {
             out.close();
         }
-
     }
 
     /**

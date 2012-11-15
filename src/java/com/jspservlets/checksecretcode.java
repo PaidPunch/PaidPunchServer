@@ -104,7 +104,6 @@ public class CheckSecretCode extends HttpServlet {
         String secretcode = "";
         PrintWriter out = response.getWriter();
         secretcode = generateSecretCode();
-
         out.println(secretcode);
     }
 
@@ -185,7 +184,6 @@ public class CheckSecretCode extends HttpServlet {
             else {
                 codeFlag = false;
             }
-
         } catch (SQLException e) {
             com.server.Constants.logger
                     .error("Error in Sql in checksecretcode.java in getsecretcode " + e.getMessage());
@@ -198,7 +196,6 @@ public class CheckSecretCode extends HttpServlet {
                     rs = null;
                 }
                 db.closeConnection();
-
             } catch (SQLException e) {
                 com.server.Constants.logger.error("Error in closing SQL in checksecretcode.java" + e.getMessage());
             }
@@ -217,7 +214,6 @@ public class CheckSecretCode extends HttpServlet {
         String secretcode = "";
         boolean fl = true;
         try {
-
             db = new DBConnection();
             conn = db.con;
             st = db.stmt;

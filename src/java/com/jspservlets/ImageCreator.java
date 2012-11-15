@@ -417,7 +417,6 @@ public class ImageCreator {
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-
         // getResizeImageWithHeightFixed("E:\\images\\DIMAYOR.png",80,80);
         byte[] data = getResizeImageWithHeightFixed("C:\\testing\\index.JPEG", 100);
         FileOutputStream fos = new FileOutputStream(new File("c:\\testing\\test.jpg"));

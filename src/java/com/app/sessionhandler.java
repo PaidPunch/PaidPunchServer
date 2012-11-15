@@ -15,9 +15,7 @@ public class SessionHandler {
     {
         boolean verify = false;
         try {
-
             verify = DataAccessController.getDataTable("app_user", "user_id", "sessionid", userid, sessionid);
-
         } catch (SQLException ex) {
             Constants.logger.error(ex.toString());
         }

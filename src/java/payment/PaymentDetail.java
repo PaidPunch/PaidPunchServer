@@ -72,9 +72,7 @@ public class PaymentDetail extends HttpServlet {
             }
             try {
                 ServletInputStream in = request.getInputStream();
-
                 SAXParserExample example = new SAXParserExample();
-
                 int info;
                 StringBuffer sb = new StringBuffer();
                 while ((info = in.read()) != -1) {
@@ -131,14 +129,12 @@ public class PaymentDetail extends HttpServlet {
                 if (reqtype.equalsIgnoreCase("Delete-Profile-REQ")) {
                     deleteProfile(list, response);
                     return;
-
                 }
                 if (reqtype.equalsIgnoreCase("Get-Profile-REQ")) {
                     String userid = arz.getUserId();
                     DataAccess da = new DataAccess();
                     Vector profile_info = da.getProfileId(userid);
-                    if (profile_info == null)
-                    {
+                    if (profile_info == null) {
                         xml(response, "Failed to process request.Please try again.", "01");
                         return;
                     }
@@ -160,11 +156,8 @@ public class PaymentDetail extends HttpServlet {
                         getprofilexml(response, meas, code, maskno, payid);
                         return;
                     }
-
                 }
-
-            } catch (SSLPeerUnverifiedException ssl)
-            {
+            } catch (SSLPeerUnverifiedException ssl) {
                 Constants.logger.error(ssl);
                 getprofilexml(response, "Failed to process request.Please try again.", "02", "", "");
                 return;
@@ -182,19 +175,15 @@ public class PaymentDetail extends HttpServlet {
         try {
             AccessRequest arz = (AccessRequest) list.get(0);
             String userid = arz.getUserId();
-
             String sessionid = arz.getSessionId();
             SessionHandler session = new SessionHandler();
             boolean b = session.sessionidverify(userid, sessionid);
             Constants.logger.info("Delete profile");
-            if (b)
-            {
+            if (b) {
                 Constants.logger.info("userid:" + userid);
-
                 DataAccess da = new DataAccess();
                 Vector profile_info = da.getProfileId(userid);
-                if (profile_info == null)
-                {
+                if (profile_info == null) {
                     xml(response, "Failed to process request.Please try again.", "01");
                     return;
                 }
@@ -205,35 +194,27 @@ public class PaymentDetail extends HttpServlet {
                         + " message: " + profile_data.elementAt(1).toString() + " "
                         + profile_data.elementAt(2).toString());
                 String successcode = profile_data.elementAt(0).toString();
-                if (successcode.equalsIgnoreCase("00"))
-                {
+                if (successcode.equalsIgnoreCase("00")) {
                     int res = da.update_profileid("app_user", userid, "", "false");
-                    if (res > 0)
-                    {
+                    if (res > 0) {
                         deleteXml(response, "00", "Delete Successful", "false");
                         return;
                     }
-                    else
-                    {
+                    else {
                         xml(response, "Failed to process request.Please try again.", "01");
                         return;
                     }
                 }
-                else
-                {
+                else {
                     xml(response, profile_data.elementAt(2).toString(), "01");
                     return;
                 }
-
             }
-            else
-            {
+            else {
                 xml(response, "You have logged in from another device", "400");
             }
         }
-
-        catch (Exception e)
-        {
+        catch (Exception e) {
             Constants.logger.info(e.toString());
             xml(response, "Failed to process request.Please try again.", "01");
             return;
@@ -241,13 +222,10 @@ public class PaymentDetail extends HttpServlet {
     }
 
     private void xml(HttpServletResponse p_response, String mesage, String code) {
-
         String statusCode = code;
         String statusMessage = mesage;
-
         try {
             PrintWriter out = p_response.getWriter();
-
             Constants.logger.info("statuscode" + statusCode);
             Constants.logger.info("statusmessage" + statusMessage);
 
@@ -258,13 +236,10 @@ public class PaymentDetail extends HttpServlet {
                     + "<statusMessage>" + statusMessage + "</statusMessage>";
             out.print(resmes);
             // out.print();
-
             out.print("</paidpunch-resp>");
-
         } catch (Exception e) {
             Constants.logger.error(e);
         }
-
     }
 
     private void deleteXml(HttpServletResponse p_response, String statusCode, String statusMessage,
@@ -316,14 +291,11 @@ public class PaymentDetail extends HttpServlet {
         } catch (Exception tfe) {
             Constants.logger.error(tfe.toString());
         }
-
     }
 
     private void getprofilexml(HttpServletResponse p_response, String mesage, String code, String masked, String payid) {
-
         String statusCode = code;
         String statusMessage = mesage;
-
         try {
             PrintWriter out = p_response.getWriter();
 
@@ -339,17 +311,11 @@ public class PaymentDetail extends HttpServlet {
                     + "<statusMessage>" + statusMessage + "</statusMessage></paidpunch-resp>";
             Constants.logger.info("masked no" + masked + " code: " + statusCode);
             Constants.logger.info("masked no and paymentid send to mobile");
-
             out.print(xml);
-
         } catch (Exception e) {
             Constants.logger.error(e);
         }
-
     }
-
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -395,6 +361,6 @@ public class PaymentDetail extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

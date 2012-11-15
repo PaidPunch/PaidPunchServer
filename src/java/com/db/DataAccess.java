@@ -18,7 +18,6 @@ import com.server.FeedBean;
 public class DataAccess {
 
     public String login(String user, String password, String sessionid) throws UnsupportedEncodingException {
-
         byte[] test = user.getBytes("UTF-8");
         user = new String(test, "UTF-8");
         Vector ids = new Vector();
@@ -71,13 +70,11 @@ public class DataAccess {
             }
         } catch (Exception ex) {
             Constants.logger.error(ex.getMessage());
-
         }
         return result;
     }
 
     public Vector merchant_login(String user, String password) throws UnsupportedEncodingException {
-
         byte[] test = user.getBytes("UTF-8");
         Vector rowdata = new Vector();
         user = new String(test, "UTF-8");
@@ -85,7 +82,6 @@ public class DataAccess {
         String userid = "";
         try {
             Vector dataFromTable = DataAccessController.getDataFromTable("business_users");
-
             for (int j = 0; j < dataFromTable.size(); j++) {
                 Vector data = (Vector) dataFromTable.elementAt(j);
                 // email
@@ -114,11 +110,9 @@ public class DataAccess {
                     rowdata.add("01");
                     return rowdata;
                 }
-
             }
         } catch (Exception ex) {
             Constants.logger.error(ex.getMessage());
-
         }
         rowdata.add("02");
         return rowdata;
@@ -127,18 +121,14 @@ public class DataAccess {
     public String logout(String userid) {
         Vector ids = new Vector();
         String result = "02";
-
         try {
-
             int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "user_status", "N");
             if (res == 1) {
                 return userid;
             }
             return "01";
-
         } catch (Exception ex) {
             Constants.logger.error(ex.getMessage());
-
         }
         return result;
     }
@@ -169,7 +159,6 @@ public class DataAccess {
             l_prepStat.setString(1, id);
 
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             ResultSet l_rs = l_prepStat.executeQuery();
             if (l_rs.next()) {
                 l_rs.close();
@@ -182,7 +171,6 @@ public class DataAccess {
                 l_conn.close();
                 return false;
             }
-
         } catch (SQLException e) {
             try {
                 l_prepStat.close();
@@ -194,7 +182,6 @@ public class DataAccess {
                 return false;
             }
         }
-
     }
 
     public boolean isFreePunch(String punchId, String appUserId) {

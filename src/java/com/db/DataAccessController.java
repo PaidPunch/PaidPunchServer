@@ -22,7 +22,6 @@ public class DataAccessController {
     public static Connection createConnection() {
         Connection l_conn = null;
         try {
-
             Class.forName(Constants.JDBC_DRIVER).newInstance();
             l_conn = DriverManager.getConnection(Constants.JDBC_URL, Constants.USERID, Constants.PASSWORD);
             // Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -36,8 +35,7 @@ public class DataAccessController {
         return l_conn;
     }
 
-    public static String getPassword(String email) throws SQLException
-    {
+    public static String getPassword(String email) throws SQLException {
         String Password = "";
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
@@ -61,7 +59,6 @@ public class DataAccessController {
                 }
 
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -70,9 +67,7 @@ public class DataAccessController {
             l_conn.close();
             Constants.logger.error("Error : " + e.getMessage());
         }
-
         return Password;
-
     }
 
     public static Vector getDataFromTable(String p_table, String p_id, String p_value) throws SQLException {
@@ -623,7 +618,6 @@ public class DataAccessController {
             }
             l_rs.close();
             l_prepStat.close();
-
         } catch (Exception ex) {
             Constants.logger.error("", ex);
         } finally {
@@ -657,7 +651,6 @@ public class DataAccessController {
         Vector l_result = new Vector();
         try {
             l_prepStat = l_conn.prepareStatement(l_query.toString());
-
         } catch (Exception e) {
             Constants.logger.error("", e);
         }
@@ -921,10 +914,8 @@ public class DataAccessController {
             while (l_rs.next()) {
                 result = true;
             }
-
             l_rs.close();
             l_prepStat.close();
-
         } catch (Exception e) {
             l_prepStat.close();
             l_conn.close();
@@ -937,7 +928,6 @@ public class DataAccessController {
             }
         }
         return result;
-
     }
 
     public static boolean getUserValidation(String p_table, String p_id, String p_pword) throws SQLException {
@@ -994,9 +984,7 @@ public class DataAccessController {
         // result = true;
         // return result;
         // }
-
         return result;
-
     }
 
     public static boolean getDataFromTable(String p_table, String p_id, String p_password, String p_value,
@@ -1025,7 +1013,6 @@ public class DataAccessController {
             }
 
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             ResultSet l_rs = l_prepStat.executeQuery();
             l_result = new Vector();
             ResultSetMetaData l_rsmd = l_rs.getMetaData();
@@ -1055,14 +1042,10 @@ public class DataAccessController {
             db_user_name = (String) l_result.elementAt(0);
         }
         boolean result = false;
-
         if (db_user_name.equals(p_value)) {
             result = true;
-            return result;
         }
-
         return result;
-
     }
 
     public static boolean getDataTable(String p_table, String p_id, String p_password, String p_value, String p_pword)
@@ -1089,9 +1072,7 @@ public class DataAccessController {
             } else {
                 l_prepStat.setString(2, "%");
             }
-
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             ResultSet l_rs = l_prepStat.executeQuery();
             l_result = new Vector();
             ResultSetMetaData l_rsmd = l_rs.getMetaData();
@@ -1105,7 +1086,6 @@ public class DataAccessController {
                 l_result.addElement(l_row);
                 temp = true;
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -1116,16 +1096,7 @@ public class DataAccessController {
             return false;
         }
         String db_user_name = "";
-        if (temp == true)
-        {
-            return temp;
-        }
-        else
-        {
-            return temp;
-
-        }
-
+        return temp;
     }
 
     public static boolean getchecker(String p_table, String p_id, String p_value) throws SQLException {
@@ -1160,7 +1131,6 @@ public class DataAccessController {
                 l_result.addElement(l_row);
                 temp = true;
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -1171,20 +1141,10 @@ public class DataAccessController {
             return false;
         }
         String db_user_name = "";
-        if (temp == true)
-        {
-            return temp;
-        }
-        else
-        {
-            return temp;
-
-        }
-
+        return temp;
     }
 
     public static Boolean getDataFromTableDisplay(String p_table, String p_id, String p_value) throws SQLException {
-
         Vector l_result = null;
         Connection l_conn = null;
         PreparedStatement l_prepStat = null;
@@ -1202,12 +1162,10 @@ public class DataAccessController {
             }
 
             Constants.logger.info("l_callStat ::{}" + l_prepStat);
-
             ResultSet l_rs = l_prepStat.executeQuery();
             l_result = new Vector();
             ResultSetMetaData l_rsmd = l_rs.getMetaData();
             int l_noColumns = l_rsmd.getColumnCount();
-
             while (l_rs.next()) {
                 Vector l_row = new Vector();
                 for (int col = 1; col <= l_noColumns; col++) {
@@ -1216,7 +1174,6 @@ public class DataAccessController {
                 l_result.addElement(l_row);
                 temp = true;
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -1228,16 +1185,7 @@ public class DataAccessController {
             return false;
         }
         String db_user_name = "";
-        if (temp == true)
-        {
-            return temp;
-        }
-        else
-        {
-            return temp;
-
-        }
-
+        return temp;
     }
 
     public static int getMaxFieldValue(String p_table, String p_field, Vector p_ids, Vector p_idValues) {
@@ -1377,7 +1325,6 @@ public class DataAccessController {
 
                 l_result.add(l_row);
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -1426,7 +1373,6 @@ public class DataAccessController {
                 // }
                 // l_result.addElement(l_row);
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -1509,7 +1455,6 @@ public class DataAccessController {
                 l_prepStat.execute();
                 // l_conn.commit();
             }
-
             l_rs.close();
             l_prepStat.close();
             l_conn.close();
@@ -1519,7 +1464,6 @@ public class DataAccessController {
             Constants.logger.error("" + e.getMessage());
         }
         return l_result;
-
     }
 
     public static String insert_payment(Vector p_rowData) {

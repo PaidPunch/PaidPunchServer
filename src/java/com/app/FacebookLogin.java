@@ -71,7 +71,6 @@ public class FacebookLogin extends HttpServlet {
                     sb.append(temp);
                 }
                 Constants.logger.info("-------------paid_punch---------------");
-
                 Constants.logger.info("XML File" + sb);
                 String xmldata = new String(sb);
                 xmldata = xmldata.trim();

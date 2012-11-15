@@ -194,7 +194,6 @@ public class Payment extends HttpServlet {
                     buy_Punch(response, userdata, code, getwaymessage);
                     return;
                 }
-
                 // tid=da.getpaymentID();
                 // tid="123456";
             }
@@ -302,13 +301,10 @@ public class Payment extends HttpServlet {
                     buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
                     return;
                 }
-
             } else {
                 buy_Punch(response, userdata, "400", "You have logged in from another device");
-
             }
-        } catch (SSLPeerUnverifiedException ssl)
-        {
+        } catch (SSLPeerUnverifiedException ssl) {
             Constants.logger.error(ssl);
             buy_Punch(response, userdata, "02", "Failed to process request.Please try again.");
             return;
@@ -339,9 +335,6 @@ public class Payment extends HttpServlet {
             Constants.logger.error(e);
         }
     }
-
-    // <editor-fold defaultstate="collapsed"
-    // desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -387,6 +380,6 @@ public class Payment extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
     
 }

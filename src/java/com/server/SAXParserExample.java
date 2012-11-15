@@ -59,7 +59,6 @@ public class SAXParserExample extends DefaultHandler {
      * Iterate through the list and print the contents
      */
     private void printData() {
-
         // System.out.println("No of Employees '" + myEmpls.size() + "'.");
         //
         // Iterator it = myEmpls.iterator();
@@ -82,140 +81,105 @@ public class SAXParserExample extends DefaultHandler {
     public void characters(char[] ch, int start, int length) throws SAXException {
         tempVal = new String(ch, start, length);
         parameter_val = parameter_val + tempVal;
-
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
-
         if (qName.equalsIgnoreCase("paidpunch-req")) {
             aczList.add(acz);
         } else if (qName.equalsIgnoreCase("txtype")) {
             acz.setTxType(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("username")) {
             acz.setUserName(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("name")) {
             acz.setName(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("password")) {
             acz.setPassword(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("email")) {
             acz.setEmail(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("mobilenumber")) {
             acz.setMobileNumber(parameter_val);
-
             parameter_val = "";
-        }
-        else if (qName.equalsIgnoreCase("city")) {
+        } else if (qName.equalsIgnoreCase("city")) {
             acz.setCity(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("scannedcode")) {
             acz.setVerificationCode(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("userId")) {
             acz.setUserId(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("punchcardid")) {
             acz.setPunchCardId(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("orangeqrscannedvalue")) {
             acz.setOrangQrScannedValue(parameter_val);
             parameter_val = "";
-
         } else if (qName.equalsIgnoreCase("punch_card_downloadid")) {
             acz.setPunchCardDownloadId(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("oldpassword")) {
             acz.setOldPassword(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("feedbackText")) {
             acz.setFeedbackText(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("pincode")) {
             acz.setPin(parameter_val);
-
             parameter_val = "";
-        }
-        else if (qName.equalsIgnoreCase("business_name")) {
+        } else if (qName.equalsIgnoreCase("business_name")) {
             acz.setBusinessName(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("sessionid")) {
             acz.setSessionId(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("barcodevalue")) {
             acz.setBarcodeValue(parameter_val);
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("bussinessid")) {
             acz.setBusinessId(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("FBid")) {
             acz.setFbid(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("isfreepunch")) {
             acz.isFreePunch(parameter_val);
             parameter_val = "";
-
         } else if (qName.equalsIgnoreCase("transactionid")) {
             acz.setTid(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("is_mystery_punch")) {
             acz.setIsMysteryPunch(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("cardno")) {
             acz.setCardNumber(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("cvv")) {
             acz.setCvv(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("exp_date")) {
             acz.setExpirationDate(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("amount")) {
             acz.setAmount(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("paymentid")) {
             acz.setPaymentId(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("cardtype")) {
             acz.setCardType(parameter_val);
-
             parameter_val = "";
         } else if (qName.equalsIgnoreCase("expirestatus")) {
             acz.setExpireStatus(parameter_val);
-
             parameter_val = "";
         }
         else if (qName.equalsIgnoreCase("offerQRscannedcode")) {
-
             parameter_val = "";
         }
-
     }
 
     // public static void main(String[] args){
