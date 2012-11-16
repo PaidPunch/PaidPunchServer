@@ -1,8 +1,14 @@
 package com.app;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.server.Constants;
+import com.server.ProductsList;
 
+import java.io.IOException;
+
+import java.util.HashMap;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +31,23 @@ public class Products extends XmlHttpServlet  {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	PrintWriter out = response.getWriter();
-
-        out.println("Hello, world!");
-        out.close();
+            throws ServletException, IOException 
+    {
+    	try 
+    	{
+    		ServletContext context;
+    	    ServletConfig config = null;
+            config = getServletConfig();
+            context = config.getServletContext();
+            Constants.loadJDBCConstants(context);
+        } 
+    	catch (Exception e) 
+        {
+            Constants.logger.error(e);
+        }
+    	
+    	ProductsList products = ProductsList.getInstance();
+    	HashMap<String, Object> currentProducts = products.getMapOfProducts();
+    	xmlResponse(response, currentProducts);
     }
 }

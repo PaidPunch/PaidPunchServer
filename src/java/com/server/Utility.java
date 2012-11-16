@@ -203,7 +203,6 @@ public final class Utility {
         ByteArrayInputStream in = new ByteArrayInputStream(p_compressed_bytes);
         // ZipInputStream zin = new ZipInputStream(in);
         JarInputStream zin = new JarInputStream(in);
-        ZipEntry entry = zin.getNextEntry();
         byte[] buffer = new byte[1024];
         int offset = -1;
         while ((offset = zin.read(buffer)) != -1) {
@@ -308,7 +307,6 @@ public final class Utility {
     }
 
     public static Date HoureAdd(Date time1, int min) {
-        boolean l_result = false;
 
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(time1);
@@ -349,6 +347,7 @@ public final class Utility {
 
         FileInputStream in_File = new FileInputStream(file);
         in_File.read(l_data, 0, (int) file.length());
+        in_File.close();
         return l_data;
     }
 

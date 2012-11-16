@@ -40,27 +40,34 @@ public class Constants {
     public static String merchant_code_validate_time = "";
     public static String filereader = "";
     public static String applicationName = "";
+    
+    private static boolean initialized = false;
 
     // logger
 
-    public static void loadJDBCConstants(ServletContext context) {
-        init(context);
+    public static void loadJDBCConstants(ServletContext context) 
+    {
+    	if (!initialized)
+    	{
+    		init(context);
 
-        JDBC_DRIVER = context.getInitParameter("JDBC_DRIVER");
-        JDBC_URL = context.getInitParameter("JDBC_URL");
-        USERID = context.getInitParameter("USERID");
-        PASSWORD = context.getInitParameter("PASSWORD");
-        IP_URL = context.getInitParameter("URL");
-        LOGO_TEMP_PATH = context.getInitParameter("LOGO_TEMP_PATH");
-        PunchTime = context.getInitParameter("punchTime");
-        Pdf_Read_Path = context.getInitParameter("PDF_READ_PATH");
-        Pdf_Write_Path = context.getInitParameter("PDF_WRITE_PATH");
-        imagePath = context.getInitParameter("IMAGES_PATH");
-        logoActualPath = context.getInitParameter("LOGO_IMAGE_PATH");
-        merchant_code_validate_time = context.getInitParameter("merchant_code_validate_time");
-        filereader = context.getInitParameter("filereader");
-        applicationName = context.getInitParameter("application_name");
-        // HOST_IP = context.getInitParameter("HOST_IP");
+            JDBC_DRIVER = context.getInitParameter("JDBC_DRIVER");
+            JDBC_URL = context.getInitParameter("JDBC_URL");
+            USERID = context.getInitParameter("USERID");
+            PASSWORD = context.getInitParameter("PASSWORD");
+            IP_URL = context.getInitParameter("URL");
+            LOGO_TEMP_PATH = context.getInitParameter("LOGO_TEMP_PATH");
+            PunchTime = context.getInitParameter("punchTime");
+            Pdf_Read_Path = context.getInitParameter("PDF_READ_PATH");
+            Pdf_Write_Path = context.getInitParameter("PDF_WRITE_PATH");
+            imagePath = context.getInitParameter("IMAGES_PATH");
+            logoActualPath = context.getInitParameter("LOGO_IMAGE_PATH");
+            merchant_code_validate_time = context.getInitParameter("merchant_code_validate_time");
+            filereader = context.getInitParameter("filereader");
+            applicationName = context.getInitParameter("application_name");	
+            
+            initialized = true;
+    	}
     }
 
     public static void init(ServletContext context) {

@@ -2,6 +2,7 @@ package com.db;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -526,5 +527,48 @@ public class DataAccess {
                 return feedlist;
             }
         }
+    }
+    
+    public interface ResultSetHandler
+    {
+         void handle(ResultSet results, Object returnObj) throws SQLException;
+    }
+    
+    public static void queryDatabase(String queryString, Object returnObj, ResultSetHandler handler) throws SQLException 
+    {
+    	Connection l_conn = null;
+        PreparedStatement l_prepStat = null;
+        ResultSet l_rs = null;
+        try 
+        {
+            //l_conn = DataAccessController.createConnection();
+        	Class.forName(com.server.Constants.JDBC_DRIVER);
+        	l_conn = (Connection) DriverManager.getConnection(com.server.Constants.JDBC_URL, com.server.Constants.USERID,
+                    com.server.Constants.PASSWORD);
+            l_prepStat = l_conn.prepareStatement(queryString);
+            Constants.logger.info("l_callStat ::{}" + l_prepStat);
+            l_rs = l_prepStat.executeQuery();
+            handler.handle(l_rs, returnObj);
+            l_rs.close();
+            l_prepStat.close();
+            l_conn.close();
+        } 
+        catch (SQLException e) 
+        {
+            try 
+            {
+                l_prepStat.close();
+                l_conn.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+        catch (Exception e) 
+        {
+        	Constants.logger.error("" + e.getMessage());
+        	e.printStackTrace();
+        }
+
     }
 }
