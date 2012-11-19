@@ -46,7 +46,7 @@ public class ProductsList
 			String queryString = "SELECT * FROM products;";
 			try
 			{
-				DataAccess.queryDatabase(queryString, currentProducts, new ResultSetHandler()
+				DataAccess.queryDatabase(queryString, null, currentProducts, new ResultSetHandler()
 				{
 					 public void handle(ResultSet results, Object returnObj) throws SQLException
 	                 { 

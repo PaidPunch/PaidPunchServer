@@ -136,6 +136,10 @@
         <servlet-class>com.app.Update</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Users</servlet-name>
+        <servlet-class>com.app.Users</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Feedback</servlet-name>
         <servlet-class>com.app.Feedback</servlet-class>
     </servlet>
@@ -226,6 +230,10 @@
     <servlet-mapping>
         <servlet-name>Products</servlet-name>
         <url-pattern>/Products</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Users</servlet-name>
+        <url-pattern>/Users</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Punch</servlet-name>

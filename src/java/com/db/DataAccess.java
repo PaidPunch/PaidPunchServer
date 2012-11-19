@@ -531,34 +531,43 @@ public class DataAccess {
     
     public interface ResultSetHandler
     {
-         void handle(ResultSet results, Object returnObj) throws SQLException;
+    	void handle(ResultSet results, Object returnObj) throws SQLException;
     }
     
-    public static void queryDatabase(String queryString, Object returnObj, ResultSetHandler handler) throws SQLException 
+    public static void queryDatabase(String queryString, ArrayList<String> parameters, Object returnObj, ResultSetHandler handler) throws SQLException 
     {
-    	Connection l_conn = null;
-        PreparedStatement l_prepStat = null;
-        ResultSet l_rs = null;
+    	Connection conn = null;
+        PreparedStatement prepStat = null;
+        ResultSet results = null;
         try 
         {
-            //l_conn = DataAccessController.createConnection();
-        	Class.forName(com.server.Constants.JDBC_DRIVER);
-        	l_conn = (Connection) DriverManager.getConnection(com.server.Constants.JDBC_URL, com.server.Constants.USERID,
-                    com.server.Constants.PASSWORD);
-            l_prepStat = l_conn.prepareStatement(queryString);
-            Constants.logger.info("l_callStat ::{}" + l_prepStat);
-            l_rs = l_prepStat.executeQuery();
-            handler.handle(l_rs, returnObj);
-            l_rs.close();
-            l_prepStat.close();
-            l_conn.close();
+        	conn = DataAccessController.createConnection();
+            
+            // Creating SQL query string
+        	prepStat = conn.prepareStatement(queryString);
+        	if (parameters != null)
+        	{
+                int index = 1;
+                for (String param: parameters)
+                {
+                	prepStat.setString(index, param);
+                	index++;
+                }	
+        	}
+            
+            Constants.logger.info("callStat ::{}" + prepStat);
+            results = prepStat.executeQuery();
+            handler.handle(results, returnObj);
+            results.close();
+            prepStat.close();
+            conn.close();
         } 
         catch (SQLException e) 
         {
             try 
             {
-                l_prepStat.close();
-                l_conn.close();
+            	prepStat.close();
+                conn.close();
                 Constants.logger.error("Error : " + e.getMessage());
             } catch (Exception ex) {
                 Constants.logger.error("Error : " + ex.getMessage());

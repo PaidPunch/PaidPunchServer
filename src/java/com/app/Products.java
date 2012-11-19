@@ -16,6 +16,22 @@ import javax.servlet.http.HttpServletResponse;
 public class Products extends XmlHttpServlet  {
 
 	private static final long serialVersionUID = 4628293433991773440L;
+	
+	@Override
+    public void init(ServletConfig config) throws ServletException
+    {
+	   super.init(config);
+
+	   try
+	   {
+		   ServletContext context = config.getServletContext();
+		   Constants.loadJDBCConstants(context);
+	   }
+	   catch(Exception e)
+	   {
+		   Constants.logger.error(e);
+	   }
+    }
 
 	/**
      * Handles the HTTP <code>GET</code> method.
@@ -32,20 +48,7 @@ public class Products extends XmlHttpServlet  {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
-    {
-    	try 
-    	{
-    		ServletContext context;
-    	    ServletConfig config = null;
-            config = getServletConfig();
-            context = config.getServletContext();
-            Constants.loadJDBCConstants(context);
-        } 
-    	catch (Exception e) 
-        {
-            Constants.logger.error(e);
-        }
-    	
+    {    	
     	ProductsList products = ProductsList.getInstance();
     	HashMap<String, Object> currentProducts = products.getMapOfProducts();
     	xmlResponse(response, currentProducts);

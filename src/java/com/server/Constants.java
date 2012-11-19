@@ -14,6 +14,16 @@ public class Constants {
     public static Logger logger = Logger.getLogger(Constants.class.getName());
     public final static String SQL_DATE_FORMAT = "yyyyMMdd";
     public final static String SQL_TIME_FORMAT = "HHmm";
+    
+    // Parameter names used for receiving input and providing output to client
+    public static String USERID_PARAMNAME = "user_id";
+    public static String NAME_PARAMNAME = "name";
+    public static String EMAIL_PARAMNAME = "email";
+    public static String FBID_PARAMNAME = "fbid";
+    public static String CREDIT_PARAMNAME = "credit";
+    public static String REFERCODE_PARAMNAME = "refer_code";
+    public static String USERCODE_PARAMNAME = "user_code";
+    public static String SESSIONID_PARAMNAME = "sessionid";
 
     // Used in database connection
     public static String JDBC_DRIVER = "";
