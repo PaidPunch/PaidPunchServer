@@ -16,6 +16,7 @@ public class Constants {
     public final static String SQL_TIME_FORMAT = "HHmm";
     
     // Parameter names used for receiving input and providing output to client
+    public static String TXTYPE_PARAMNAME = "txtype";
     public static String USERID_PARAMNAME = "user_id";
     public static String NAME_PARAMNAME = "name";
     public static String EMAIL_PARAMNAME = "email";

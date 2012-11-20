@@ -529,6 +529,41 @@ public class DataAccess {
         }
     }
     
+    /**
+     *  Abstraction function calls for database queries and updates
+     * @author Aaron
+    **/
+    
+    private static PreparedStatement prepareSQLStatement(Connection conn, String queryString, ArrayList<String> parameters)
+    {
+    	PreparedStatement prepStat = null;
+    	try
+    	{
+            prepStat = conn.prepareStatement(queryString);
+        	if (parameters != null)
+        	{
+                int index = 1;
+                for (String param: parameters)
+                {
+                	prepStat.setString(index, param);
+                	index++;
+                }	
+        	}
+    	}
+        catch (SQLException e) 
+        {
+            try 
+            {
+            	prepStat.close();
+                conn.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+    	return prepStat;
+    }
+    
     public interface ResultSetHandler
     {
     	void handle(ResultSet results, Object returnObj) throws SQLException;
@@ -544,16 +579,7 @@ public class DataAccess {
         	conn = DataAccessController.createConnection();
             
             // Creating SQL query string
-        	prepStat = conn.prepareStatement(queryString);
-        	if (parameters != null)
-        	{
-                int index = 1;
-                for (String param: parameters)
-                {
-                	prepStat.setString(index, param);
-                	index++;
-                }	
-        	}
+        	prepStat = prepareSQLStatement(conn, queryString, parameters);
             
             Constants.logger.info("callStat ::{}" + prepStat);
             results = prepStat.executeQuery();
@@ -579,5 +605,41 @@ public class DataAccess {
         	e.printStackTrace();
         }
 
+    }
+    
+    public static boolean updateDatabase(String queryString, ArrayList<String> parameters) throws SQLException 
+    {
+    	Connection conn = null;
+        PreparedStatement prepStat = null;
+        try 
+        {
+        	conn = DataAccessController.createConnection();
+            
+            // Creating SQL query string
+        	prepStat = prepareSQLStatement(conn, queryString, parameters);
+            
+            Constants.logger.info("callStat ::{}" + prepStat);
+            int result = prepStat.executeUpdate();
+            prepStat.close();
+            conn.close();
+            return (result != 0);
+        } 
+        catch (SQLException e) 
+        {
+            try 
+            {
+            	prepStat.close();
+                conn.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+        catch (Exception e) 
+        {
+        	Constants.logger.error("" + e.getMessage());
+        	e.printStackTrace();
+        }
+        return false;
     }
 }
