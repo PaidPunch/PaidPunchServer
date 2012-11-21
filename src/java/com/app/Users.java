@@ -1,6 +1,7 @@
 package com.app;
 
 import com.db.DataAccess;
+import com.db.DataAccessController;
 import com.db.DataAccess.ResultSetHandler;
 import com.jspservlets.SignupAddPunch;
 import com.server.Constants;
@@ -153,9 +154,10 @@ public class Users extends XmlHttpServlet  {
 		return exists;
 	}
 	
-	private void registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
+	private boolean registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
             throws ServletException, IOException 
 	{
+		boolean success = false;
 		String fbid = requestInputs.get(Constants.FBID_PARAMNAME);
 		if (!doesFBIDExist(fbid))
 		{
@@ -181,9 +183,10 @@ public class Users extends XmlHttpServlet  {
 	            parameters.add(requestInputs.get(Constants.REFERCODE_PARAMNAME));
 	            // Generate a length 5 random alphanumeric code for the new user
 	            parameters.add(getRandomAlphaNumericCode(5));
-				boolean success = DataAccess.updateDatabase(queryString, parameters);	
+			    success = DataAccess.updateDatabase(queryString, parameters);	
 				if (success)
 				{
+					// Get the first name from the name field
 					int spaceIndex = name.indexOf(' ');
 					String firstName;
 					if (spaceIndex != -1)
@@ -195,6 +198,7 @@ public class Users extends XmlHttpServlet  {
 						firstName = name;
 					}
 					
+					// Send a welcome/confirmation mail to the person who signed up
                     SignupAddPunch emailsender = new SignupAddPunch();
                     emailsender.sendConfirmationEmail(email, firstName);
                     Constants.logger.info("Created new user with name " + name + " and email " + email);
@@ -217,6 +221,22 @@ public class Users extends XmlHttpServlet  {
     		Constants.logger.error("Error: Facebook id " + fbid + " is already being used");
     		errorResponse(response, "403", "Cannot register. Facebook account is already in use.");
 		}
+		return success;
+	}
+	
+	private void addRewardCreditToReferrer(String userid, String credit)
+	{
+		// Update referrer with reward credit
+		float updatedAmount = Float.parseFloat(credit) + rewardCreditValue;
+		int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "credit", Float.toString(updatedAmount));
+        if (res == 1)
+        {
+        	Constants.logger.info("Updated credit with referral reward for userid: " + userid);
+        }
+        else
+        {
+        	Constants.logger.error("Unable to update credit with referral reward for userid: " + userid);
+        }
 	}
 
 	/**
@@ -244,7 +264,14 @@ public class Users extends XmlHttpServlet  {
         	ArrayList<HashMap<String,String>> resultsArray = getReferringUser(refer_code);
         	if (resultsArray.size() == 1)
         	{
-        		registerFBUser(request, response, requestInputs);
+        		boolean success = false;
+        		success = registerFBUser(request, response, requestInputs);
+        		if (success)
+        		{
+        			// Get the referring user's info and then call function to reward them
+        			HashMap<String, String> userParams = resultsArray.get(0);
+        			addRewardCreditToReferrer(userParams.get(Constants.USERID_PARAMNAME), userParams.get(Constants.CREDIT_PARAMNAME));
+        		}
         	}
         	else if (resultsArray.size() > 1)
         	{
