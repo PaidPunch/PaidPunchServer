@@ -20,6 +20,8 @@ public class Constants {
     public static String USERID_PARAMNAME = "user_id";
     public static String NAME_PARAMNAME = "name";
     public static String EMAIL_PARAMNAME = "email";
+    public static String MOBILENO_PARAMNAME = "mobile_no";
+    public static String PASSWORD_PARAMNAME = "password";
     public static String FBID_PARAMNAME = "fbid";
     public static String CREDIT_PARAMNAME = "credit";
     public static String REFERCODE_PARAMNAME = "refer_code";

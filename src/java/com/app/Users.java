@@ -24,6 +24,8 @@ public class Users extends XmlHttpServlet  {
 
 	private static final long serialVersionUID = -9044506610414211667L;
 	private static final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String emailRegistration = "EMAIL-REGISTER";
+	private static final String facebookRegistration = "FACEBOOK-REGISTER";
 	private static final float rewardCreditValue = (float)5.00;
 	
 	private ArrayList<String> postElements;
@@ -53,6 +55,8 @@ public class Users extends XmlHttpServlet  {
 		postElements = new ArrayList<String>();
 		postElements.add(Constants.TXTYPE_PARAMNAME);
 		postElements.add(Constants.NAME_PARAMNAME);
+		postElements.add(Constants.MOBILENO_PARAMNAME);
+		postElements.add(Constants.PASSWORD_PARAMNAME);
 		postElements.add(Constants.EMAIL_PARAMNAME);
 		postElements.add(Constants.FBID_PARAMNAME);
 		postElements.add(Constants.REFERCODE_PARAMNAME);
@@ -113,17 +117,35 @@ public class Users extends XmlHttpServlet  {
 		return resultsArray;
 	}
 	
-	// Check if an FBID exists already for this account
-	private boolean doesFBIDExist(String fbid)
+	private void sendWelcomeEmail(String name, String email)
+	{
+		// Get the first name from the name field
+		int spaceIndex = name.indexOf(' ');
+		String firstName;
+		if (spaceIndex != -1)
+		{
+			firstName = name.substring(0, spaceIndex);
+		}
+		else
+		{
+			firstName = name;
+		}
+		
+		// Send a welcome/confirmation mail to the person who signed up
+        SignupAddPunch emailsender = new SignupAddPunch();
+        emailsender.sendConfirmationEmail(email, firstName);
+        Constants.logger.info("Created new user with name " + name + " and email " + email);
+	}
+	
+	private boolean doesAccountExistInternal(String queryString, String value)
 	{
 		boolean exists = true;
-		String queryString = "SELECT user_id FROM app_user a where fbid=?;";
-		if (fbid != null)
+		if (value != null)
 		{
 			try
 			{
 				ArrayList<String> parameters = new ArrayList<String>();
-				parameters.add(fbid);
+				parameters.add(value);
 				ArrayList<Boolean> result = new ArrayList<Boolean>();
 				DataAccess.queryDatabase(queryString, parameters, result, new ResultSetHandler()
 				{
@@ -154,6 +176,76 @@ public class Users extends XmlHttpServlet  {
 		return exists;
 	}
 	
+	// Check if an email account also exists already for this user
+	private boolean doesEmailAccountExist(String email)
+	{
+		String queryString = "SELECT user_id FROM app_user WHERE email_id=? and isfbaccount='N';";
+		return doesAccountExistInternal(queryString, email);
+	}
+	
+	// Check if an FBID exists already for this account
+	private boolean doesFBIDExist(String fbid)
+	{
+		String queryString = "SELECT user_id FROM app_user WHERE fbid=?;";
+		return doesAccountExistInternal(queryString, fbid);
+	}
+	
+	private boolean registerEmailUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
+            throws ServletException, IOException 
+	{
+		boolean success = false;
+		String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
+		if (!doesEmailAccountExist(email))
+		{
+			try
+			{
+				// Insert new user into database
+				java.sql.Time time = new java.sql.Time(new Date().getTime());
+	            java.sql.Date date = new java.sql.Date(new Date().getTime());
+	            String name = requestInputs.get(Constants.NAME_PARAMNAME);
+	            String queryString = "insert into app_user " +
+	                    " (username,email_id,mobile_no,password,pincode,user_status,isemailverified,time,date,isfbaccount,credit,refer_code,user_code) " +
+	            		"values(?,?,?,?,0,'N','N','" + 
+	                    time + "','" + 
+	            		date + 
+	            		"','N'," + 
+	    	            rewardCreditValue + 
+	    	            ",?,?);";
+
+	            ArrayList<String> parameters = new ArrayList<String>();
+	            parameters.add(name);
+	            parameters.add(email);
+	            parameters.add(requestInputs.get(Constants.MOBILENO_PARAMNAME));
+				parameters.add(requestInputs.get(Constants.PASSWORD_PARAMNAME));
+	            parameters.add(requestInputs.get(Constants.REFERCODE_PARAMNAME));
+	            // Generate a length 5 random alphanumeric code for the new user
+	            parameters.add(getRandomAlphaNumericCode(5));
+			    success = DataAccess.updateDatabase(queryString, parameters);	
+				if (success)
+				{
+					sendWelcomeEmail(name, email);
+				}
+				else
+				{
+					// The referral code returned more than a single user. Return an error after logging.
+		    		Constants.logger.error("Error: Unable to register new user");
+		    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
+				}
+			}
+			catch (Exception ex)
+			{
+				Constants.logger.error("Error : " + ex.getMessage());
+			}
+		}
+		else
+		{
+			// The referral code returned more than a single user. Return an error after logging.
+    		Constants.logger.error("Error: Email " + email + " is already being used");
+    		errorResponse(response, "403", "Cannot register. Email is already in use.");
+		}
+		return success;
+	}
+	
 	private boolean registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
             throws ServletException, IOException 
 	{
@@ -168,7 +260,7 @@ public class Users extends XmlHttpServlet  {
 	            java.sql.Date date = new java.sql.Date(new Date().getTime());
 	            String name = requestInputs.get(Constants.NAME_PARAMNAME);
 	            String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
-	            String queryString = "insert into app_user" + "" +
+	            String queryString = "insert into app_user " +
 	            		"(username,email_id,user_status,isemailverified,Date,Time,sessionid,isfbaccount,fbid,credit,refer_code,user_code)" + 
 	            		"values(?,?,'Y','Y','" + 
 	            		date + "','" + 
@@ -186,22 +278,7 @@ public class Users extends XmlHttpServlet  {
 			    success = DataAccess.updateDatabase(queryString, parameters);	
 				if (success)
 				{
-					// Get the first name from the name field
-					int spaceIndex = name.indexOf(' ');
-					String firstName;
-					if (spaceIndex != -1)
-					{
-						firstName = name.substring(0, spaceIndex);
-					}
-					else
-					{
-						firstName = name;
-					}
-					
-					// Send a welcome/confirmation mail to the person who signed up
-                    SignupAddPunch emailsender = new SignupAddPunch();
-                    emailsender.sendConfirmationEmail(email, firstName);
-                    Constants.logger.info("Created new user with name " + name + " and email " + email);
+					sendWelcomeEmail(name, email);
 				}
 				else
 				{
@@ -265,7 +342,34 @@ public class Users extends XmlHttpServlet  {
         	if (resultsArray.size() == 1)
         	{
         		boolean success = false;
-        		success = registerFBUser(request, response, requestInputs);
+        		String registrationType = requestInputs.get(Constants.TXTYPE_PARAMNAME);
+        		if (registrationType != null)
+        		{
+        			if (registrationType.equalsIgnoreCase(emailRegistration))
+        			{
+        				// Perform email registration
+                		success = registerEmailUser(request, response, requestInputs);
+        			}
+        			else if (registrationType.equalsIgnoreCase(facebookRegistration))
+        			{
+        				// Perform Facebook registration
+                		success = registerFBUser(request, response, requestInputs);
+        			}
+        			else
+        			{
+        				// Unknown registration type specified by caller
+                		Constants.logger.error("Error: unknown registration type");
+                		errorResponse(response, "404", "Registration error");
+        			}
+        		}
+        		else
+        		{
+        			// No registration type specified by caller
+            		Constants.logger.error("Error: null registration type");
+            		errorResponse(response, "404", "Registration error");
+        		}
+        		
+        		// Successfully created user, now reward the referring user
         		if (success)
         		{
         			// Get the referring user's info and then call function to reward them
