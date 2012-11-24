@@ -2,12 +2,13 @@ package com.db;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 
 import com.server.Constants;
@@ -569,7 +570,9 @@ public class DataAccess {
     	void handle(ResultSet results, Object returnObj) throws SQLException;
     }
     
-    public static void queryDatabase(String queryString, ArrayList<String> parameters, Object returnObj, ResultSetHandler handler) throws SQLException 
+    // This function allows the caller to customize a delegate function that performs special processing on the
+    // results before returning.
+    public static void queryDatabaseCustom(String queryString, ArrayList<String> parameters, Object returnObj, ResultSetHandler handler) throws SQLException 
     {
     	Connection conn = null;
         PreparedStatement prepStat = null;
@@ -642,4 +645,42 @@ public class DataAccess {
         }
         return false;
     }
+    
+    // This function is used if the caller simply wishes to get an array of hashmaps containing
+    // the list of results from the query.
+    public static ArrayList<HashMap<String,String>> queryDatabase(String queryString, ArrayList<String> parameters)
+	{
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		try
+		{
+			DataAccess.queryDatabaseCustom(queryString, parameters, resultsArray, new ResultSetHandler()
+			{
+				 public void handle(ResultSet results, Object returnObj) throws SQLException
+                 { 						 
+					 // The cast here is a well-known one, so the suppression is OK
+					 @SuppressWarnings("unchecked")
+					 ArrayList<HashMap<String,String>> resultsArray = (ArrayList<HashMap<String,String>>)returnObj;
+                     while(results.next())
+                     {                    	 
+                    	 // Populate information
+                    	 HashMap<String,String> current = new HashMap<String,String>();
+                    	 
+                    	 ResultSetMetaData rsmd = results.getMetaData();
+                    	 int numColumns = rsmd.getColumnCount();
+                    	 for(int i=1; i <= numColumns; i++)
+                    	 {
+                    		 current.put(rsmd.getColumnName(i),results.getString(i));
+                    	 }
+                    	 
+                    	 resultsArray.add(current);
+                     }
+                 }
+			});
+		}
+		catch (SQLException ex)
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return resultsArray;
+	}
 }

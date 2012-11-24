@@ -24,9 +24,13 @@ public class Constants {
     public static String PASSWORD_PARAMNAME = "password";
     public static String FBID_PARAMNAME = "fbid";
     public static String CREDIT_PARAMNAME = "credit";
+    public static String CREDITS_PARAMNAME = "credits";
+    public static String DISABLED_PARAMNAME = "disabled";
     public static String REFERCODE_PARAMNAME = "refer_code";
     public static String USERCODE_PARAMNAME = "user_code";
     public static String SESSIONID_PARAMNAME = "sessionid";
+    public static String PUNCHCARDID_PARAMNAME = "punchcardid";
+    public static String BUSINESSID_PARAMNAME = "business_userid";
 
     // Used in database connection
     public static String JDBC_DRIVER = "";

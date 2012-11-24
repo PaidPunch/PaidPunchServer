@@ -83,36 +83,13 @@ public class Users extends XmlHttpServlet  {
 	// Get information about user associated with the referral code used by new registering user
 	private ArrayList<HashMap<String,String>> getReferringUser(String refer_code)
 	{
-		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String queryString = "SELECT user_id, credit FROM app_user WHERE user_code = ?;";
+		ArrayList<HashMap<String,String>> resultsArray = null;
 		if (refer_code != null)
 		{
-			try
-			{
-				ArrayList<String> parameters = new ArrayList<String>();
-				parameters.add(refer_code);
-				DataAccess.queryDatabase(queryString, parameters, resultsArray, new ResultSetHandler()
-				{
-					 public void handle(ResultSet results, Object returnObj) throws SQLException
-	                 { 						 
-						 // The cast here is a well-known one, so the suppression is OK
-						 @SuppressWarnings("unchecked")
-						 ArrayList<HashMap<String,String>> resultsArray = (ArrayList<HashMap<String,String>>)returnObj;
-	                     while(results.next())
-	                     {                    	 
-	                    	 // Populate user information
-	                    	 HashMap<String,String> current = new HashMap<String,String>();
-	                    	 current.put(Constants.USERID_PARAMNAME, results.getString(Constants.USERID_PARAMNAME));
-	                    	 current.put(Constants.CREDIT_PARAMNAME, results.getString(Constants.CREDIT_PARAMNAME));
-	                    	 resultsArray.add(current);
-	                     }
-	                 }
-				});
-			}
-			catch (SQLException ex)
-			{
-				Constants.logger.error("Error : " + ex.getMessage());
-			}
+			String queryString = "SELECT user_id, credit FROM app_user WHERE user_code = ?;";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(refer_code);
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
 		}
 		return resultsArray;
 	}
@@ -147,7 +124,7 @@ public class Users extends XmlHttpServlet  {
 				ArrayList<String> parameters = new ArrayList<String>();
 				parameters.add(value);
 				ArrayList<Boolean> result = new ArrayList<Boolean>();
-				DataAccess.queryDatabase(queryString, parameters, result, new ResultSetHandler()
+				DataAccess.queryDatabaseCustom(queryString, parameters, result, new ResultSetHandler()
 				{
 					 public void handle(ResultSet results, Object returnObj) throws SQLException
 	                 { 						 
@@ -395,7 +372,7 @@ public class Users extends XmlHttpServlet  {
     }
     
 	/**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP <code>PUT</code> method.
      * 
      * @param request
      *            servlet request

@@ -132,6 +132,10 @@
         <servlet-class>com.app.Punch</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Punches</servlet-name>
+        <servlet-class>com.app.Punches</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Update</servlet-name>
         <servlet-class>com.app.Update</servlet-class>
     </servlet>

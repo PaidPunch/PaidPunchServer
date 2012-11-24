@@ -85,6 +85,32 @@ public class ProductsList
 		throw new CloneNotSupportedException();
 	}
 	
+	public Product getProductByID(String product_id, boolean enabledOnly)
+	{
+		// Refresh the data if necessary
+		refreshProductsFromDatabaseIfNecessary();
+		
+		for (Product current : currentProducts)
+		{
+			// Found product that matches requested ID
+			if (current.getProductId().equalsIgnoreCase(product_id))
+			{
+				// Either the caller doesn't care whether product is enabled,
+				// or product is enabled
+				if (!enabledOnly || !current.getDisabled())
+				{
+					return current;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public ArrayList<Product> getProducts()
 	{
 		// Refresh the data if necessary
