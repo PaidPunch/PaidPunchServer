@@ -167,10 +167,10 @@ public class Users extends XmlHttpServlet  {
 		return doesAccountExistInternal(queryString, fbid);
 	}
 	
-	private boolean registerEmailUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
+	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
             throws ServletException, IOException 
 	{
-		boolean success = false;
+		int user_id = 0;
 		String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
 		if (!doesEmailAccountExist(email))
 		{
@@ -197,10 +197,11 @@ public class Users extends XmlHttpServlet  {
 	            parameters.add(requestInputs.get(Constants.REFERCODE_PARAMNAME));
 	            // Generate a length 5 random alphanumeric code for the new user
 	            parameters.add(getRandomAlphaNumericCode(5));
-			    success = DataAccess.updateDatabase(queryString, parameters);	
-				if (success)
+	            user_id = DataAccess.insertDatabase(queryString, parameters);	
+				if (user_id != 0)
 				{
-					sendWelcomeEmail(name, email);
+					SignupAddPunch mail = new SignupAddPunch();
+	                mail.sendEmail_For_app_user(Integer.toString(user_id), email);
 				}
 				else
 				{
@@ -220,13 +221,13 @@ public class Users extends XmlHttpServlet  {
     		Constants.logger.error("Error: Email " + email + " is already being used");
     		errorResponse(response, "403", "Cannot register. Email is already in use.");
 		}
-		return success;
+		return user_id;
 	}
 	
-	private boolean registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
+	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
             throws ServletException, IOException 
 	{
-		boolean success = false;
+		int user_id = 0;
 		String fbid = requestInputs.get(Constants.FBID_PARAMNAME);
 		if (!doesFBIDExist(fbid))
 		{
@@ -252,8 +253,8 @@ public class Users extends XmlHttpServlet  {
 	            parameters.add(requestInputs.get(Constants.REFERCODE_PARAMNAME));
 	            // Generate a length 5 random alphanumeric code for the new user
 	            parameters.add(getRandomAlphaNumericCode(5));
-			    success = DataAccess.updateDatabase(queryString, parameters);	
-				if (success)
+	            user_id = DataAccess.insertDatabase(queryString, parameters);	
+				if (user_id != 0)
 				{
 					sendWelcomeEmail(name, email);
 				}
@@ -275,7 +276,23 @@ public class Users extends XmlHttpServlet  {
     		Constants.logger.error("Error: Facebook id " + fbid + " is already being used");
     		errorResponse(response, "403", "Cannot register. Facebook account is already in use.");
 		}
-		return success;
+		return user_id;
+	}
+	
+	private HashMap<String,Object> createEmailRegistrationResponse(int new_user_id, HashMap<String, String> requestInputs)
+	{
+		HashMap<String, Object> responseMap = new HashMap<String,Object>();
+		responseMap.put("Status", "00");
+		responseMap.put("userid", new_user_id);
+		responseMap.put("name", requestInputs.get(Constants.NAME_PARAMNAME));
+		String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
+		responseMap.put("email", email);
+		responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
+		String statusMessage =  "You’re almost done!"
+                + " We’ve sent an email to " + email + "."
+                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
+		responseMap.put("statusMessage", statusMessage);
+		return responseMap;
 	}
 	
 	private void addRewardCreditToReferrer(String userid, String credit)
@@ -309,6 +326,7 @@ public class Users extends XmlHttpServlet  {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {    	
+    	HashMap<String, Object> responseMap = null;
     	float expectedAPIVersion = getExpectedVersion(request);
     	if (validateVersion(response, expectedAPIVersion))
     	{
@@ -318,19 +336,27 @@ public class Users extends XmlHttpServlet  {
         	ArrayList<HashMap<String,String>> resultsArray = getReferringUser(refer_code);
         	if (resultsArray.size() == 1)
         	{
-        		boolean success = false;
+        		int new_user_id = 0;
         		String registrationType = requestInputs.get(Constants.TXTYPE_PARAMNAME);
         		if (registrationType != null)
         		{
         			if (registrationType.equalsIgnoreCase(emailRegistration))
         			{
         				// Perform email registration
-                		success = registerEmailUser(request, response, requestInputs);
+        				new_user_id = registerEmailUser(request, response, requestInputs);
+        				if (new_user_id != 0)
+                		{
+        					responseMap = createEmailRegistrationResponse(new_user_id, requestInputs);
+                		}
         			}
         			else if (registrationType.equalsIgnoreCase(facebookRegistration))
         			{
         				// Perform Facebook registration
-                		success = registerFBUser(request, response, requestInputs);
+        				new_user_id = registerFBUser(request, response, requestInputs);
+        				if (new_user_id != 0)
+                		{
+        					
+                		}
         			}
         			else
         			{
@@ -347,11 +373,14 @@ public class Users extends XmlHttpServlet  {
         		}
         		
         		// Successfully created user, now reward the referring user
-        		if (success)
+        		if (new_user_id != 0)
         		{
         			// Get the referring user's info and then call function to reward them
         			HashMap<String, String> userParams = resultsArray.get(0);
         			addRewardCreditToReferrer(userParams.get(Constants.USERID_PARAMNAME), userParams.get(Constants.CREDIT_PARAMNAME));
+        	    	
+        			// Send a response to caller
+        			xmlResponse(response, responseMap);
         		}
         	}
         	else if (resultsArray.size() > 1)
@@ -367,8 +396,6 @@ public class Users extends XmlHttpServlet  {
         		errorResponse(response, "404", "The referral code is invalid");
         	}
     	}
-
-    	//xmlResponse(response, currentProducts);
     }
     
 	/**

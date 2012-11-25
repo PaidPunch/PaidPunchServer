@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -537,10 +538,22 @@ public class DataAccess {
     
     private static PreparedStatement prepareSQLStatement(Connection conn, String queryString, ArrayList<String> parameters)
     {
+    	return prepareSQLStatement(conn, queryString, parameters, false);
+    }
+    
+    private static PreparedStatement prepareSQLStatement(Connection conn, String queryString, ArrayList<String> parameters, boolean getGeneratedKeys)
+    {
     	PreparedStatement prepStat = null;
     	try
     	{
-            prepStat = conn.prepareStatement(queryString);
+    		if (getGeneratedKeys)
+    		{
+                prepStat = conn.prepareStatement(queryString, Statement.RETURN_GENERATED_KEYS);
+    		}
+    		else
+    		{
+                prepStat = conn.prepareStatement(queryString);	
+    		}
         	if (parameters != null)
         	{
                 int index = 1;
@@ -608,6 +621,59 @@ public class DataAccess {
         	e.printStackTrace();
         }
 
+    }
+    
+    public static int insertDatabase(String queryString, ArrayList<String> parameters) throws SQLException 
+    {
+    	Connection conn = null;
+        PreparedStatement prepStat = null;
+        int new_id = 0;
+        try 
+        {
+        	conn = DataAccessController.createConnection();
+            
+            // Creating SQL query string
+        	prepStat = prepareSQLStatement(conn, queryString, parameters, true);
+            
+            Constants.logger.info("callStat ::{}" + prepStat);
+            int result = prepStat.executeUpdate();
+            if (result != 0)
+            {
+            	ResultSet generatedKeys = prepStat.getGeneratedKeys();
+            	if (generatedKeys.next())
+            	{
+            		new_id = generatedKeys.getInt(1);
+            	}
+            	else
+            	{
+            		Constants.logger.error("Error: Could not retrieve generated keys for " + prepStat);
+            	}
+            }
+            else
+            {
+            	Constants.logger.error("Error: Sql execution failed for " + prepStat);
+            }
+            prepStat.close();
+            conn.close();
+            return new_id;
+        } 
+        catch (SQLException e) 
+        {
+            try 
+            {
+            	prepStat.close();
+                conn.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+        catch (Exception e) 
+        {
+        	Constants.logger.error("" + e.getMessage());
+        	e.printStackTrace();
+        }
+        return new_id;
     }
     
     public static boolean updateDatabase(String queryString, ArrayList<String> parameters) throws SQLException 
