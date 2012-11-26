@@ -282,7 +282,7 @@ public class Users extends XmlHttpServlet  {
 	private HashMap<String,Object> createEmailRegistrationResponse(int new_user_id, HashMap<String, String> requestInputs)
 	{
 		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-		responseMap.put("Status", "00");
+		responseMap.put("statusCode", "00");
 		responseMap.put("userid", new_user_id);
 		responseMap.put("name", requestInputs.get(Constants.NAME_PARAMNAME));
 		String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
@@ -292,6 +292,17 @@ public class Users extends XmlHttpServlet  {
                 + " We’ve sent an email to " + email + "."
                 + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
 		responseMap.put("statusMessage", statusMessage);
+		return responseMap;
+	}
+	
+	private HashMap<String,Object> createFacebookRegistrationResponse(int new_user_id, HashMap<String, String> requestInputs)
+	{
+		HashMap<String, Object> responseMap = new HashMap<String,Object>();
+		responseMap.put("statusCode", "00");
+		responseMap.put("userid", new_user_id);
+		responseMap.put("sessionid", requestInputs.get(Constants.SESSIONID_PARAMNAME));
+		responseMap.put("is_profileid_created", "false");
+		responseMap.put("statusMessage", "Registration successful!");
 		return responseMap;
 	}
 	
@@ -355,7 +366,7 @@ public class Users extends XmlHttpServlet  {
         				new_user_id = registerFBUser(request, response, requestInputs);
         				if (new_user_id != 0)
                 		{
-        					
+        					responseMap = createFacebookRegistrationResponse(new_user_id, requestInputs);
                 		}
         			}
         			else
