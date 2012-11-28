@@ -303,6 +303,12 @@ public class Punches extends XmlHttpServlet
             	            	if (buyPunch(response, user_id, punchcardid, cost, punch_num, expirydays))
             	            	{
             	            		// Provide successful response to caller
+            	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
+            	            		responseMap.put("statusCode", "00");
+            	            		responseMap.put("statusMessage", "Punch card purchased successfully");
+            	            		
+            	            		// Send a response to caller
+            	        			xmlResponse(response, responseMap);
             	            	}
             	            }
             	            else
