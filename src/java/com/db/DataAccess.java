@@ -583,17 +583,12 @@ public class DataAccess {
     	void handle(ResultSet results, Object returnObj) throws SQLException;
     }
     
-    // This function allows the caller to customize a delegate function that performs special processing on the
-    // results before returning.
-    public static void queryDatabaseCustom(String queryString, ArrayList<String> parameters, Object returnObj, ResultSetHandler handler) throws SQLException 
+    public static void queryDatabaseCustomWithExistingConnection(Connection conn, String queryString, ArrayList<String> parameters, Object returnObj, ResultSetHandler handler) throws SQLException 
     {
-    	Connection conn = null;
         PreparedStatement prepStat = null;
         ResultSet results = null;
         try 
-        {
-        	conn = DataAccessController.createConnection();
-            
+        {            
             // Creating SQL query string
         	prepStat = prepareSQLStatement(conn, queryString, parameters);
             
@@ -602,14 +597,12 @@ public class DataAccess {
             handler.handle(results, returnObj);
             results.close();
             prepStat.close();
-            conn.close();
         } 
         catch (SQLException e) 
         {
             try 
             {
             	prepStat.close();
-                conn.close();
                 Constants.logger.error("Error : " + e.getMessage());
             } catch (Exception ex) {
                 Constants.logger.error("Error : " + ex.getMessage());
@@ -623,15 +616,12 @@ public class DataAccess {
 
     }
     
-    public static int insertDatabase(String queryString, ArrayList<String> parameters) throws SQLException 
+    public static int insertDatabaseWithExistingConnection(Connection conn, String queryString, ArrayList<String> parameters) throws SQLException 
     {
-    	Connection conn = null;
         PreparedStatement prepStat = null;
         int new_id = 0;
         try 
-        {
-        	conn = DataAccessController.createConnection();
-            
+        {         
             // Creating SQL query string
         	prepStat = prepareSQLStatement(conn, queryString, parameters, true);
             
@@ -654,7 +644,6 @@ public class DataAccess {
             	Constants.logger.error("Error: Sql execution failed for " + prepStat);
             }
             prepStat.close();
-            conn.close();
             return new_id;
         } 
         catch (SQLException e) 
@@ -662,6 +651,93 @@ public class DataAccess {
             try 
             {
             	prepStat.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+        catch (Exception e) 
+        {
+        	Constants.logger.error("" + e.getMessage());
+        	e.printStackTrace();
+        }
+        return new_id;
+    }
+    
+    public static boolean updateDatabaseWithExistingConnection(Connection conn, String queryString, ArrayList<String> parameters) throws SQLException 
+    {
+        PreparedStatement prepStat = null;
+        try 
+        {
+            // Creating SQL query string
+        	prepStat = prepareSQLStatement(conn, queryString, parameters);
+            
+            Constants.logger.info("callStat ::{}" + prepStat);
+            int result = prepStat.executeUpdate();
+            prepStat.close();
+            return (result != 0);
+        } 
+        catch (SQLException e) 
+        {
+            try 
+            {
+            	prepStat.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+        catch (Exception e) 
+        {
+        	Constants.logger.error("" + e.getMessage());
+        	e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // This function allows the caller to customize a delegate function that performs special processing on the
+    // results before returning.
+    public static void queryDatabaseCustom(String queryString, ArrayList<String> parameters, Object returnObj, ResultSetHandler handler) throws SQLException 
+    {
+    	Connection conn = null;
+        try 
+        {
+        	conn = DataAccessController.createConnection();	
+            queryDatabaseCustomWithExistingConnection(conn, queryString, parameters, returnObj, handler);
+            conn.close();
+        } 
+        catch (SQLException e) 
+        {
+            try 
+            {
+                conn.close();
+                Constants.logger.error("Error : " + e.getMessage());
+            } catch (Exception ex) {
+                Constants.logger.error("Error : " + ex.getMessage());
+            }
+        }
+        catch (Exception e) 
+        {
+        	Constants.logger.error("" + e.getMessage());
+        	e.printStackTrace();
+        }
+
+    }
+    
+    public static int insertDatabase(String queryString, ArrayList<String> parameters) throws SQLException 
+    {
+    	Connection conn = null;
+    	int new_id = 0;
+        try 
+        {
+        	conn = DataAccessController.createConnection();
+            new_id = insertDatabaseWithExistingConnection(conn, queryString, parameters);
+            conn.close();
+        } 
+        catch (SQLException e) 
+        {
+            try 
+            {
                 conn.close();
                 Constants.logger.error("Error : " + e.getMessage());
             } catch (Exception ex) {
@@ -679,25 +755,17 @@ public class DataAccess {
     public static boolean updateDatabase(String queryString, ArrayList<String> parameters) throws SQLException 
     {
     	Connection conn = null;
-        PreparedStatement prepStat = null;
+    	boolean success = false;
         try 
         {
         	conn = DataAccessController.createConnection();
-            
-            // Creating SQL query string
-        	prepStat = prepareSQLStatement(conn, queryString, parameters);
-            
-            Constants.logger.info("callStat ::{}" + prepStat);
-            int result = prepStat.executeUpdate();
-            prepStat.close();
+        	success = updateDatabaseWithExistingConnection(conn, queryString, parameters);
             conn.close();
-            return (result != 0);
         } 
         catch (SQLException e) 
         {
             try 
             {
-            	prepStat.close();
                 conn.close();
                 Constants.logger.error("Error : " + e.getMessage());
             } catch (Exception ex) {
@@ -709,44 +777,58 @@ public class DataAccess {
         	Constants.logger.error("" + e.getMessage());
         	e.printStackTrace();
         }
-        return false;
+        return success;
     }
     
     // This function is used if the caller simply wishes to get an array of hashmaps containing
     // the list of results from the query.
-    public static ArrayList<HashMap<String,String>> queryDatabase(String queryString, ArrayList<String> parameters)
+    public static ArrayList<HashMap<String,String>> queryDatabase(Connection conn, String queryString, ArrayList<String> parameters)
 	{
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
 		try
 		{
-			DataAccess.queryDatabaseCustom(queryString, parameters, resultsArray, new ResultSetHandler()
+			ResultSetHandler handler = new ResultSetHandler()
 			{
-				 public void handle(ResultSet results, Object returnObj) throws SQLException
-                 { 						 
-					 // The cast here is a well-known one, so the suppression is OK
-					 @SuppressWarnings("unchecked")
-					 ArrayList<HashMap<String,String>> resultsArray = (ArrayList<HashMap<String,String>>)returnObj;
-                     while(results.next())
-                     {                    	 
-                    	 // Populate information
-                    	 HashMap<String,String> current = new HashMap<String,String>();
-                    	 
-                    	 ResultSetMetaData rsmd = results.getMetaData();
-                    	 int numColumns = rsmd.getColumnCount();
-                    	 for(int i=1; i <= numColumns; i++)
-                    	 {
-                    		 current.put(rsmd.getColumnName(i),results.getString(i));
-                    	 }
-                    	 
-                    	 resultsArray.add(current);
-                     }
-                 }
-			});
+				public void handle(ResultSet results, Object returnObj) throws SQLException
+                { 						 
+					// The cast here is a well-known one, so the suppression is OK
+				    @SuppressWarnings("unchecked")
+					ArrayList<HashMap<String,String>> resultsArray = (ArrayList<HashMap<String,String>>)returnObj;
+                    while(results.next())
+                    {                    	 
+	                   	 // Populate information
+	                   	 HashMap<String,String> current = new HashMap<String,String>();
+	                   	 
+	                   	 ResultSetMetaData rsmd = results.getMetaData();
+	                   	 int numColumns = rsmd.getColumnCount();
+	                   	 for(int i=1; i <= numColumns; i++)
+	                   	 {
+	                   		 current.put(rsmd.getColumnName(i),results.getString(i));
+	                   	 }
+	                   	 
+	                   	 resultsArray.add(current);
+                    }
+                }
+			};
+			
+			if (conn != null)
+			{
+				DataAccess.queryDatabaseCustomWithExistingConnection(conn, queryString, parameters, resultsArray, handler);
+			}
+			else
+			{
+				DataAccess.queryDatabaseCustom(queryString, parameters, resultsArray, handler);
+			}
 		}
 		catch (SQLException ex)
 		{
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		return resultsArray;
+	}
+    
+    public static ArrayList<HashMap<String,String>> queryDatabase(String queryString, ArrayList<String> parameters)
+	{
+    	return queryDatabase(null, queryString, parameters);
 	}
 }
