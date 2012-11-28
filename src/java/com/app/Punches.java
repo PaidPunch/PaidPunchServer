@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.db.DataAccess;
 import com.db.DataAccessController;
 import com.server.Constants;
+import com.server.CreditChangeHistory;
 import com.server.Utility;
 
 public class Punches extends XmlHttpServlet 
@@ -224,7 +225,13 @@ public class Punches extends XmlHttpServlet
 					{
 						// update number of credits remaining for current user
 						boolean creditUpdateSuccess = updateCreditsForUser(conn, user_id, Float.toString(remainder));
-						if (!creditUpdateSuccess)
+						if (creditUpdateSuccess)
+						{
+							// Insert tracking row into change history table
+					        CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
+							changeHistory.insertCreditChange(user_id, (float)(0.0 - cost), CreditChangeHistory.PUNCHCARD, punch_id);
+						}
+						else
 						{
 							// credits update failed
 							// NOTE: Don't return an error
@@ -265,6 +272,17 @@ public class Punches extends XmlHttpServlet
 		catch (SQLException ex)
 		{
 			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		finally
+		{
+			try
+			{
+				conn.close();
+			}
+			catch (SQLException ex)
+			{
+				Constants.logger.error("Error : " + ex.getMessage());
+			}
 		}
 		return success;
 	}
@@ -346,7 +364,5 @@ public class Punches extends XmlHttpServlet
         		errorResponse(response, "404", "Unknown user");
         	}
     	}
-    	
-    	//xmlResponse(response, currentProducts);
     }
 }

@@ -156,8 +156,10 @@ public class ProductsList
 	}
 	
 	// Singleton 
-	public static synchronized ProductsList getInstance() {
-		if (singleton == null) {
+	public static synchronized ProductsList getInstance() 
+	{
+		if (singleton == null) 
+		{
 			singleton = new ProductsList();
 		}
 		return singleton;

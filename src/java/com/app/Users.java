@@ -5,6 +5,7 @@ import com.db.DataAccessController;
 import com.db.DataAccess.ResultSetHandler;
 import com.jspservlets.SignupAddPunch;
 import com.server.Constants;
+import com.server.CreditChangeHistory;
 
 import java.io.IOException;
 
@@ -167,7 +168,7 @@ public class Users extends XmlHttpServlet  {
 		return doesAccountExistInternal(queryString, fbid);
 	}
 	
-	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
+	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs, String referringUserId)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
@@ -200,6 +201,11 @@ public class Users extends XmlHttpServlet  {
 	            user_id = DataAccess.insertDatabase(queryString, parameters);	
 				if (user_id != 0)
 				{
+					// Put a tracking row into the credit change history table
+					CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
+					changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, CreditChangeHistory.SIGNUP, referringUserId);
+					
+					// Send confirmation email
 					SignupAddPunch mail = new SignupAddPunch();
 	                mail.sendEmail_For_app_user(Integer.toString(user_id), email);
 				}
@@ -224,7 +230,7 @@ public class Users extends XmlHttpServlet  {
 		return user_id;
 	}
 	
-	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs)
+	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs, String referringUserId)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
@@ -256,6 +262,10 @@ public class Users extends XmlHttpServlet  {
 	            user_id = DataAccess.insertDatabase(queryString, parameters);	
 				if (user_id != 0)
 				{
+					// Put a tracking row into the credit change history table
+					CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
+					changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, CreditChangeHistory.SIGNUP, referringUserId);
+					
 					sendWelcomeEmail(name, email);
 				}
 				else
@@ -306,7 +316,7 @@ public class Users extends XmlHttpServlet  {
 		return responseMap;
 	}
 	
-	private void addRewardCreditToReferrer(String userid, String credit)
+	private void addRewardCreditToReferrer(String userid, String credit, String referredUserId)
 	{
 		// Update referrer with reward credit
 		float updatedAmount = Float.parseFloat(credit) + rewardCreditValue;
@@ -319,6 +329,10 @@ public class Users extends XmlHttpServlet  {
         {
         	Constants.logger.error("Unable to update credit with referral reward for userid: " + userid);
         }
+        
+        // Insert tracking row into change history table
+        CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
+		changeHistory.insertCreditChange(userid, rewardCreditValue, CreditChangeHistory.USER_INVITE, referredUserId);
 	}
 
 	/**
@@ -347,6 +361,9 @@ public class Users extends XmlHttpServlet  {
         	ArrayList<HashMap<String,String>> resultsArray = getReferringUser(refer_code);
         	if (resultsArray.size() == 1)
         	{
+        		HashMap<String, String> userParams = resultsArray.get(0);
+        		String referringUserId = userParams.get(Constants.USERID_PARAMNAME);
+        		
         		int new_user_id = 0;
         		String registrationType = requestInputs.get(Constants.TXTYPE_PARAMNAME);
         		if (registrationType != null)
@@ -354,7 +371,7 @@ public class Users extends XmlHttpServlet  {
         			if (registrationType.equalsIgnoreCase(emailRegistration))
         			{
         				// Perform email registration
-        				new_user_id = registerEmailUser(request, response, requestInputs);
+        				new_user_id = registerEmailUser(request, response, requestInputs, referringUserId);
         				if (new_user_id != 0)
                 		{
         					responseMap = createEmailRegistrationResponse(new_user_id, requestInputs);
@@ -363,7 +380,7 @@ public class Users extends XmlHttpServlet  {
         			else if (registrationType.equalsIgnoreCase(facebookRegistration))
         			{
         				// Perform Facebook registration
-        				new_user_id = registerFBUser(request, response, requestInputs);
+        				new_user_id = registerFBUser(request, response, requestInputs, referringUserId);
         				if (new_user_id != 0)
                 		{
         					responseMap = createFacebookRegistrationResponse(new_user_id, requestInputs);
@@ -387,8 +404,7 @@ public class Users extends XmlHttpServlet  {
         		if (new_user_id != 0)
         		{
         			// Get the referring user's info and then call function to reward them
-        			HashMap<String, String> userParams = resultsArray.get(0);
-        			addRewardCreditToReferrer(userParams.get(Constants.USERID_PARAMNAME), userParams.get(Constants.CREDIT_PARAMNAME));
+        			addRewardCreditToReferrer(referringUserId, userParams.get(Constants.CREDIT_PARAMNAME), Integer.toString(new_user_id));
         	    	
         			// Send a response to caller
         			xmlResponse(response, responseMap);

@@ -569,7 +569,6 @@ public class DataAccess {
             try 
             {
             	prepStat.close();
-                conn.close();
                 Constants.logger.error("Error : " + e.getMessage());
             } catch (Exception ex) {
                 Constants.logger.error("Error : " + ex.getMessage());
