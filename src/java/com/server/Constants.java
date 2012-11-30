@@ -31,6 +31,7 @@ public class Constants {
     public static String SESSIONID_PARAMNAME = "sessionid";
     public static String PUNCHCARDID_PARAMNAME = "punchcardid";
     public static String BUSINESSID_PARAMNAME = "business_userid";
+    public static String PRODUCTID_PARAMNAME = "product_id";
 
     // Used in database connection
     public static String JDBC_DRIVER = "";

@@ -30,7 +30,6 @@ public class Users extends XmlHttpServlet  {
 	private static final float rewardCreditValue = (float)5.00;
 	
 	private ArrayList<String> postElements;
-	private ArrayList<String> putElements;
 	
 	@Override
     public void init(ServletConfig config) throws ServletException
@@ -43,7 +42,6 @@ public class Users extends XmlHttpServlet  {
 		   Constants.loadJDBCConstants(context);
 		   
 		   initializePostElements();
-		   initializePutElements();
 	   }
 	   catch(Exception e)
 	   {
@@ -62,12 +60,6 @@ public class Users extends XmlHttpServlet  {
 		postElements.add(Constants.FBID_PARAMNAME);
 		postElements.add(Constants.REFERCODE_PARAMNAME);
 		postElements.add(Constants.SESSIONID_PARAMNAME);
-	}
-	
-	private void initializePutElements()
-	{
-		putElements = new ArrayList<String>();
-		putElements.add(Constants.USERID_PARAMNAME);
 	}
 	
 	private String getRandomAlphaNumericCode(int len) 
@@ -423,33 +415,5 @@ public class Users extends XmlHttpServlet  {
         		errorResponse(response, "404", "The referral code is invalid");
         	}
     	}
-    }
-    
-	/**
-     * Handles the HTTP <code>PUT</code> method.
-     * 
-     * @param request
-     *            servlet request
-     * @param response
-     *            servlet response
-     * @throws ServletException
-     *             if a servlet-specific error occurs
-     * @throws IOException
-     *             if an I/O error occurs
-     */
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException 
-    {
-    	float expectedAPIVersion = getExpectedVersion(request);
-    	if (validateVersion(response, expectedAPIVersion))
-    	{
-        	HashMap<String, String> requestInputs = getRequestData(request, putElements);	
-        	
-        	// TODO: Remove later. Temporary to get rid of warning.
-        	Constants.logger.info(requestInputs.toString());
-    	}
-    	
-    	//xmlResponse(response, currentProducts);
     }
 }
