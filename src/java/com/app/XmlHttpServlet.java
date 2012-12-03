@@ -123,6 +123,7 @@ public class XmlHttpServlet extends HttpServlet
                     + "</paidpunch-resp>";
             PrintWriter out = response.getWriter();
             out.print(res);
+            response.setStatus(Integer.parseInt(statusCode));
             Constants.logger.info("Error response - Status Code: " + statusCode + ", Message: " + statusMessage);
         } 
         catch (Exception e) 

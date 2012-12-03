@@ -66,11 +66,11 @@ public class Products extends XmlHttpServlet  {
 			{
 				// Connection not being null implies that we're doing a full transaction 
 				// across multiple database calls
-				queryString = "SELECT credit FROM app_user WHERE user_id = ? FOR UPDATE;";	
+				queryString = "SELECT * FROM app_user WHERE user_id = ? FOR UPDATE;";	
 			}
 			else
 			{
-				queryString = "SELECT credit FROM app_user WHERE user_id = ?;";
+				queryString = "SELECT * FROM app_user WHERE user_id = ?;";
 			}
 			ArrayList<String> parameters = new ArrayList<String>();
 			parameters.add(user_id);
@@ -164,7 +164,7 @@ public class Products extends XmlHttpServlet  {
 		try
     	{
         	int new_id = DataAccess.insertDatabase(queryString, parameters);
-        	if (new_id != 0)
+        	if (new_id == 0)
         	{
         		Constants.logger.error("Error: Could not insert new row into payment_details for user_id: " +
         				user_id +
@@ -242,7 +242,7 @@ public class Products extends XmlHttpServlet  {
 		return success;
     }
     
-    private boolean purchaseProduct(String user_id, String product_id, String profile_id, String payment_id, float amount)
+    private boolean purchaseProduct(String user_id, String product_id, String profile_id, String payment_id, float cost, float credit)
     {
     	TransactionCommunication tc = new TransactionCommunication();
     	boolean success = false;
@@ -252,7 +252,7 @@ public class Products extends XmlHttpServlet  {
         	// getCustomerProfileAuth actually returns a Vector, but all items
         	// within that vector are Strings.
         	@SuppressWarnings("unchecked")
-            Vector<String> paymentdata = tc.makePaymentAuthCapture(profile_id, payment_id, Float.toString(amount));
+            Vector<String> paymentdata = tc.makePaymentAuthCapture(profile_id, payment_id, Float.toString(cost));
             String code = paymentdata.elementAt(0);
             String servermsg = paymentdata.elementAt(1);
             String gatewaymsg = paymentdata.elementAt(2);
@@ -272,9 +272,9 @@ public class Products extends XmlHttpServlet  {
             insertPaymentDetails(user_id, product_id, transaction_id, gatewaymsg);
 
             // Update credits for user
-            if (!(code.equalsIgnoreCase("00"))) 
+            if (code.equalsIgnoreCase("00")) 
             {
-            	success = updateUserCredits(user_id, product_id, amount);	
+            	success = updateUserCredits(user_id, product_id, credit);	
             }
             else
             {
@@ -340,7 +340,7 @@ public class Products extends XmlHttpServlet  {
             	{
             		HashMap<String,String> productInfo = productResultsArray.get(0);
             		// Check if punchcard is still valid
-            		if (Integer.getInteger(productInfo.get("disabled")) == 1)
+            		if (!Boolean.getBoolean(productInfo.get("disabled")))
             		{
             			boolean success = false;
             			HashMap<String,String> userInfo = userResultsArray.get(0);
@@ -348,7 +348,13 @@ public class Products extends XmlHttpServlet  {
             			HashMap<String,String> paymentInfo = getPaymentInfo(user_id, profile_id);
             			if (paymentInfo != null)
             			{
-            				success = purchaseProduct(user_id, product_id, profile_id, paymentInfo.get("payment_id"), Float.parseFloat(productInfo.get("credits")));
+            				success = purchaseProduct(
+            								user_id, 
+            								product_id, 
+            								profile_id, 
+            								paymentInfo.get("payment_id"), 
+            								Float.parseFloat(productInfo.get("cost")),
+            								Float.parseFloat(productInfo.get("credits")));
             			}
             			
             			if (success)
