@@ -58,6 +58,7 @@ public class Constants {
     public static String merchant_code_validate_time = "";
     public static String filereader = "";
     public static String applicationName = "";
+    public static String rootBusinessImagePath = "";
     
     private static boolean initialized = false;
 
@@ -83,6 +84,7 @@ public class Constants {
             merchant_code_validate_time = context.getInitParameter("merchant_code_validate_time");
             filereader = context.getInitParameter("filereader");
             applicationName = context.getInitParameter("application_name");	
+            rootBusinessImagePath = context.getInitParameter("ROOT_BUSINESS_IMAGE_PATH");	
             
             initialized = true;
     	}

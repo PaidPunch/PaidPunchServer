@@ -9,6 +9,7 @@
    "http://www.w3.org/TR/html4/loose.dtd">
 
 <%@page import="com.server.Constants"%>
+<%@page import="com.server.Utility"%>
 <%@page import="com.jspservlets.DBConnection"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.SQLException"%>
@@ -508,39 +509,53 @@ function onload_fun()
             Statement stmt1 = null;
             ResultSet rs1 = null;
             int busid=0;
+            String businessLogoPath = "";
 
-            try {
-                               db1 = new DBConnection();
-                               stmt1 = db1.stmt;
+            try 
+            {
+			        db1 = new DBConnection();
+					stmt1 = db1.stmt;
 
-                               try{
-                                    String query = "SELECT business_userid FROM business_users where email_id='"+username+"'";
-                                    rs1 = stmt1.executeQuery(query);
-                                    com.server.Constants.logger.info("The select query is " + query);
+         			try
+         			{
+              			String query = "SELECT business_userid FROM business_users where email_id='"+username+"'";
+              			rs1 = stmt1.executeQuery(query);
+              			com.server.Constants.logger.info("The select query is " + query);
 
-                                   if(rs1.next()){
-                                    busid = rs1.getInt(1);
-                                   }
-                               }catch(SQLException e){
-                                com.server.Constants.logger.error("Error in Sql in qrCode_display.jsp in getting QR CODE Value "+e.getMessage());
-                                throw new ServletException("SQL Exception.", e);
-                            }
-                            }catch (Exception e) {
-                            com.server.Constants.logger.error("Error in Sql in qrCode_display.jsp in getting QR CODE Value "+e.getMessage());
-                          throw new ServletException("SQL Exception.", e);
-                      } finally {
-                      try {
-                          if(rs1 != null) {
-                              rs1.close();
-                              //Constants.logger.info("Closing rs Statement ");
-                              rs1 = null;
-                          }
-                          db1.closeConnection();
-
-                      } catch (SQLException e) {
-                            com.server.Constants.logger.error("Error in closing SQL in checksecretcode.java"+e.getMessage());
-                      }
-                   }
+             			if(rs1.next())
+             			{
+              				busid = rs1.getInt(1);
+              				businessLogoPath = Utility.getBusinessLogoUrl(Integer.toString(busid));
+             			}
+         			}
+         			catch(SQLException e)
+         			{
+          					com.server.Constants.logger.error("Error in Sql in qrCode_display.jsp in getting QR CODE Value "+e.getMessage());
+          					throw new ServletException("SQL Exception.", e);
+      				}
+      		}
+            catch (Exception e) 
+            {
+      			com.server.Constants.logger.error("Error in Sql in qrCode_display.jsp in getting QR CODE Value "+e.getMessage());
+    			throw new ServletException("SQL Exception.", e);
+			} 
+            finally 
+            {
+				try 
+				{
+    				if(rs1 != null) 
+    				{
+        				rs1.close();
+        				//Constants.logger.info("Closing rs Statement ");
+        				rs1 = null;
+    				}
+    				db1.closeConnection();
+				}
+				catch (SQLException e) 
+				{
+      				com.server.Constants.logger.error("Error in closing SQL in checksecretcode.java"+e.getMessage());
+				}
+            }
 
     %>
 <div id="pagewrap">
@@ -776,7 +791,7 @@ System.out.println("BUsiness Name:"+business_name+"\nEmail_id: "+email_id+"\nBus
 
                             <table width="95%" cellspacing="0" cellpadding="0">
                                <tr><td><br></td></tr>
-                             <TR><TD rowspan="14" valign="middle"><img src="DisplayImage?bussid=<%=busid%>" alt="pplogo" height="120px" width="120px" style=" margin-right: 10px;"></TD>
+                             <TR><TD rowspan="14" valign="middle"><img src="<%=businessLogoPath%>" alt="pplogo" height="120px" width="120px" style=" margin-right: 10px;"></TD>
                             <td id="label" align="left" width="75%">Punches Sold</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right"><%=totalpunchessold%></TD></TR>
                              <TR><td id="label" align="left" width="75%">Total Collected</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right" style="color: #323232">$<%=totalvaluecollected%></TD></TR>
                             <TR><td><BR></td></TR>
@@ -792,18 +807,6 @@ System.out.println("BUsiness Name:"+business_name+"\nEmail_id: "+email_id+"\nBus
                             <TR><td id="label" align="left" width="75%">Total Mystery Redeemed</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right" style="color: #323232"><%=totalmysteryRedeemed%></TD></TR>
                             <%--<TR><td id="label" align="left" width="80%">Jackpot Mystery Redeemed</td><td id="label2" width="5%">:</td><TD width="15%" id="label1" align="right" style="color: #323232"><%=jackpotmysteryRedeemed%></TD></TR>--%>
                             </table>
-
-                            <%--<table width="95%" cellspacing="0" cellpadding="0">
-                                <TR><td rowspan="8" valign="middle"><img src="DisplayImage?bussid=<%=busid%>" alt="pplogo" height="120px" width="120px" style="margin-top: 25px; margin-right: 10px;"></td>
-                            <td id="label" align="left" width="75%">Punches Sold</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right"><%=totalpunchessold%></TD></TR>
-                            <TR><td id="label" align="left" width="75%">Total Collected</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right" style="color: #323232">$<%=totalvaluecollected%></TD></TR>
-                            <TR><td><BR></td></TR>
-                            <TR ><td id="label" align="left" width="75%">Punches Redeemed</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right"><%=redeemedpunches%></TD></TR>
-                            <TR><td id="label" align="left" width="75%">Total Revenue</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right" style="color: #38761D">$<%=revenue%></TD></TR>
-                            <TR><td><BR></td></TR>
-                            <TR><td id="label" align="left" width="75%">Punches Outstanding</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right"><%=outstandingPunches%></TD></TR>
-                            <TR><td id="label" align="left" width="75%">Total Outstanding</td><td id="label2" width="5%">:</td><TD width="20%" id="label1" align="right" style="color: #323232">$<%=outstandingRevenue%></TD></TR>
-                            </table>--%>
                 </div>
 		</div>
                       </td>

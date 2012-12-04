@@ -99,6 +99,10 @@
         <!--<param-value>Biscuit-1</param-value>-->
         <param-value>root</param-value>
     </context-param>
+    <context-param>
+        <param-name>ROOT_BUSINESS_IMAGE_PATH</param-name>
+        <param-value>https://www.paidpunch.com/paid_punch/uploaded_logo_images/</param-value>
+    </context-param>
     <servlet>
         <servlet-name>Register</servlet-name>
         <servlet-class>com.app.Register</servlet-class>

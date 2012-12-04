@@ -9,6 +9,7 @@
    "http://www.w3.org/TR/html4/loose.dtd">
 
 <%@page import="com.server.Constants"%>
+<%@page import="com.server.Utility"%>
 <%@page import="com.jspservlets.DBConnection"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.SQLException"%>
@@ -519,9 +520,11 @@ div.tableContainer {
             
 
         int busid=0;
+		String businessLogoPath = "";
         try{
             String businessId = request.getParameter("radioval");
            busid  = Integer.parseInt(businessId);
+           businessLogoPath = Utility.getBusinessLogoUrl(Integer.toString(busid));
            System.out.println("BusinessId"+businessId);
         }catch(Exception e){
         }
@@ -776,7 +779,7 @@ div.tableContainer {
 			<div class="content">
                            <table width="95%" cellspacing="0" cellpadding="0">
                                <tr><td><br></td></tr>
-                             <TR><TD rowspan="14" valign="middle"><img src="DisplayImage?bussid=<%=busid%>" alt="pplogo" height="120px" width="120px" style=" margin-right: 10px;"></TD>
+                             <TR><TD rowspan="14" valign="middle"><img src="<%=businessLogoPath%>" alt="pplogo" height="120px" width="120px" style=" margin-right: 10px;"></TD>
                             <td id="label5" align="left" width="75%">Punches Sold</td><td id="label7" width="5%">:</td><TD width="20%" id="label6" align="right"><%=totalpunchessold%></TD></TR>
                              <TR><td id="label5" align="left" width="75%">Total Collected</td><td id="label7" width="5%">:</td><TD width="20%" id="label6" align="right" style="color: #323232">$<%=totalvaluecollected%></TD></TR>
                             <TR><td><BR></td></TR>

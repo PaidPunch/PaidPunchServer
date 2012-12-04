@@ -8,6 +8,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="com.server.Constants"%>
+<%@page import="com.server.Utility"%>
 <%@page import="com.jspservlets.DBConnection"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.SQLException"%>
@@ -669,6 +670,7 @@ img {
             Statement stmt1 = null;
             ResultSet rs1 = null;
             int busid=0;
+            String businessLogoPath = "";
 
             try {
                                db1 = new DBConnection();
@@ -681,6 +683,7 @@ img {
 
                                    if(rs1.next()){
                                     busid = rs1.getInt(1);
+                                    businessLogoPath = Utility.getBusinessLogoUrl(Integer.toString(busid));
                                    }
                                }catch(SQLException e){
                                 com.server.Constants.logger.error("Error in Sql in qrCode_display.jsp in getting QR CODE Value "+e.getMessage());
@@ -801,7 +804,7 @@ String business_name="",email_id="",busi_desc="",address="",discount="";
                             <form id="form1" name="user" action="edit_bus_setting" method="post">
 					<fieldset>
 					<legend>Edit Business Profile</legend>
-                                        <table id="vd" width="100%"><TR><TD width="30%" rowspan="2" valign="middle" ><img src="DisplayImage?bussid=<%=busid%>" alt="pplogo" height="64px" width="64px" style="margin-left: 10px; margin-right: 10px;"></TD><TD style="font-family: Calibri; font-size: 22px; font-weight: bold; color: #323232; padding-top: 10px;"><%=business_name%></TD><TR><TD style="font-family: Calibri; font-size: 18px; font-weight: bold; color: #323232;"><%=email_id%></TD></TR></table><BR>
+                                        <table id="vd" width="100%"><TR><TD width="30%" rowspan="2" valign="middle" ><img src="<%=businessLogoPath%>" alt="pplogo" height="64px" width="64px" style="margin-left: 10px; margin-right: 10px;"></TD><TD style="font-family: Calibri; font-size: 22px; font-weight: bold; color: #323232; padding-top: 10px;"><%=business_name%></TD><TR><TD style="font-family: Calibri; font-size: 18px; font-weight: bold; color: #323232;"><%=email_id%></TD></TR></table><BR>
                                         <label for="inputtext5">Description of Business<font color="#FF6699">*</font>:</label><textarea id="inputtext5" name="businessdesc" class="textarea" onKeyDown="limitText(this.form.businessdesc,100);" onKeyUp="limitText(this.form.businessdesc,100);" style="border: 1px solid #CCCCCC; width: 190px; height:50px;min-width: 190px; max-width: 190px; max-height: 50px;min-height:50px " disabled="true"><%=busi_desc%></textarea><br><br><br><br><!--<input id="inputtext5" type="text" name="businessdesc" value="" maxlength="80"/><br><br>-->
                                         <%--<label for="inputfile1">Logo<font color="#FF6699">*</font>:</label><input id="inputfile1" type="file" name="datafile" size="17" onchange="preview(this)"><br><br>--%>
                                         <label for="inputtext11">Contact Name<font color="#FF6699">*</font>:</label><input id="inputtext11" type="text" name="contactname" value="<%=contactname%>" maxlength="30" disabled="true"/><br><br>

@@ -7,11 +7,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
+
+import com.db.DataAccess;
 
 public final class Utility {
     
@@ -379,6 +383,25 @@ public final class Utility {
             l_result[j] = (byte) ((high << 4) | low);
         }
         return l_result;
+    }
+    
+    public static String getBusinessLogoUrl(String business_id)
+    {
+    	String logoUrl = "";
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		if (business_id != null)
+		{
+			String queryString = "SELECT logo_path FROM business_users WHERE business_userid = ?;";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(business_id);
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
+			if (resultsArray.size() == 1)
+			{
+				HashMap<String,String> businessInfo = resultsArray.get(0);
+				logoUrl = businessInfo.get("logo_path");
+			}
+		}
+		return logoUrl;
     }
 
     private static int charToNibble(char p_ch) {
