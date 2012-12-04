@@ -385,6 +385,16 @@ public final class Utility {
         return l_result;
     }
     
+    // NOTE: Not the best placement for these functions, but for now it'll do. 
+    private static final String rootImagePath = "https://s3-us-west-2.amazonaws.com/paidpunch.images/";
+    public static String getLogoFilename(String originalLogoPath)
+    {
+    	String delim = "[/]+";
+    	String[] tokens = originalLogoPath.split(delim);
+    	int size = tokens.length;
+    	return tokens[size-1];
+    }
+    
     public static String getBusinessLogoUrl(String business_id)
     {
     	String logoUrl = "";
@@ -398,7 +408,9 @@ public final class Utility {
 			if (resultsArray.size() == 1)
 			{
 				HashMap<String,String> businessInfo = resultsArray.get(0);
-				logoUrl = businessInfo.get("logo_path");
+				String currentLogoPath = businessInfo.get("logo_path");
+				String filename = getLogoFilename(currentLogoPath);
+				logoUrl = rootImagePath + filename;
 			}
 		}
 		return logoUrl;

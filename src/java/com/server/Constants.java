@@ -58,10 +58,9 @@ public class Constants {
     public static String merchant_code_validate_time = "";
     public static String filereader = "";
     public static String applicationName = "";
-    public static String rootBusinessImagePath = "";
     
     private static boolean initialized = false;
-
+    
     // logger
 
     public static void loadJDBCConstants(ServletContext context) 
@@ -83,8 +82,7 @@ public class Constants {
             logoActualPath = context.getInitParameter("LOGO_IMAGE_PATH");
             merchant_code_validate_time = context.getInitParameter("merchant_code_validate_time");
             filereader = context.getInitParameter("filereader");
-            applicationName = context.getInitParameter("application_name");	
-            rootBusinessImagePath = context.getInitParameter("ROOT_BUSINESS_IMAGE_PATH");	
+            applicationName = context.getInitParameter("application_name");		
             
             initialized = true;
     	}
