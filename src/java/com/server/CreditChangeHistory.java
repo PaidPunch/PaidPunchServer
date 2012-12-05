@@ -11,10 +11,11 @@ public class CreditChangeHistory
 	private static CreditChangeHistory singleton;
 	
 	// Change types
-	public static final int SIGNUP = 1;
-	public static final int USER_INVITE = 2;
-	public static final int PURCHASE = 3;
-	public static final int PUNCHCARD = 4;
+	public static final int USER_INVITE_SIGNUP = 1;
+	public static final int BUSINESS_INVITE_SIGNUP = 2;
+	public static final int USER_REFERRAL = 3;
+	public static final int PURCHASE = 4;
+	public static final int PUNCHCARD = 5;
 	
 	// Private constructor
 	private CreditChangeHistory() 
