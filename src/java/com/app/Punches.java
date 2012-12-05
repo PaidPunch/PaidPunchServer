@@ -50,6 +50,7 @@ public class Punches extends XmlHttpServlet
 		postElements = new ArrayList<String>();
 		postElements.add(Constants.USERID_PARAMNAME);
 		postElements.add(Constants.PUNCHCARDID_PARAMNAME);
+		postElements.add(Constants.SESSIONID_PARAMNAME);
 	}
 	
 	// Get user info
@@ -63,11 +64,11 @@ public class Punches extends XmlHttpServlet
 			{
 				// Connection not being null implies that we're doing a full transaction 
 				// across multiple database calls
-				queryString = "SELECT credit FROM app_user WHERE user_id = ? FOR UPDATE;";	
+				queryString = "SELECT * FROM app_user WHERE user_id = ? FOR UPDATE;";	
 			}
 			else
 			{
-				queryString = "SELECT credit FROM app_user WHERE user_id = ?;";
+				queryString = "SELECT * FROM app_user WHERE user_id = ?;";
 			}
 			ArrayList<String> parameters = new ArrayList<String>();
 			parameters.add(user_id);
@@ -299,62 +300,75 @@ public class Punches extends XmlHttpServlet
         	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
         	if (userResultsArray.size() == 1)
         	{
-        		String punchcardid = requestInputs.get(Constants.PUNCHCARDID_PARAMNAME);
-            	ArrayList<HashMap<String,String>> punchcardResultsArray = getPunchCardInfo(punchcardid);
-            	if (punchcardResultsArray.size() == 1)
-            	{
-            		HashMap<String,String> punchcardInfo = punchcardResultsArray.get(0);
-            		// Check if punchcard is still valid
-            		if (punchcardNotExpired(punchcardInfo.get("expiry_date")))
-            		{
-            			String business_id = punchcardInfo.get(Constants.BUSINESSID_PARAMNAME);
-            			ArrayList<HashMap<String,String>> businessResultsArray = getBusinessInfo(business_id);
-            			if (businessResultsArray.size() == 1)
-            			{
-            				HashMap<String,String> businessInfo = businessResultsArray.get(0);
-            				String busi_enabled = businessInfo.get("busi_enabled");
-            	            if (busi_enabled.equalsIgnoreCase("Y")) 
-            	            {
-            	            	String cost = punchcardInfo.get("selling_price_of_punch_card");
-            	            	String expirydays = punchcardInfo.get("expirydays");
-            	            	String punch_num = punchcardInfo.get("no_of_punches_per_card");
-            	            	if (buyPunch(response, user_id, punchcardid, cost, punch_num, expirydays))
-            	            	{
-            	            		// Provide successful response to caller
-            	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-            	            		responseMap.put("statusCode", "00");
-            	            		responseMap.put("statusMessage", "Punch card purchased successfully");
-            	            		
-            	            		// Send a response to caller
-            	        			xmlResponse(response, responseMap);
-            	            	}
-            	            }
-            	            else
-            	            {
-                				// Business is not enabled
-                        		Constants.logger.error("Error: Tried to purchase punchcard from expired business: " + business_id);
+        		HashMap<String,String> userInfo = userResultsArray.get(0);
+        		
+        		// Validate session
+        		String currentSessionId = requestInputs.get(Constants.SESSIONID_PARAMNAME);
+        		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
+        		{
+        			String punchcardid = requestInputs.get(Constants.PUNCHCARDID_PARAMNAME);
+                	ArrayList<HashMap<String,String>> punchcardResultsArray = getPunchCardInfo(punchcardid);
+                	if (punchcardResultsArray.size() == 1)
+                	{
+                		HashMap<String,String> punchcardInfo = punchcardResultsArray.get(0);
+                		// Check if punchcard is still valid
+                		if (punchcardNotExpired(punchcardInfo.get("expiry_date")))
+                		{
+                			String business_id = punchcardInfo.get(Constants.BUSINESSID_PARAMNAME);
+                			ArrayList<HashMap<String,String>> businessResultsArray = getBusinessInfo(business_id);
+                			if (businessResultsArray.size() == 1)
+                			{
+                				HashMap<String,String> businessInfo = businessResultsArray.get(0);
+                				String busi_enabled = businessInfo.get("busi_enabled");
+                	            if (busi_enabled.equalsIgnoreCase("Y")) 
+                	            {
+                	            	String cost = punchcardInfo.get("selling_price_of_punch_card");
+                	            	String expirydays = punchcardInfo.get("expirydays");
+                	            	String punch_num = punchcardInfo.get("no_of_punches_per_card");
+                	            	if (buyPunch(response, user_id, punchcardid, cost, punch_num, expirydays))
+                	            	{
+                	            		// Provide successful response to caller
+                	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
+                	            		responseMap.put("statusCode", "00");
+                	            		responseMap.put("statusMessage", "Punch card purchased successfully");
+                	            		
+                	            		// Send a response to caller
+                	        			xmlResponse(response, responseMap);
+                	            	}
+                	            }
+                	            else
+                	            {
+                    				// Business is not enabled
+                            		Constants.logger.error("Error: Tried to purchase punchcard from expired business: " + business_id);
+                            		errorResponse(response, "404", "Unknown business.");
+                	            }
+                			}
+                			else
+                			{
+                				// Could not find business
+                        		Constants.logger.error("Error: Unable to find business with id: " + business_id);
                         		errorResponse(response, "404", "Unknown business.");
-            	            }
-            			}
-            			else
-            			{
-            				// Could not find business
-                    		Constants.logger.error("Error: Unable to find business with id: " + business_id);
-                    		errorResponse(response, "404", "Unknown business.");
-            			}
-            		}
-            		else
-            		{
-            			// Punchcard is expired
-                		Constants.logger.error("Error: Tried to purchase expired punchcard: " + punchcardid);
-                		errorResponse(response, "403", "Punchcard is expired.");
-            		}
-            	}
-            	else
+                			}
+                		}
+                		else
+                		{
+                			// Punchcard is expired
+                    		Constants.logger.error("Error: Tried to purchase expired punchcard: " + punchcardid);
+                    		errorResponse(response, "403", "Punchcard is expired.");
+                		}
+                	}
+                	else
+                	{
+            			// Could not find punchcard
+                		Constants.logger.error("Error: Unable to find punchcard with id: " + punchcardid);
+                		errorResponse(response, "404", "Unknown punchcard");
+                	}
+        		}
+        		else
             	{
-        			// Could not find punchcard
-            		Constants.logger.error("Error: Unable to find punchcard with id: " + punchcardid);
-            		errorResponse(response, "404", "Unknown punchcard");
+            		// Session mismatch
+            		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
+            		errorResponse(response, "400", "You have logged in from another device");
             	}
         	}
         	else

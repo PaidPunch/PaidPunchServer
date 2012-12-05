@@ -334,58 +334,70 @@ public class Products extends XmlHttpServlet  {
         	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
         	if (userResultsArray.size() == 1)
         	{
-        		String product_id = requestInputs.get(Constants.PRODUCTID_PARAMNAME);
-            	ArrayList<HashMap<String,String>> productResultsArray = getProductInfo(product_id);
-            	if (productResultsArray.size() == 1)
-            	{
-            		HashMap<String,String> productInfo = productResultsArray.get(0);
-            		// Check if punchcard is still valid
-            		if (!Boolean.getBoolean(productInfo.get("disabled")))
-            		{
-            			boolean success = false;
-            			HashMap<String,String> userInfo = userResultsArray.get(0);
-            			String profile_id = userInfo.get("profile_id");
-            			HashMap<String,String> paymentInfo = getPaymentInfo(user_id, profile_id);
-            			if (paymentInfo != null)
-            			{
-            				success = purchaseProduct(
-            								user_id, 
-            								product_id, 
-            								profile_id, 
-            								paymentInfo.get("payment_id"), 
-            								Float.parseFloat(productInfo.get("cost")),
-            								Float.parseFloat(productInfo.get("credits")));
-            			}
-            			
-            			if (success)
-            			{
-            				// Provide successful response to caller
-    	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-    	            		responseMap.put("statusCode", "00");
-    	            		responseMap.put("statusMessage", "Credit product purchased successfully");
-    	            		
-    	            		// Send a response to caller
-    	        			xmlResponse(response, responseMap);
-            			}
-            			else
+        		HashMap<String,String> userInfo = userResultsArray.get(0);
+        		
+        		// Validate session
+        		String currentSessionId = requestInputs.get(Constants.SESSIONID_PARAMNAME);
+        		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
+        		{
+        			String product_id = requestInputs.get(Constants.PRODUCTID_PARAMNAME);
+                	ArrayList<HashMap<String,String>> productResultsArray = getProductInfo(product_id);
+                	if (productResultsArray.size() == 1)
+                	{
+                		HashMap<String,String> productInfo = productResultsArray.get(0);
+                		// Check if punchcard is still valid
+                		if (!Boolean.getBoolean(productInfo.get("disabled")))
                 		{
-                			// Could not retrieve payment information
-                    		Constants.logger.error("Error: Unable to retrieve  " + product_id);
-                    		errorResponse(response, "400", "Unable to purchase credits");
+                			boolean success = false;
+                			String profile_id = userInfo.get("profile_id");
+                			HashMap<String,String> paymentInfo = getPaymentInfo(user_id, profile_id);
+                			if (paymentInfo != null)
+                			{
+                				success = purchaseProduct(
+                								user_id, 
+                								product_id, 
+                								profile_id, 
+                								paymentInfo.get("payment_id"), 
+                								Float.parseFloat(productInfo.get("cost")),
+                								Float.parseFloat(productInfo.get("credits")));
+                			}
+                			
+                			if (success)
+                			{
+                				// Provide successful response to caller
+        	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
+        	            		responseMap.put("statusCode", "00");
+        	            		responseMap.put("statusMessage", "Credit product purchased successfully");
+        	            		
+        	            		// Send a response to caller
+        	        			xmlResponse(response, responseMap);
+                			}
+                			else
+                    		{
+                    			// Could not retrieve payment information
+                        		Constants.logger.error("Error: Unable to retrieve  " + product_id);
+                        		errorResponse(response, "400", "Unable to purchase credits");
+                    		}
                 		}
-            		}
-            		else
-            		{
-            			// Product is disabled
-                		Constants.logger.error("Error: Attempt to purchase disabled product " + product_id);
-                		errorResponse(response, "403", "This product is no longer available for purchase");
-            		}
-            	}
-            	else
+                		else
+                		{
+                			// Product is disabled
+                    		Constants.logger.error("Error: Attempt to purchase disabled product " + product_id);
+                    		errorResponse(response, "403", "This product is no longer available for purchase");
+                		}
+                	}
+                	else
+                	{
+                		// Could not find product
+                		Constants.logger.error("Error: Unable to find product with id: " + product_id);
+                		errorResponse(response, "404", "Unknown credit product");
+                	}	
+        		}
+        		else
             	{
-            		// Could not find product
-            		Constants.logger.error("Error: Unable to find product with id: " + product_id);
-            		errorResponse(response, "404", "Unknown credit product");
+            		// Session mismatch
+            		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
+            		errorResponse(response, "400", "You have logged in from another device");
             	}
         	}
         	else
