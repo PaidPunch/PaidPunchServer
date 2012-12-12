@@ -87,14 +87,12 @@ public class Product {
 		HashMap<String,Object> internalMap= new HashMap<String, Object>();
 
         // adding or set elements in Map by put method key and value pair
+		internalMap.put("product_id", productId);
 		internalMap.put("name", name);
 		internalMap.put("desc", desc);
 		internalMap.put("credits", credits);
 		internalMap.put("cost", cost);
 		
-		HashMap<String,Object> mp= new HashMap<String, Object>();
-		mp.put("product", internalMap);
-		
-		return mp;
+		return internalMap;
 	}
 }

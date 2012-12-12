@@ -21,6 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.*;
+
 public class Users extends XmlHttpServlet  {
 
 	private static final long serialVersionUID = -9044506610414211667L;
@@ -28,8 +30,6 @@ public class Users extends XmlHttpServlet  {
 	private static final String emailRegistration = "EMAIL-REGISTER";
 	private static final String facebookRegistration = "FACEBOOK-REGISTER";
 	private static final float rewardCreditValue = (float)5.00;
-	
-	private ArrayList<String> postElements;
 	
 	@Override
     public void init(ServletConfig config) throws ServletException
@@ -40,27 +40,12 @@ public class Users extends XmlHttpServlet  {
 	   {
 		   ServletContext context = config.getServletContext();
 		   Constants.loadJDBCConstants(context);
-		   
-		   initializePostElements();
 	   }
 	   catch(Exception e)
 	   {
 		   Constants.logger.error(e);
 	   }
     }
-	
-	private void initializePostElements()
-	{
-		postElements = new ArrayList<String>();
-		postElements.add(Constants.TXTYPE_PARAMNAME);
-		postElements.add(Constants.NAME_PARAMNAME);
-		postElements.add(Constants.MOBILENO_PARAMNAME);
-		postElements.add(Constants.PASSWORD_PARAMNAME);
-		postElements.add(Constants.EMAIL_PARAMNAME);
-		postElements.add(Constants.FBID_PARAMNAME);
-		postElements.add(Constants.REFERCODE_PARAMNAME);
-		postElements.add(Constants.SESSIONID_PARAMNAME);
-	}
 	
 	private String getRandomAlphaNumericCode(int len) 
 	{
@@ -187,185 +172,215 @@ public class Users extends XmlHttpServlet  {
 		return doesAccountExistInternal(queryString, fbid);
 	}
 	
-	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs, String referringId, boolean userReferred)
+	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
-		String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
-		if (!doesEmailAccountExist(email))
+		String email;
+		try 
 		{
-			try
+			email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
+		
+			if (!doesEmailAccountExist(email))
 			{
-				// Insert new user into database
-				java.sql.Time time = new java.sql.Time(new Date().getTime());
-	            java.sql.Date date = new java.sql.Date(new Date().getTime());
-	            String name = requestInputs.get(Constants.NAME_PARAMNAME);
-	            String queryString = "insert into app_user " +
-	                    " (username,email_id,mobile_no,password,pincode,user_status,isemailverified,time,date,isfbaccount,credit,refer_code,user_code, user_referred) " +
-	            		"values(?,?,?,?,0,'N','N','" + 
-	                    time + "','" + 
-	            		date + 
-	            		"','N'," + 
-	    	            rewardCreditValue + 
-	    	            ",?,?,?);";
-
-	            ArrayList<String> parameters = new ArrayList<String>();
-	            parameters.add(name);
-	            parameters.add(email);
-	            parameters.add(requestInputs.get(Constants.MOBILENO_PARAMNAME));
-				parameters.add(requestInputs.get(Constants.PASSWORD_PARAMNAME));
-	            parameters.add(requestInputs.get(Constants.REFERCODE_PARAMNAME));
-	            // Generate a length 5 random alphanumeric code for the new user
-	            parameters.add(getRandomAlphaNumericCode(5));
-	            if (userReferred)
-	            {
-	            	parameters.add("1");
-	            }
-	            else
-	            {
-	            	parameters.add("0");
-	            }
-	            user_id = DataAccess.insertDatabase(queryString, parameters);	
-				if (user_id != 0)
+				try
 				{
-					// Put a tracking row into the credit change history table
-					CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
-					int reason = 0;
-					if (userReferred)
+					// Insert new user into database
+					java.sql.Time time = new java.sql.Time(new Date().getTime());
+		            java.sql.Date date = new java.sql.Date(new Date().getTime());
+		            String name = requestInputs.getString(Constants.NAME_PARAMNAME);
+		            String queryString = "insert into app_user " +
+		                    " (username,email_id,mobile_no,password,pincode,user_status,isemailverified,time,date,isfbaccount,credit,refer_code,user_code, user_referred) " +
+		            		"values(?,?,?,?,0,'N','N','" + 
+		                    time + "','" + 
+		            		date + 
+		            		"','N'," + 
+		    	            rewardCreditValue + 
+		    	            ",?,?,?);";
+	
+		            ArrayList<String> parameters = new ArrayList<String>();
+		            parameters.add(name);
+		            parameters.add(email);
+		            parameters.add(requestInputs.getString(Constants.MOBILENO_PARAMNAME));
+					parameters.add(requestInputs.getString(Constants.PASSWORD_PARAMNAME));
+		            parameters.add(requestInputs.getString(Constants.REFERCODE_PARAMNAME));
+		            // Generate a length 5 random alphanumeric code for the new user
+		            parameters.add(getRandomAlphaNumericCode(5));
+		            if (userReferred)
+		            {
+		            	parameters.add("1");
+		            }
+		            else
+		            {
+		            	parameters.add("0");
+		            }
+		            user_id = DataAccess.insertDatabase(queryString, parameters);	
+					if (user_id != 0)
 					{
-						reason = CreditChangeHistory.USER_INVITE_SIGNUP;
+						// Put a tracking row into the credit change history table
+						CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
+						int reason = 0;
+						if (userReferred)
+						{
+							reason = CreditChangeHistory.USER_INVITE_SIGNUP;
+						}
+						else
+						{
+							reason = CreditChangeHistory.BUSINESS_INVITE_SIGNUP;
+						}
+						changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
+						
+						// Send confirmation email
+						SignupAddPunch mail = new SignupAddPunch();
+		                mail.sendEmail_For_app_user(Integer.toString(user_id), email);
 					}
 					else
 					{
-						reason = CreditChangeHistory.BUSINESS_INVITE_SIGNUP;
+						// The referral code returned more than a single user. Return an error after logging.
+			    		Constants.logger.error("Error: Unable to register new user");
+			    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
 					}
-					changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
-					
-					// Send confirmation email
-					SignupAddPunch mail = new SignupAddPunch();
-	                mail.sendEmail_For_app_user(Integer.toString(user_id), email);
 				}
-				else
+				catch (Exception ex)
 				{
-					// The referral code returned more than a single user. Return an error after logging.
-		    		Constants.logger.error("Error: Unable to register new user");
-		    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
+					Constants.logger.error("Error : " + ex.getMessage());
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				Constants.logger.error("Error : " + ex.getMessage());
+				// The referral code returned more than a single user. Return an error after logging.
+	    		Constants.logger.error("Error: Email " + email + " is already being used");
+	    		errorResponse(response, "403", "Cannot register. Email is already in use.");
 			}
-		}
-		else
+		} 
+		catch (JSONException ex) 
 		{
-			// The referral code returned more than a single user. Return an error after logging.
-    		Constants.logger.error("Error: Email " + email + " is already being used");
-    		errorResponse(response, "403", "Cannot register. Email is already in use.");
+			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		return user_id;
 	}
 	
-	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, HashMap<String, String> requestInputs, String referringId, boolean userReferred)
+	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
-		String fbid = requestInputs.get(Constants.FBID_PARAMNAME);
-		if (!doesFBIDExist(fbid))
+		try
 		{
-			try
+			String fbid = requestInputs.getString(Constants.FBID_PARAMNAME);
+			if (!doesFBIDExist(fbid))
 			{
-				// Insert new user into database
-				java.sql.Time time = new java.sql.Time(new Date().getTime());
-	            java.sql.Date date = new java.sql.Date(new Date().getTime());
-	            String name = requestInputs.get(Constants.NAME_PARAMNAME);
-	            String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
-	            String queryString = "insert into app_user " +
-	            		"(username,email_id,user_status,isemailverified,Date,Time,sessionid,isfbaccount,fbid,credit,refer_code,user_code,user_referred)" + 
-	            		"values(?,?,'Y','Y','" + 
-	            		date + "','" + 
-	            		time + "',?,'Y',?," + 
-	            		rewardCreditValue + 
-	            		",?,?,?);";
-	            ArrayList<String> parameters = new ArrayList<String>();
-	            parameters.add(name);
-	            parameters.add(email);
-	            parameters.add(requestInputs.get(Constants.SESSIONID_PARAMNAME));
-				parameters.add(fbid);
-	            parameters.add(requestInputs.get(Constants.REFERCODE_PARAMNAME));
-	            // Generate a length 5 random alphanumeric code for the new user
-	            parameters.add(getRandomAlphaNumericCode(5));
-	            if (userReferred)
-	            {
-	            	parameters.add("1");
-	            }
-	            else
-	            {
-	            	parameters.add("0");
-	            }
-	            user_id = DataAccess.insertDatabase(queryString, parameters);	
-				if (user_id != 0)
+				try
 				{
-					// Put a tracking row into the credit change history table
-					CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
-					int reason = 0;
-					if (userReferred)
+					// Insert new user into database
+					java.sql.Time time = new java.sql.Time(new Date().getTime());
+		            java.sql.Date date = new java.sql.Date(new Date().getTime());
+		            String name = requestInputs.getString(Constants.NAME_PARAMNAME);
+		            String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
+		            String queryString = "insert into app_user " +
+		            		"(username,email_id,user_status,isemailverified,Date,Time,sessionid,isfbaccount,fbid,credit,refer_code,user_code,user_referred)" + 
+		            		"values(?,?,'Y','Y','" + 
+		            		date + "','" + 
+		            		time + "',?,'Y',?," + 
+		            		rewardCreditValue + 
+		            		",?,?,?);";
+		            ArrayList<String> parameters = new ArrayList<String>();
+		            parameters.add(name);
+		            parameters.add(email);
+		            parameters.add(requestInputs.getString(Constants.SESSIONID_PARAMNAME));
+					parameters.add(fbid);
+		            parameters.add(requestInputs.getString(Constants.REFERCODE_PARAMNAME));
+		            // Generate a length 5 random alphanumeric code for the new user
+		            parameters.add(getRandomAlphaNumericCode(5));
+		            if (userReferred)
+		            {
+		            	parameters.add("1");
+		            }
+		            else
+		            {
+		            	parameters.add("0");
+		            }
+		            user_id = DataAccess.insertDatabase(queryString, parameters);	
+					if (user_id != 0)
 					{
-						reason = CreditChangeHistory.USER_INVITE_SIGNUP;
+						// Put a tracking row into the credit change history table
+						CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
+						int reason = 0;
+						if (userReferred)
+						{
+							reason = CreditChangeHistory.USER_INVITE_SIGNUP;
+						}
+						else
+						{
+							reason = CreditChangeHistory.BUSINESS_INVITE_SIGNUP;
+						}
+						changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
+						
+						sendWelcomeEmail(name, email);
 					}
 					else
 					{
-						reason = CreditChangeHistory.BUSINESS_INVITE_SIGNUP;
+						// The referral code returned more than a single user. Return an error after logging.
+			    		Constants.logger.error("Error: Unable to register new user");
+			    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
 					}
-					changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
-					
-					sendWelcomeEmail(name, email);
 				}
-				else
+				catch (Exception ex)
 				{
-					// The referral code returned more than a single user. Return an error after logging.
-		    		Constants.logger.error("Error: Unable to register new user");
-		    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
+					Constants.logger.error("Error : " + ex.getMessage());
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				Constants.logger.error("Error : " + ex.getMessage());
+				// The referral code returned more than a single user. Return an error after logging.
+	    		Constants.logger.error("Error: Facebook id " + fbid + " is already being used");
+	    		errorResponse(response, "403", "Cannot register. Facebook account is already in use.");
 			}
-		}
-		else
+		} 
+		catch (JSONException ex) 
 		{
-			// The referral code returned more than a single user. Return an error after logging.
-    		Constants.logger.error("Error: Facebook id " + fbid + " is already being used");
-    		errorResponse(response, "403", "Cannot register. Facebook account is already in use.");
+			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		return user_id;
 	}
 	
-	private HashMap<String,Object> createEmailRegistrationResponse(int new_user_id, HashMap<String, String> requestInputs)
+	private JSONObject createEmailRegistrationResponse(int new_user_id, JSONObject requestInputs)
 	{
-		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-		responseMap.put("statusCode", "00");
-		responseMap.put("userid", new_user_id);
-		responseMap.put("name", requestInputs.get(Constants.NAME_PARAMNAME));
-		String email = requestInputs.get(Constants.EMAIL_PARAMNAME);
-		responseMap.put("email", email);
-		responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
-		String statusMessage =  "You’re almost done!"
-                + " We’ve sent an email to " + email + "."
-                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
-		responseMap.put("statusMessage", statusMessage);
+		JSONObject responseMap = new JSONObject();
+		try
+		{
+			responseMap.put("statusCode", "00");
+			responseMap.put("userid", new_user_id);
+			responseMap.put("name", requestInputs.get(Constants.NAME_PARAMNAME));
+			String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
+			responseMap.put("email", email);
+			responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
+			String statusMessage =  "You’re almost done!"
+	                + " We’ve sent an email to " + email + "."
+	                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
+			responseMap.put("statusMessage", statusMessage);
+		} 
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
 		return responseMap;
 	}
 	
-	private HashMap<String,Object> createFacebookRegistrationResponse(int new_user_id, HashMap<String, String> requestInputs)
+	private JSONObject createFacebookRegistrationResponse(int new_user_id, JSONObject requestInputs)
 	{
-		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-		responseMap.put("statusCode", "00");
-		responseMap.put("userid", new_user_id);
-		responseMap.put("sessionid", requestInputs.get(Constants.SESSIONID_PARAMNAME));
-		responseMap.put("is_profileid_created", "false");
-		responseMap.put("statusMessage", "Registration successful!");
+		JSONObject responseMap = new JSONObject();
+		try
+		{
+			responseMap.put("statusCode", "00");
+			responseMap.put("userid", new_user_id);
+			responseMap.put("sessionid", requestInputs.getString(Constants.SESSIONID_PARAMNAME));
+			responseMap.put("is_profileid_created", "false");
+			responseMap.put("statusMessage", "Registration successful!");
+		} 
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
 		return responseMap;
 	}
 	
@@ -404,92 +419,100 @@ public class Users extends XmlHttpServlet  {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {    	
-    	HashMap<String, Object> responseMap = null;
-    	float expectedAPIVersion = getExpectedVersion(request);
-    	if (validateVersion(response, expectedAPIVersion))
+    	try
     	{
-        	HashMap<String, String> requestInputs = getRequestData(request, postElements);	
-        	
-        	String refer_code = requestInputs.get(Constants.REFERCODE_PARAMNAME);
-        	boolean userReferral = false;
-        	HashMap<String,String> results = getReferringUser(refer_code);
-        	if (results != null)
+    		JSONObject responseMap = null;
+        	float expectedAPIVersion = getExpectedVersion(request);
+        	if (validateVersion(response, expectedAPIVersion))
         	{
-        		userReferral = true;
-        	}
-        	else
-        	{
-        		// Failed to find a referring user. Check businesses.
-        		results = getReferringBusiness(refer_code);
-        	}
-        	
-        	if (results != null)
-        	{
-    			String referringId = null;
-    			if (userReferral)
-    			{
-    				// get the user id for the referring user
-    				referringId = results.get(Constants.USERID_PARAMNAME);	
-    			}
-    			else
-    			{
-    				// get the business id for the referring business
-    				referringId = results.get(Constants.BUSINESSID_PARAMNAME);
-    			}
-        		
-        		int new_user_id = 0;
-        		String registrationType = requestInputs.get(Constants.TXTYPE_PARAMNAME);
-        		if (registrationType != null)
-        		{
-        			if (registrationType.equalsIgnoreCase(emailRegistration))
+            	//HashMap<String, String> requestInputs = getRequestData(request, postElements);	
+        		JSONObject requestInputs = getRequestData(request);	
+            	
+            	String refer_code = requestInputs.getString(Constants.REFERCODE_PARAMNAME);
+            	boolean userReferral = false;
+            	HashMap<String,String> results = getReferringUser(refer_code);
+            	if (results != null)
+            	{
+            		userReferral = true;
+            	}
+            	else
+            	{
+            		// Failed to find a referring user. Check businesses.
+            		results = getReferringBusiness(refer_code);
+            	}
+            	
+            	if (results != null)
+            	{
+        			String referringId = null;
+        			if (userReferral)
         			{
-        				// Perform email registration
-        				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral);
-        				if (new_user_id != 0)
-                		{
-        					responseMap = createEmailRegistrationResponse(new_user_id, requestInputs);
-                		}
-        			}
-        			else if (registrationType.equalsIgnoreCase(facebookRegistration))
-        			{
-        				// Perform Facebook registration
-        				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral);
-        				if (new_user_id != 0)
-                		{
-        					responseMap = createFacebookRegistrationResponse(new_user_id, requestInputs);
-                		}
+        				// get the user id for the referring user
+        				referringId = results.get(Constants.USERID_PARAMNAME);	
         			}
         			else
         			{
-        				// Unknown registration type specified by caller
-                		Constants.logger.error("Error: unknown registration type");
+        				// get the business id for the referring business
+        				referringId = results.get(Constants.BUSINESSID_PARAMNAME);
+        			}
+            		
+            		int new_user_id = 0;
+            		String registrationType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
+            		if (registrationType != null)
+            		{
+            			if (registrationType.equalsIgnoreCase(emailRegistration))
+            			{
+            				// Perform email registration
+            				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral);
+            				if (new_user_id != 0)
+                    		{
+            					responseMap = createEmailRegistrationResponse(new_user_id, requestInputs);
+                    		}
+            			}
+            			else if (registrationType.equalsIgnoreCase(facebookRegistration))
+            			{
+            				// Perform Facebook registration
+            				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral);
+            				if (new_user_id != 0)
+                    		{
+            					responseMap = createFacebookRegistrationResponse(new_user_id, requestInputs);
+                    		}
+            			}
+            			else
+            			{
+            				// Unknown registration type specified by caller
+                    		Constants.logger.error("Error: unknown registration type");
+                    		errorResponse(response, "404", "Registration error");
+            			}
+            		}
+            		else
+            		{
+            			// No registration type specified by caller
+                		Constants.logger.error("Error: null registration type");
                 		errorResponse(response, "404", "Registration error");
-        			}
-        		}
-        		else
-        		{
-        			// No registration type specified by caller
-            		Constants.logger.error("Error: null registration type");
-            		errorResponse(response, "404", "Registration error");
-        		}
-        		
-        		if (new_user_id != 0)
-        		{
-            		// Successfully created user, now reward the referring user if there is one
-        			if (userReferral)
-        			{
-        				// Get the referring user's info and then call function to reward them
-            			addRewardCreditToReferrer(referringId, results.get(Constants.CREDIT_PARAMNAME), Integer.toString(new_user_id));
-        			}
-        			
-        			// Send a response to caller
-        			xmlResponse(response, responseMap);
-        		}
-        	}
-        	else
-        	{
-        		errorResponse(response, "404", "The referral code is invalid");
+            		}
+            		
+            		if (new_user_id != 0)
+            		{
+                		// Successfully created user, now reward the referring user if there is one
+            			if (userReferral)
+            			{
+            				// Get the referring user's info and then call function to reward them
+                			addRewardCreditToReferrer(referringId, results.get(Constants.CREDIT_PARAMNAME), Integer.toString(new_user_id));
+            			}
+            			
+            			// Send a response to caller
+            			jsonResponse(response, responseMap);
+            		}
+            	}
+            	else
+            	{
+            		errorResponse(response, "404", "The referral code is invalid");
+            	}
         	}
     	}
+    	catch (JSONException ex)
+    	{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
     }
 }

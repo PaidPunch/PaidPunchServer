@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.*;
+
 import com.db.DataAccess;
 import com.db.DataAccessController;
 import com.server.Constants;
@@ -24,8 +26,6 @@ import com.server.Utility;
 public class Punches extends XmlHttpServlet 
 {
 	private static final long serialVersionUID = -5700319928859466433L;
-	
-	private ArrayList<String> postElements;
 
 	@Override
     public void init(ServletConfig config) throws ServletException
@@ -36,22 +36,12 @@ public class Punches extends XmlHttpServlet
 	   {
 		   ServletContext context = config.getServletContext();
 		   Constants.loadJDBCConstants(context);
-		   
-		   initializePostElements();
 	   }
 	   catch(Exception e)
 	   {
 		   Constants.logger.error(e);
 	   }
     }
-	
-	private void initializePostElements()
-	{
-		postElements = new ArrayList<String>();
-		postElements.add(Constants.USERID_PARAMNAME);
-		postElements.add(Constants.PUNCHCARDID_PARAMNAME);
-		postElements.add(Constants.SESSIONID_PARAMNAME);
-	}
 	
 	// Get user info
 	private ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
@@ -294,89 +284,97 @@ public class Punches extends XmlHttpServlet
     	float expectedAPIVersion = getExpectedVersion(request);
     	if (validateVersion(response, expectedAPIVersion))
     	{
-        	HashMap<String, String> requestInputs = getRequestData(request, postElements);	
+        	JSONObject requestInputs = getRequestData(request);	
         	
-        	String user_id = requestInputs.get(Constants.USERID_PARAMNAME);
-        	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
-        	if (userResultsArray.size() == 1)
+        	try
         	{
-        		HashMap<String,String> userInfo = userResultsArray.get(0);
-        		
-        		// Validate session
-        		String currentSessionId = requestInputs.get(Constants.SESSIONID_PARAMNAME);
-        		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
-        		{
-        			String punchcardid = requestInputs.get(Constants.PUNCHCARDID_PARAMNAME);
-                	ArrayList<HashMap<String,String>> punchcardResultsArray = getPunchCardInfo(punchcardid);
-                	if (punchcardResultsArray.size() == 1)
-                	{
-                		HashMap<String,String> punchcardInfo = punchcardResultsArray.get(0);
-                		// Check if punchcard is still valid
-                		if (punchcardNotExpired(punchcardInfo.get("expiry_date")))
-                		{
-                			String business_id = punchcardInfo.get(Constants.BUSINESSID_PARAMNAME);
-                			ArrayList<HashMap<String,String>> businessResultsArray = getBusinessInfo(business_id);
-                			if (businessResultsArray.size() == 1)
-                			{
-                				HashMap<String,String> businessInfo = businessResultsArray.get(0);
-                				String busi_enabled = businessInfo.get("busi_enabled");
-                	            if (busi_enabled.equalsIgnoreCase("Y")) 
-                	            {
-                	            	String cost = punchcardInfo.get("selling_price_of_punch_card");
-                	            	String expirydays = punchcardInfo.get("expirydays");
-                	            	String punch_num = punchcardInfo.get("no_of_punches_per_card");
-                	            	if (buyPunch(response, user_id, punchcardid, cost, punch_num, expirydays))
-                	            	{
-                	            		// Provide successful response to caller
-                	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-                	            		responseMap.put("statusCode", "00");
-                	            		responseMap.put("statusMessage", "Punch card purchased successfully");
-                	            		
-                	            		// Send a response to caller
-                	        			xmlResponse(response, responseMap);
-                	            	}
-                	            }
-                	            else
-                	            {
-                    				// Business is not enabled
-                            		Constants.logger.error("Error: Tried to purchase punchcard from expired business: " + business_id);
-                            		errorResponse(response, "404", "Unknown business.");
-                	            }
-                			}
-                			else
-                			{
-                				// Could not find business
-                        		Constants.logger.error("Error: Unable to find business with id: " + business_id);
-                        		errorResponse(response, "404", "Unknown business.");
-                			}
-                		}
-                		else
-                		{
-                			// Punchcard is expired
-                    		Constants.logger.error("Error: Tried to purchase expired punchcard: " + punchcardid);
-                    		errorResponse(response, "403", "Punchcard is expired.");
-                		}
-                	}
-                	else
-                	{
-            			// Could not find punchcard
-                		Constants.logger.error("Error: Unable to find punchcard with id: " + punchcardid);
-                		errorResponse(response, "404", "Unknown punchcard");
-                	}
-        		}
-        		else
+        		String user_id = requestInputs.getString(Constants.USERID_PARAMNAME);
+            	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
+            	if (userResultsArray.size() == 1)
             	{
-            		// Session mismatch
-            		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
-            		errorResponse(response, "400", "You have logged in from another device");
+            		HashMap<String,String> userInfo = userResultsArray.get(0);
+            		
+            		// Validate session
+            		String currentSessionId = requestInputs.getString(Constants.SESSIONID_PARAMNAME);
+            		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
+            		{
+            			String punchcardid = requestInputs.getString(Constants.PUNCHCARDID_PARAMNAME);
+                    	ArrayList<HashMap<String,String>> punchcardResultsArray = getPunchCardInfo(punchcardid);
+                    	if (punchcardResultsArray.size() == 1)
+                    	{
+                    		HashMap<String,String> punchcardInfo = punchcardResultsArray.get(0);
+                    		// Check if punchcard is still valid
+                    		if (punchcardNotExpired(punchcardInfo.get("expiry_date")))
+                    		{
+                    			String business_id = punchcardInfo.get(Constants.BUSINESSID_PARAMNAME);
+                    			ArrayList<HashMap<String,String>> businessResultsArray = getBusinessInfo(business_id);
+                    			if (businessResultsArray.size() == 1)
+                    			{
+                    				HashMap<String,String> businessInfo = businessResultsArray.get(0);
+                    				String busi_enabled = businessInfo.get("busi_enabled");
+                    	            if (busi_enabled.equalsIgnoreCase("Y")) 
+                    	            {
+                    	            	String cost = punchcardInfo.get("selling_price_of_punch_card");
+                    	            	String expirydays = punchcardInfo.get("expirydays");
+                    	            	String punch_num = punchcardInfo.get("no_of_punches_per_card");
+                    	            	if (buyPunch(response, user_id, punchcardid, cost, punch_num, expirydays))
+                    	            	{
+                    	            		// Provide successful response to caller
+                    	            		JSONObject responseMap = new JSONObject();
+                    	            		responseMap.put("statusCode", "00");
+                    	            		responseMap.put("statusMessage", "Punch card purchased successfully");
+                    	            		
+                    	            		// Send a response to caller
+                    	        			jsonResponse(response, responseMap);
+                    	            	}
+                    	            }
+                    	            else
+                    	            {
+                        				// Business is not enabled
+                                		Constants.logger.error("Error: Tried to purchase punchcard from expired business: " + business_id);
+                                		errorResponse(response, "404", "Unknown business.");
+                    	            }
+                    			}
+                    			else
+                    			{
+                    				// Could not find business
+                            		Constants.logger.error("Error: Unable to find business with id: " + business_id);
+                            		errorResponse(response, "404", "Unknown business.");
+                    			}
+                    		}
+                    		else
+                    		{
+                    			// Punchcard is expired
+                        		Constants.logger.error("Error: Tried to purchase expired punchcard: " + punchcardid);
+                        		errorResponse(response, "403", "Punchcard is expired.");
+                    		}
+                    	}
+                    	else
+                    	{
+                			// Could not find punchcard
+                    		Constants.logger.error("Error: Unable to find punchcard with id: " + punchcardid);
+                    		errorResponse(response, "404", "Unknown punchcard");
+                    	}
+            		}
+            		else
+                	{
+                		// Session mismatch
+                		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
+                		errorResponse(response, "400", "You have logged in from another device");
+                	}
             	}
-        	}
-        	else
-        	{
-    			// Could not find user
-        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-        		errorResponse(response, "404", "Unknown user");
-        	}
+            	else
+            	{
+        			// Could not find user
+            		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+            		errorResponse(response, "404", "Unknown user");
+            	}
+	    	}
+	    	catch (JSONException ex)
+	    	{
+	    		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
+	    		errorResponse(response, "500", "Unable to retrieve products");
+	    	}
     	}
     }
 }

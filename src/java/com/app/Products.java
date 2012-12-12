@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import net.authorize.CustomerProfileCommunication;
 import net.authorize.TransactionCommunication;
 
+import org.json.*;
+
 public class Products extends XmlHttpServlet  {
 
 	private static final long serialVersionUID = 4628293433991773440L;
-	
-	private ArrayList<String> putElements;
 	
 	@Override
     public void init(ServletConfig config) throws ServletException
@@ -38,22 +38,12 @@ public class Products extends XmlHttpServlet  {
 	   {
 		   ServletContext context = config.getServletContext();
 		   Constants.loadJDBCConstants(context);
-		   
-		   initializePutElements();
 	   }
 	   catch(Exception e)
 	   {
 		   Constants.logger.error(e);
 	   }
     }
-
-	private void initializePutElements()
-	{
-		putElements = new ArrayList<String>();
-		putElements.add(Constants.USERID_PARAMNAME);
-		putElements.add(Constants.SESSIONID_PARAMNAME);
-		putElements.add(Constants.PRODUCTID_PARAMNAME);
-	}
 	
 	// Get user info
 	private ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
@@ -305,8 +295,8 @@ public class Products extends XmlHttpServlet  {
             throws ServletException, IOException 
     {    	
     	ProductsList products = ProductsList.getInstance();
-    	HashMap<String, Object> currentProducts = products.getMapOfProducts();
-    	xmlResponse(response, currentProducts);
+    	String currentProducts = products.getMapOfProducts();
+    	stringResponse(response, currentProducts);
     }
     
 	/**
@@ -328,86 +318,99 @@ public class Products extends XmlHttpServlet  {
     	float expectedAPIVersion = getExpectedVersion(request);
     	if (validateVersion(response, expectedAPIVersion))
     	{
-        	HashMap<String, String> requestInputs = getRequestData(request, putElements);	
+        	JSONObject requestInputs = getRequestData(request);	
         	
-        	String user_id = requestInputs.get(Constants.USERID_PARAMNAME);
-        	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
-        	if (userResultsArray.size() == 1)
+        	try
         	{
-        		HashMap<String,String> userInfo = userResultsArray.get(0);
-        		
-        		// Validate session
-        		String currentSessionId = requestInputs.get(Constants.SESSIONID_PARAMNAME);
-        		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
-        		{
-        			String product_id = requestInputs.get(Constants.PRODUCTID_PARAMNAME);
-                	ArrayList<HashMap<String,String>> productResultsArray = getProductInfo(product_id);
-                	if (productResultsArray.size() == 1)
-                	{
-                		HashMap<String,String> productInfo = productResultsArray.get(0);
-                		// Check if punchcard is still valid
-                		if (!Boolean.getBoolean(productInfo.get("disabled")))
-                		{
-                			boolean success = false;
-                			String profile_id = userInfo.get("profile_id");
-                			HashMap<String,String> paymentInfo = getPaymentInfo(user_id, profile_id);
-                			if (paymentInfo != null)
-                			{
-                				success = purchaseProduct(
-                								user_id, 
-                								product_id, 
-                								profile_id, 
-                								paymentInfo.get("payment_id"), 
-                								Float.parseFloat(productInfo.get("cost")),
-                								Float.parseFloat(productInfo.get("credits")));
-                			}
-                			
-                			if (success)
-                			{
-                				// Provide successful response to caller
-        	            		HashMap<String, Object> responseMap = new HashMap<String,Object>();
-        	            		responseMap.put("statusCode", "00");
-        	            		responseMap.put("statusMessage", "Credit product purchased successfully");
-        	            		
-        	            		// Send a response to caller
-        	        			xmlResponse(response, responseMap);
-                			}
-                			else
-                    		{
-                    			// Could not retrieve payment information
-                        		Constants.logger.error("Error: Unable to retrieve  " + product_id);
-                        		errorResponse(response, "400", "Unable to purchase credits");
-                    		}
-                		}
-                		else
-                		{
-                			// Product is disabled
-                    		Constants.logger.error("Error: Attempt to purchase disabled product " + product_id);
-                    		errorResponse(response, "403", "This product is no longer available for purchase");
-                		}
-                	}
-                	else
-                	{
-                		// Could not find product
-                		Constants.logger.error("Error: Unable to find product with id: " + product_id);
-                		errorResponse(response, "404", "Unknown credit product");
-                	}	
-        		}
-        		else
+        		String user_id = requestInputs.getString(Constants.USERID_PARAMNAME);
+            	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
+            	if (userResultsArray.size() == 1)
             	{
-            		// Session mismatch
-            		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
-            		errorResponse(response, "400", "You have logged in from another device");
+            		HashMap<String,String> userInfo = userResultsArray.get(0);
+            		
+            		// Validate session
+            		String currentSessionId = requestInputs.getString(Constants.SESSIONID_PARAMNAME);
+            		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
+            		{
+            			String product_id = requestInputs.getString(Constants.PRODUCTID_PARAMNAME);
+                    	ArrayList<HashMap<String,String>> productResultsArray = getProductInfo(product_id);
+                    	if (productResultsArray.size() == 1)
+                    	{
+                    		HashMap<String,String> productInfo = productResultsArray.get(0);
+                    		// Check if punchcard is still valid
+                    		if (!Boolean.getBoolean(productInfo.get("disabled")))
+                    		{
+                    			boolean success = false;
+                    			String profile_id = userInfo.get("profile_id");
+                    			HashMap<String,String> paymentInfo = getPaymentInfo(user_id, profile_id);
+                    			if (paymentInfo != null)
+                    			{
+                    				success = purchaseProduct(
+                    								user_id, 
+                    								product_id, 
+                    								profile_id, 
+                    								paymentInfo.get("payment_id"), 
+                    								Float.parseFloat(productInfo.get("cost")),
+                    								Float.parseFloat(productInfo.get("credits")));
+                    			}
+                    			
+                    			if (success)
+                    			{
+                    				try
+                    				{
+                    					// Provide successful response to caller
+                        				JSONObject responseMap = new JSONObject();
+                	            		responseMap.put("statusCode", "00");
+                	            		responseMap.put("statusMessage", "Credit product purchased successfully");
+                	            		
+                	            		// Send a response to caller
+                	        			jsonResponse(response, responseMap);
+                    				}
+                    				catch (JSONException ex)
+                    				{
+                    					Constants.logger.error("Error : " + ex.getMessage());
+                    				}
+                    			}
+                    			else
+                        		{
+                        			// Could not retrieve payment information
+                            		Constants.logger.error("Error: Unable to retrieve  " + product_id);
+                            		errorResponse(response, "400", "Unable to purchase credits");
+                        		}
+                    		}
+                    		else
+                    		{
+                    			// Product is disabled
+                        		Constants.logger.error("Error: Attempt to purchase disabled product " + product_id);
+                        		errorResponse(response, "403", "This product is no longer available for purchase");
+                    		}
+                    	}
+                    	else
+                    	{
+                    		// Could not find product
+                    		Constants.logger.error("Error: Unable to find product with id: " + product_id);
+                    		errorResponse(response, "404", "Unknown credit product");
+                    	}	
+            		}
+            		else
+                	{
+                		// Session mismatch
+                		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
+                		errorResponse(response, "400", "You have logged in from another device");
+                	}
+            	}
+            	else
+            	{
+            		// Could not find user
+            		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+            		errorResponse(response, "404", "Unknown user");
             	}
         	}
-        	else
+        	catch (JSONException ex)
         	{
-        		// Could not find user
-        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-        		errorResponse(response, "404", "Unknown user");
+        		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
+        		errorResponse(response, "500", "Unable to retrieve products");
         	}
     	}
-    	
-    	//xmlResponse(response, currentProducts);
     }
 }

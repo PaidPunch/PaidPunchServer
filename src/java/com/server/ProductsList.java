@@ -4,10 +4,11 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import com.db.DataAccess;
 import com.db.DataAccess.ResultSetHandler;
+
+import org.json.*;
 
 public class ProductsList 
 {
@@ -135,24 +136,21 @@ public class ProductsList
 		return enabledProducts;
 	}
 	
-	public HashMap<String, Object> getMapOfProducts()
+	public String getMapOfProducts()
 	{
 		// Refresh the data if necessary
 		refreshProductsFromDatabaseIfNecessary();
 				
-		ArrayList<HashMap<String, Object>> mapArray = new ArrayList<HashMap<String, Object>>();
+		JSONArray mapArray = new JSONArray();
 		for (Product current : currentProducts)
 		{
 			if (!current.getDisabled())
 			{
-				mapArray.add(current.getMapOfProduct());
+				mapArray.put(current.getMapOfProduct());
 			}
 		}
 		
-		HashMap<String,Object> mp= new HashMap<String, Object>();
-		mp.put("products", mapArray);
-		
-		return mp;
+		return mapArray.toString();
 	}
 	
 	// Singleton 
