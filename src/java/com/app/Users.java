@@ -191,7 +191,7 @@ public class Users extends XmlHttpServlet  {
 		            String name = requestInputs.getString(Constants.NAME_PARAMNAME);
 		            String queryString = "insert into app_user " +
 		                    " (username,email_id,mobile_no,password,pincode,user_status,isemailverified,time,date,isfbaccount,credit,refer_code,user_code, user_referred) " +
-		            		"values(?,?,?,?,0,'N','N','" + 
+		            		"values(?,?,?,?,?,'N','N','" + 
 		                    time + "','" + 
 		            		date + 
 		            		"','N'," + 
@@ -203,6 +203,7 @@ public class Users extends XmlHttpServlet  {
 		            parameters.add(email);
 		            parameters.add(requestInputs.getString(Constants.MOBILENO_PARAMNAME));
 					parameters.add(requestInputs.getString(Constants.PASSWORD_PARAMNAME));
+					parameters.add(requestInputs.getString(Constants.ZIPCODE_PARAMNAME));
 		            parameters.add(requestInputs.getString(Constants.REFERCODE_PARAMNAME));
 		            // Generate a length 5 random alphanumeric code for the new user
 		            parameters.add(getRandomAlphaNumericCode(5));
