@@ -355,8 +355,8 @@ public class Users extends XmlHttpServlet  {
 			String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
 			responseMap.put("email", email);
 			responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
-			String statusMessage =  "You’re almost done!"
-	                + " We’ve sent an email to " + email + "."
+			String statusMessage =  "You are almost done!"
+	                + " We have sent an email to " + email + "."
 	                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
 			responseMap.put("statusMessage", statusMessage);
 		} 
