@@ -29,6 +29,8 @@ public class Users extends XmlHttpServlet  {
 	private static final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private static final String emailRegistration = "EMAIL-REGISTER";
 	private static final String facebookRegistration = "FACEBOOK-REGISTER";
+	private static final String emailLogin = "EMAIL-LOGIN";
+	private static final String facebookLogin = "FACEBOOK-LOGIN";
 	private static final float rewardCreditValue = (float)5.00;
 	
 	@Override
@@ -403,6 +405,134 @@ public class Users extends XmlHttpServlet  {
         CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
 		changeHistory.insertCreditChange(userid, rewardCreditValue, CreditChangeHistory.USER_REFERRAL, referredUserId);
 	}
+	
+	private HashMap<String,String> validateEmailLogin(JSONObject requestInputs)
+	{
+		HashMap<String,String> results = null;
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		
+		try
+		{
+			String queryString = "SELECT * FROM app_user WHERE email_id=? and password=? and isfbaccount='N';";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(requestInputs.getString(Constants.EMAIL_PARAMNAME));
+			parameters.add(requestInputs.getString(Constants.PASSWORD_PARAMNAME));
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
+			if (resultsArray.size() == 1)
+			{
+				results = resultsArray.get(0);
+			}
+			else if (resultsArray.size() > 1)
+	    	{
+	    		// The referral code returned more than a single entity. Return an error after logging.
+	    		Constants.logger.error("Error: Email " + requestInputs.getString(Constants.EMAIL_PARAMNAME) + " returned more than one user");
+	    	}
+	    	else
+	    	{
+	    		// The refer code does not match an existing entity
+	    		Constants.logger.info("Warning: Email " + requestInputs.getString(Constants.EMAIL_PARAMNAME) + " does not match any known users or password did not match");
+	    	}	
+		}
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return results;
+	}
+	
+	private JSONObject createEmailLoginResponse(HashMap<String,String> userData)
+	{
+		JSONObject responseMap = new JSONObject();
+		try
+		{
+			responseMap.put("statusCode", "00");
+			responseMap.put("userid", userData.get(Constants.USERID_PARAMNAME));
+			responseMap.put("name", userData.get(Constants.NAME_PARAMNAME));
+			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
+			responseMap.put("mobilenumber", userData.get(Constants.MOBILENO_PARAMNAME));
+			responseMap.put("statusMessage", "Login Successful");
+		} 
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return responseMap;
+	}
+	
+	private HashMap<String,String> validateFacebookLogin(JSONObject requestInputs)
+	{
+		HashMap<String,String> results = null;
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		
+		try
+		{
+			String queryString = "SELECT * FROM app_user WHERE fbid=? and email_id=?;";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(requestInputs.getString(Constants.FBID_PARAMNAME));
+			parameters.add(requestInputs.getString(Constants.EMAIL_PARAMNAME));
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
+			if (resultsArray.size() == 1)
+			{
+				results = resultsArray.get(0);
+			}
+			else if (resultsArray.size() > 1)
+	    	{
+	    		// The referral code returned more than a single entity. Return an error after logging.
+	    		Constants.logger.error("Error: FBID " + requestInputs.getString(Constants.FBID_PARAMNAME) + " returned more than one user");
+	    	}
+	    	else
+	    	{
+	    		// The refer code does not match an existing entity
+	    		Constants.logger.info("Warning: FBID " + requestInputs.getString(Constants.FBID_PARAMNAME) + " does not match any known users or password did not match");
+	    	}	
+		}
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return results;
+	}
+	
+	private JSONObject createFacebookLoginResponse(HashMap<String,String> userData)
+	{
+		JSONObject responseMap = new JSONObject();
+		try
+		{
+			responseMap.put("statusCode", "00");
+			responseMap.put("userid", userData.get(Constants.USERID_PARAMNAME));
+			responseMap.put("name", userData.get(Constants.NAME_PARAMNAME));
+			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
+			responseMap.put("statusMessage", "Login Successful");
+		} 
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return responseMap;
+	}
+	
+	private boolean updateSessionForUser(HashMap<String,String> userData, JSONObject requestInputs)
+	{
+		boolean success = false;
+		try
+		{
+			String queryString = "UPDATE app_user SET sessionid = ?, user_status = 'Y' WHERE user_id = ?";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(requestInputs.getString(Constants.SESSIONID_PARAMNAME));
+			parameters.add(userData.get(Constants.USERID_PARAMNAME));
+			success = DataAccess.updateDatabase(queryString, parameters);
+		}
+		catch (SQLException ex)
+		{
+        	Constants.logger.error(ex);
+        }
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		
+		return success;
+	}
 
 	/**
      * Handles the HTTP <code>POST</code> method.
@@ -426,7 +556,6 @@ public class Users extends XmlHttpServlet  {
         	float expectedAPIVersion = getExpectedVersion(request);
         	if (validateVersion(response, expectedAPIVersion))
         	{
-            	//HashMap<String, String> requestInputs = getRequestData(request, postElements);	
         		JSONObject requestInputs = getRequestData(request);	
             	
             	String refer_code = requestInputs.getString(Constants.REFERCODE_PARAMNAME);
@@ -512,6 +641,95 @@ public class Users extends XmlHttpServlet  {
         	}
     	}
     	catch (JSONException ex)
+    	{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+    }
+    
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException 
+    {
+    	try
+    	{
+    		JSONObject responseMap = null;
+        	float expectedAPIVersion = getExpectedVersion(request);
+        	if (validateVersion(response, expectedAPIVersion))
+        	{
+        		JSONObject requestInputs = getRequestData(request);	
+        		HashMap<String,String> userData = null;
+            	
+        		String loginType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
+        		if (loginType != null)
+        		{
+        			if (loginType.equalsIgnoreCase(emailLogin))
+        			{
+        				userData = validateEmailLogin(requestInputs);
+        				if (userData != null)
+        				{
+        					if (userData.get("isemailverified").equals("Y"))
+        					{
+        						responseMap = createEmailLoginResponse(userData);
+        					}
+        					else
+        					{
+        						errorResponse(response, "403", "Please verify your email first being trying to log in.");
+        					}
+        				}
+        				else
+        				{
+        					errorResponse(response, "404", "User not found. Either email or password is invalid. Please sign up first.");
+        				}
+        			}
+        			else if (loginType.equalsIgnoreCase(facebookLogin))
+        			{
+        				userData = validateFacebookLogin(requestInputs);
+        				if (userData != null)
+        				{
+        					responseMap = createFacebookLoginResponse(userData);
+        				}
+        				else
+        				{
+        					errorResponse(response, "404", "User not found. Either facebook id is invalid. Please sign up first.");
+        				}
+        			}
+        			else
+        			{
+        				// Unknown registration type specified by caller
+                		Constants.logger.error("Error: unknown login type");
+                		errorResponse(response, "404", "Login error");
+        			}
+        			
+        			if (responseMap != null)
+        			{
+        				// Update sessionid for user
+        				updateSessionForUser(userData, requestInputs);
+        				
+        				// Send a response to caller
+            			jsonResponse(response, responseMap);
+        			}
+        		}
+	    		else
+	    		{
+	    			// No registration type specified by caller
+	        		Constants.logger.error("Error: null login type");
+	        		errorResponse(response, "404", "Login error");
+	    		}
+        	}
+    	}
+    	catch (Exception ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
