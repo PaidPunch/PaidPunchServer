@@ -22,6 +22,7 @@ public class Constants {
     public static String EMAIL_PARAMNAME = "email";
     public static String MOBILENO_PARAMNAME = "mobile_no";
     public static String PASSWORD_PARAMNAME = "password";
+    public static String NEWPASSWORD_PARAMNAME = "new_password";
     public static String FBID_PARAMNAME = "fbid";
     public static String CREDIT_PARAMNAME = "credit";
     public static String CREDITS_PARAMNAME = "credits";

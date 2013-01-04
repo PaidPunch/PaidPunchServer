@@ -42,6 +42,20 @@ public class XmlHttpServlet extends HttpServlet
 		return true;
 	}
 	
+	protected boolean validateSessionId(String validSessionId, JSONObject requestInputs)
+	{
+		try 
+		{
+			String currentSessionId = requestInputs.getString(Constants.SESSIONID_PARAMNAME);
+			return validSessionId.equals(currentSessionId);
+		}
+		catch (JSONException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return false;
+	}
+	
 	protected void jsonResponse(HttpServletResponse response, JSONObject responseMap)
             throws IOException 
     {

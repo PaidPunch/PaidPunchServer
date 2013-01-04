@@ -9,6 +9,7 @@ import com.server.CreditChangeHistory;
 
 import java.io.IOException;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class Users extends XmlHttpServlet  {
 	private static final String facebookRegistration = "FACEBOOK-REGISTER";
 	private static final String emailLogin = "EMAIL-LOGIN";
 	private static final String facebookLogin = "FACEBOOK-LOGIN";
+	private static final String passwordChange = "PASSWORD-CHANGE";
+	private static final String mobilePhoneChange = "MOBILE-CHANGE";
 	private static final float rewardCreditValue = (float)5.00;
 	
 	@Override
@@ -533,6 +536,139 @@ public class Users extends XmlHttpServlet  {
 		
 		return success;
 	}
+	
+	// Get user info
+	private ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
+	{
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		if (user_id != null)
+		{		
+			String queryString = null;
+			if (conn != null)
+			{
+				// Connection not being null implies that we're doing a full transaction 
+				// across multiple database calls
+				queryString = "SELECT * FROM app_user WHERE user_id = ? FOR UPDATE;";	
+			}
+			else
+			{
+				queryString = "SELECT * FROM app_user WHERE user_id = ?;";
+			}
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(user_id);
+			resultsArray = DataAccess.queryDatabase(conn, queryString, parameters);
+		}
+		return resultsArray;
+	}
+	
+	private boolean updatePasswordForUser(Connection conn, String user_id, String new_password)
+	{
+		boolean success = false;
+		String queryString = "UPDATE app_user SET password = ? WHERE user_id = ?";
+		ArrayList<String> parameters = new ArrayList<String>();
+		parameters.add(new_password);
+		parameters.add(user_id);
+		try
+		{
+			success = DataAccess.updateDatabaseWithExistingConnection(conn, queryString, parameters);	
+		}
+		catch (SQLException ex)
+        {
+    		success = false;
+        	Constants.logger.error(ex);
+        }
+		
+		return success;
+	}
+	
+	private JSONObject changePassword(JSONObject requestInputs, HttpServletResponse response)
+    {
+		JSONObject results = null;
+    	boolean success = false;
+		Connection conn = DataAccessController.createConnection();
+		try
+		{
+			conn.setAutoCommit(false);
+			
+			String user_id = requestInputs.getString(Constants.USERID_PARAMNAME);
+			ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, conn);
+			if (userResultsArray.size() == 1)
+        	{
+				HashMap<String,String> userInfo = userResultsArray.get(0);
+				String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);
+				if (validateSessionId(validSessionId, requestInputs))
+				{
+					String old_password = requestInputs.getString(Constants.PASSWORD_PARAMNAME);
+					String current_password = userInfo.get(Constants.PASSWORD_PARAMNAME);
+					if (old_password.equals(current_password))
+					{
+						String new_password = requestInputs.getString(Constants.NEWPASSWORD_PARAMNAME);
+						if (updatePasswordForUser(conn, user_id, new_password))
+						{
+							try
+							{
+								results = new JSONObject();
+								results.put("statusCode", "00");
+								results.put("statusMessage", "Password Change Successful");
+							} 
+							catch (JSONException ex) 
+							{
+								Constants.logger.error("Error : " + ex.getMessage());
+							}
+							success = true;
+						}
+						else
+						{
+							errorResponse(response, "500", "Password update failed");
+						}
+					}
+					else
+					{
+						errorResponse(response, "403", "Existing password does not match");
+					}
+				}
+				else
+				{
+					errorResponse(response, "403", "You are already logged into a different device");
+				}
+        	}
+			else
+			{
+				// Could not find user
+        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+        		errorResponse(response, "404", "Could not find user");
+			}
+			
+			if (success)
+			{
+				conn.commit();
+			}
+			else
+			{
+				conn.rollback();
+			}	
+		}
+		catch (SQLException ex)
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		catch (JSONException ex)
+    	{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		finally
+		{
+			try
+			{
+				conn.close();
+			}
+			catch (SQLException ex)
+			{
+				Constants.logger.error("Error : " + ex.getMessage());
+			}
+		}
+		return results;
+    }
 
 	/**
      * Handles the HTTP <code>POST</code> method.
@@ -670,11 +806,11 @@ public class Users extends XmlHttpServlet  {
         	{
         		JSONObject requestInputs = getRequestData(request);	
         		HashMap<String,String> userData = null;
-            	
-        		String loginType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
-        		if (loginType != null)
+
+        		String putType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
+        		if (putType != null)
         		{
-        			if (loginType.equalsIgnoreCase(emailLogin))
+        			if (putType.equalsIgnoreCase(emailLogin))
         			{
         				userData = validateEmailLogin(requestInputs);
         				if (userData != null)
@@ -693,7 +829,7 @@ public class Users extends XmlHttpServlet  {
         					errorResponse(response, "404", "User not found. Either email or password is invalid. Please sign up first.");
         				}
         			}
-        			else if (loginType.equalsIgnoreCase(facebookLogin))
+        			else if (putType.equalsIgnoreCase(facebookLogin))
         			{
         				userData = validateFacebookLogin(requestInputs);
         				if (userData != null)
@@ -705,17 +841,28 @@ public class Users extends XmlHttpServlet  {
         					errorResponse(response, "404", "User not found. Either facebook id is invalid. Please sign up first.");
         				}
         			}
+        			else if (putType.equalsIgnoreCase(passwordChange))
+        			{
+        				responseMap = changePassword(requestInputs, response);
+        			}
+        			else if (putType.equalsIgnoreCase(mobilePhoneChange))
+        			{
+        				
+        			}
         			else
         			{
         				// Unknown registration type specified by caller
-                		Constants.logger.error("Error: unknown login type");
-                		errorResponse(response, "404", "Login error");
+                		Constants.logger.error("Error: unknown put type");
+                		errorResponse(response, "404", "User update error");
         			}
         			
         			if (responseMap != null)
         			{
-        				// Update sessionid for user
-        				updateSessionForUser(userData, requestInputs);
+        				if (putType.equalsIgnoreCase(emailLogin) || putType.equalsIgnoreCase(facebookLogin))
+            			{
+            				// Update sessionid for user
+            				updateSessionForUser(userData, requestInputs);	
+            			}
         				
         				// Send a response to caller
             			jsonResponse(response, responseMap);
