@@ -669,6 +669,55 @@ public class Users extends XmlHttpServlet  {
 		}
 		return results;
     }
+	
+	private JSONObject updateMobilePhone(JSONObject requestInputs, HttpServletResponse response)
+    {
+		JSONObject results = null;
+    	boolean success = false;
+		try
+		{			
+			String user_id = requestInputs.getString(Constants.USERID_PARAMNAME);
+			ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
+			if (userResultsArray.size() == 1)
+        	{
+				HashMap<String,String> userInfo = userResultsArray.get(0);
+				String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);
+				if (validateSessionId(validSessionId, requestInputs))
+				{
+					String queryString = "UPDATE app_user SET mobile_no = ? WHERE user_id = ?";
+					ArrayList<String> parameters = new ArrayList<String>();
+					parameters.add(requestInputs.getString(Constants.MOBILENO_PARAMNAME));
+					parameters.add(user_id);
+					success = DataAccess.updateDatabase(queryString, parameters);
+					if (success)
+					{
+						results = new JSONObject();
+						results.put("statusCode", "00");
+						results.put("statusMessage", "Mobile phone number updated.");	
+					}
+				}
+				else
+				{
+					errorResponse(response, "403", "You are already logged into a different device");
+				}
+        	}
+			else
+			{
+				// Could not find user
+        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+        		errorResponse(response, "404", "Could not find user");
+			}
+		}
+		catch (SQLException ex)
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		catch (JSONException ex)
+    	{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		return results;
+    }
 
 	/**
      * Handles the HTTP <code>POST</code> method.
@@ -847,7 +896,7 @@ public class Users extends XmlHttpServlet  {
         			}
         			else if (putType.equalsIgnoreCase(mobilePhoneChange))
         			{
-        				
+        				responseMap = updateMobilePhone(requestInputs, response);
         			}
         			else
         			{
