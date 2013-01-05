@@ -177,7 +177,7 @@ public class Users extends XmlHttpServlet  {
 		return doesAccountExistInternal(queryString, fbid);
 	}
 	
-	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred)
+	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred, String userCode)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
@@ -195,7 +195,7 @@ public class Users extends XmlHttpServlet  {
 		            java.sql.Date date = new java.sql.Date(new Date().getTime());
 		            String name = requestInputs.getString(Constants.NAME_PARAMNAME);
 		            String queryString = "insert into app_user " +
-		                    " (username,email_id,mobile_no,password,pincode,user_status,isemailverified,time,date,isfbaccount,credit,refer_code,user_code, user_referred) " +
+		                    " (username,email_id,mobile_no,password,pincode,user_status,isemailverified,time,date,isfbaccount,credit,refer_code,user_code,user_referred) " +
 		            		"values(?,?,?,?,?,'N','N','" + 
 		                    time + "','" + 
 		            		date + 
@@ -210,8 +210,7 @@ public class Users extends XmlHttpServlet  {
 					parameters.add(requestInputs.getString(Constants.PASSWORD_PARAMNAME));
 					parameters.add(requestInputs.getString(Constants.ZIPCODE_PARAMNAME));
 		            parameters.add(requestInputs.getString(Constants.REFERCODE_PARAMNAME));
-		            // Generate a length 5 random alphanumeric code for the new user
-		            parameters.add(getRandomAlphaNumericCode(5));
+		            parameters.add(userCode);
 		            if (userReferred)
 		            {
 		            	parameters.add("1");
@@ -266,7 +265,7 @@ public class Users extends XmlHttpServlet  {
 		return user_id;
 	}
 	
-	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred)
+	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred, String userCode)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
@@ -295,8 +294,7 @@ public class Users extends XmlHttpServlet  {
 		            parameters.add(requestInputs.getString(Constants.SESSIONID_PARAMNAME));
 					parameters.add(fbid);
 		            parameters.add(requestInputs.getString(Constants.REFERCODE_PARAMNAME));
-		            // Generate a length 5 random alphanumeric code for the new user
-		            parameters.add(getRandomAlphaNumericCode(5));
+		            parameters.add(userCode);
 		            if (userReferred)
 		            {
 		            	parameters.add("1");
@@ -349,7 +347,7 @@ public class Users extends XmlHttpServlet  {
 		return user_id;
 	}
 	
-	private JSONObject createEmailRegistrationResponse(int new_user_id, JSONObject requestInputs)
+	private JSONObject createEmailRegistrationResponse(int new_user_id, String user_code, JSONObject requestInputs)
 	{
 		JSONObject responseMap = new JSONObject();
 		try
@@ -360,6 +358,8 @@ public class Users extends XmlHttpServlet  {
 			String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
 			responseMap.put("email", email);
 			responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
+			responseMap.put("user_code", user_code);
+			responseMap.put("credits", rewardCreditValue);
 			String statusMessage =  "You are almost done!"
 	                + " We have sent an email to " + email + "."
 	                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
@@ -372,7 +372,7 @@ public class Users extends XmlHttpServlet  {
 		return responseMap;
 	}
 	
-	private JSONObject createFacebookRegistrationResponse(int new_user_id, JSONObject requestInputs)
+	private JSONObject createFacebookRegistrationResponse(int new_user_id, String user_code, JSONObject requestInputs)
 	{
 		JSONObject responseMap = new JSONObject();
 		try
@@ -381,6 +381,8 @@ public class Users extends XmlHttpServlet  {
 			responseMap.put("userid", new_user_id);
 			responseMap.put("sessionid", requestInputs.getString(Constants.SESSIONID_PARAMNAME));
 			responseMap.put("is_profileid_created", "false");
+			responseMap.put("user_code", user_code);
+			responseMap.put("credits", rewardCreditValue);
 			responseMap.put("statusMessage", "Registration successful!");
 		} 
 		catch (JSONException ex) 
@@ -453,6 +455,8 @@ public class Users extends XmlHttpServlet  {
 			responseMap.put("name", userData.get(Constants.NAME_PARAMNAME));
 			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
 			responseMap.put("mobilenumber", userData.get(Constants.MOBILENO_PARAMNAME));
+			responseMap.put("user_code", userData.get(Constants.USERCODE_PARAMNAME));
+			responseMap.put("credit", userData.get(Constants.CREDIT_PARAMNAME));
 			responseMap.put("statusMessage", "Login Successful");
 		} 
 		catch (JSONException ex) 
@@ -505,6 +509,8 @@ public class Users extends XmlHttpServlet  {
 			responseMap.put("userid", userData.get(Constants.USERID_PARAMNAME));
 			responseMap.put("name", userData.get(Constants.NAME_PARAMNAME));
 			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
+			responseMap.put("user_code", userData.get(Constants.USERCODE_PARAMNAME));
+			responseMap.put("credit", userData.get(Constants.CREDIT_PARAMNAME));
 			responseMap.put("statusMessage", "Login Successful");
 		} 
 		catch (JSONException ex) 
@@ -774,22 +780,24 @@ public class Users extends XmlHttpServlet  {
             		String registrationType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
             		if (registrationType != null)
             		{
+            			// Generate a length 5 random alphanumeric code for the new user
+            			String userCode = getRandomAlphaNumericCode(5);
             			if (registrationType.equalsIgnoreCase(emailRegistration))
             			{
             				// Perform email registration
-            				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral);
+            				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral, userCode);
             				if (new_user_id != 0)
                     		{
-            					responseMap = createEmailRegistrationResponse(new_user_id, requestInputs);
+            					responseMap = createEmailRegistrationResponse(new_user_id, userCode, requestInputs);
                     		}
             			}
             			else if (registrationType.equalsIgnoreCase(facebookRegistration))
             			{
             				// Perform Facebook registration
-            				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral);
+            				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral, userCode);
             				if (new_user_id != 0)
                     		{
-            					responseMap = createFacebookRegistrationResponse(new_user_id, requestInputs);
+            					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, requestInputs);
                     		}
             			}
             			else
