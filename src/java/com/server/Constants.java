@@ -18,7 +18,7 @@ public class Constants {
     // Parameter names used for receiving input and providing output to client
     public static String TXTYPE_PARAMNAME = "txtype";
     public static String USERID_PARAMNAME = "user_id";
-    public static String NAME_PARAMNAME = "name";
+    public static String NAME_PARAMNAME = "username";
     public static String EMAIL_PARAMNAME = "email";
     public static String MOBILENO_PARAMNAME = "mobile_no";
     public static String PASSWORD_PARAMNAME = "password";

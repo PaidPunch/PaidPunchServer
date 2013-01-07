@@ -354,7 +354,7 @@ public class Users extends XmlHttpServlet  {
 		{
 			responseMap.put("statusCode", "00");
 			responseMap.put("userid", new_user_id);
-			responseMap.put("name", requestInputs.get(Constants.NAME_PARAMNAME));
+			responseMap.put("username", requestInputs.get(Constants.NAME_PARAMNAME));
 			String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
 			responseMap.put("email", email);
 			responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
@@ -452,7 +452,7 @@ public class Users extends XmlHttpServlet  {
 		{
 			responseMap.put("statusCode", "00");
 			responseMap.put("userid", userData.get(Constants.USERID_PARAMNAME));
-			responseMap.put("name", userData.get(Constants.NAME_PARAMNAME));
+			responseMap.put("username", userData.get(Constants.NAME_PARAMNAME));
 			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
 			responseMap.put("mobilenumber", userData.get(Constants.MOBILENO_PARAMNAME));
 			responseMap.put("user_code", userData.get(Constants.USERCODE_PARAMNAME));
