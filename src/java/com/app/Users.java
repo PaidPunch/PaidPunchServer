@@ -445,7 +445,7 @@ public class Users extends XmlHttpServlet  {
 		return results;
 	}
 	
-	private JSONObject createEmailLoginResponse(HashMap<String,String> userData)
+	private JSONObject createLoginResponse(HashMap<String,String> userData)
 	{
 		JSONObject responseMap = new JSONObject();
 		try
@@ -500,26 +500,6 @@ public class Users extends XmlHttpServlet  {
 		return results;
 	}
 	
-	private JSONObject createFacebookLoginResponse(HashMap<String,String> userData)
-	{
-		JSONObject responseMap = new JSONObject();
-		try
-		{
-			responseMap.put("statusCode", "00");
-			responseMap.put("userid", userData.get(Constants.USERID_PARAMNAME));
-			responseMap.put("name", userData.get(Constants.NAME_PARAMNAME));
-			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
-			responseMap.put("user_code", userData.get(Constants.USERCODE_PARAMNAME));
-			responseMap.put("credit", userData.get(Constants.CREDIT_PARAMNAME));
-			responseMap.put("statusMessage", "Login Successful");
-		} 
-		catch (JSONException ex) 
-		{
-			Constants.logger.error("Error : " + ex.getMessage());
-		}
-		return responseMap;
-	}
-	
 	private boolean updateSessionForUser(HashMap<String,String> userData, JSONObject requestInputs)
 	{
 		boolean success = false;
@@ -541,30 +521,6 @@ public class Users extends XmlHttpServlet  {
 		}
 		
 		return success;
-	}
-	
-	// Get user info
-	private ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
-	{
-		ArrayList<HashMap<String,String>> resultsArray = null;
-		if (user_id != null)
-		{		
-			String queryString = null;
-			if (conn != null)
-			{
-				// Connection not being null implies that we're doing a full transaction 
-				// across multiple database calls
-				queryString = "SELECT * FROM app_user WHERE user_id = ? FOR UPDATE;";	
-			}
-			else
-			{
-				queryString = "SELECT * FROM app_user WHERE user_id = ?;";
-			}
-			ArrayList<String> parameters = new ArrayList<String>();
-			parameters.add(user_id);
-			resultsArray = DataAccess.queryDatabase(conn, queryString, parameters);
-		}
-		return resultsArray;
 	}
 	
 	private boolean updatePasswordForUser(Connection conn, String user_id, String new_password)
@@ -840,7 +796,7 @@ public class Users extends XmlHttpServlet  {
     }
     
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Handles the HTTP <code>PUT</code> method.
      * 
      * @param request
      *            servlet request
@@ -874,7 +830,7 @@ public class Users extends XmlHttpServlet  {
         				{
         					if (userData.get("isemailverified").equals("Y"))
         					{
-        						responseMap = createEmailLoginResponse(userData);
+        						responseMap = createLoginResponse(userData);
         					}
         					else
         					{
@@ -891,7 +847,7 @@ public class Users extends XmlHttpServlet  {
         				userData = validateFacebookLogin(requestInputs);
         				if (userData != null)
         				{
-        					responseMap = createFacebookLoginResponse(userData);
+        					responseMap = createLoginResponse(userData);
         				}
         				else
         				{
@@ -931,6 +887,65 @@ public class Users extends XmlHttpServlet  {
 	        		Constants.logger.error("Error: null login type");
 	        		errorResponse(response, "404", "Login error");
 	    		}
+        	}
+    	}
+    	catch (Exception ex)
+    	{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+    }
+    
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     * 
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             if a servlet-specific error occurs
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException 
+    {
+    	try
+    	{
+    		JSONObject responseMap = null;
+        	float expectedAPIVersion = getExpectedVersion(request);
+        	if (validateVersion(response, expectedAPIVersion))
+        	{
+        		JSONObject requestInputs = getRequestData(request);	
+        		
+        		String user_id = requestInputs.getString(Constants.USERID_PARAMNAME);
+    			ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
+    			if (userResultsArray.size() == 1)
+            	{
+    				HashMap<String,String> userInfo = userResultsArray.get(0);
+    				String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);
+    				if (validateSessionId(validSessionId, requestInputs))
+    				{
+    					responseMap = createLoginResponse(userInfo);
+    					
+    					if (responseMap != null)
+            			{            				
+            				// Send a response to caller
+                			jsonResponse(response, responseMap);
+            			}
+    				}
+    				else
+    				{
+    					errorResponse(response, "403", "You are already logged into a different device");
+    				}
+            	}
+    			else
+    			{
+    				// Could not find user
+            		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+            		errorResponse(response, "404", "Could not find user");
+    			}
         	}
     	}
     	catch (Exception ex)

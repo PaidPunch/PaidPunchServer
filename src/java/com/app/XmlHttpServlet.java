@@ -1,9 +1,13 @@
 package com.app;
 
+import com.db.DataAccess;
 import com.server.Constants;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -135,5 +139,29 @@ public class XmlHttpServlet extends HttpServlet
 		
 		// Something blew up, return null
 		return null;
+	}
+	
+	// Get user info
+	protected ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
+	{
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		if (user_id != null)
+		{		
+			String queryString = null;
+			if (conn != null)
+			{
+				// Connection not being null implies that we're doing a full transaction 
+				// across multiple database calls
+				queryString = "SELECT * FROM app_user WHERE user_id = ? FOR UPDATE;";	
+			}
+			else
+			{
+				queryString = "SELECT * FROM app_user WHERE user_id = ?;";
+			}
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(user_id);
+			resultsArray = DataAccess.queryDatabase(conn, queryString, parameters);
+		}
+		return resultsArray;
 	}
 }

@@ -43,30 +43,6 @@ public class Punches extends XmlHttpServlet
 	   }
     }
 	
-	// Get user info
-	private ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
-	{
-		ArrayList<HashMap<String,String>> resultsArray = null;
-		if (user_id != null)
-		{		
-			String queryString = null;
-			if (conn != null)
-			{
-				// Connection not being null implies that we're doing a full transaction 
-				// across multiple database calls
-				queryString = "SELECT * FROM app_user WHERE user_id = ? FOR UPDATE;";	
-			}
-			else
-			{
-				queryString = "SELECT * FROM app_user WHERE user_id = ?;";
-			}
-			ArrayList<String> parameters = new ArrayList<String>();
-			parameters.add(user_id);
-			resultsArray = DataAccess.queryDatabase(conn, queryString, parameters);
-		}
-		return resultsArray;
-	}
-	
 	// Get punchcard info
 	private ArrayList<HashMap<String,String>> getPunchCardInfo(String punchcardid)
 	{
