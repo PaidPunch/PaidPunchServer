@@ -353,7 +353,7 @@ public class Users extends XmlHttpServlet  {
 		try
 		{
 			responseMap.put("statusCode", "00");
-			responseMap.put("userid", new_user_id);
+			responseMap.put("user_id", new_user_id);
 			responseMap.put("username", requestInputs.get(Constants.NAME_PARAMNAME));
 			String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
 			responseMap.put("email", email);
@@ -378,7 +378,7 @@ public class Users extends XmlHttpServlet  {
 		try
 		{
 			responseMap.put("statusCode", "00");
-			responseMap.put("userid", new_user_id);
+			responseMap.put("user_id", new_user_id);
 			responseMap.put("sessionid", requestInputs.getString(Constants.SESSIONID_PARAMNAME));
 			responseMap.put("is_profileid_created", "false");
 			responseMap.put("user_code", user_code);
@@ -399,11 +399,11 @@ public class Users extends XmlHttpServlet  {
 		int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "credit", Float.toString(updatedAmount));
         if (res == 1)
         {
-        	Constants.logger.info("Updated credit with referral reward for userid: " + userid);
+        	Constants.logger.info("Updated credit with referral reward for user_id: " + userid);
         }
         else
         {
-        	Constants.logger.error("Unable to update credit with referral reward for userid: " + userid);
+        	Constants.logger.error("Unable to update credit with referral reward for user_id: " + userid);
         }
         
         // Insert tracking row into change history table
@@ -451,7 +451,7 @@ public class Users extends XmlHttpServlet  {
 		try
 		{
 			responseMap.put("statusCode", "00");
-			responseMap.put("userid", userData.get(Constants.USERID_PARAMNAME));
+			responseMap.put("user_id", userData.get(Constants.USERID_PARAMNAME));
 			responseMap.put("username", userData.get(Constants.NAME_PARAMNAME));
 			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
 			responseMap.put("mobilenumber", userData.get(Constants.MOBILENO_PARAMNAME));
