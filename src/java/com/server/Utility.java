@@ -1,10 +1,13 @@
 package com.server;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +17,8 @@ import java.util.HashMap;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
+
+import org.json.JSONException;
 
 import com.db.DataAccess;
 
@@ -414,6 +419,26 @@ public final class Utility {
 			}
 		}
 		return logoUrl;
+    }
+    
+    public static String convertInputStreamToString(InputStream in)
+    {
+    	StringBuilder sb = new StringBuilder();
+    	try
+    	{
+    		//read it with BufferedReader
+        	BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        	String line;
+        	while ((line = br.readLine()) != null) 
+        	{
+        		sb.append(line);
+        	}	
+    	}
+    	catch (IOException ex) 
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+    	return sb.toString();
     }
 
     private static int charToNibble(char p_ch) {

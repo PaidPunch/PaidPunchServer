@@ -1,0 +1,142 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+<title>Welcome to PaidPunch</title>
+</head>
+
+<body>
+<table width='98%' border='0' cellspacing='0' cellpadding='0'>
+
+<tr>
+<td bgcolor='#FFFFFF'><table border='0' cellpadding='0' cellspacing='0' height='100%' width='100%' id='backgroundTable' style='margin: 0;padding: 0;background-color: #FAFAFA;height: 100% !important;width: 100% !important;'>
+
+<tr><td align='center' valign='top' style='border-collapse: collapse;'>
+
+<table border='0' cellpadding='0' cellspacing='0' width='600'>
+<tr>
+
+<td align='center' valign='top' width='50' id='colorBar' style='padding-top: 15px;padding-right: 5px;padding-bottom: 40px;padding-left: 5px;border-collapse: collapse;background-color: #F47B2B;'>
+<img src='http://www.paidpunch.com/images/smile.png' height='40' width='40' style='border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;'>
+</td>
+
+<td valign='top' width='535' id='templateContainer' style='padding-left: 20px;border-collapse: collapse;'>
+
+<!-- // Begin Template Preheader \\ -->
+<table border='0' cellpadding='0' cellspacing='0' width='100%' id='templatePreheader'>
+  <tr>
+    <td valign='top' class='preheaderContent' style='border-collapse: collapse;'>
+    
+      <!-- // Begin Preheader Content \\ -->
+      <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+      <tr></tr>
+      </table>
+
+    <!-- // Begin Preheader Content \\ -->
+    </td>
+  </tr>
+</table>
+<!-- // End Template Preheader \\ -->
+
+<!-- // Begin Template Header \\ -->
+<table border='0' cellpadding='0' cellspacing='0' width='100%' id='templateHeader'>
+  <tr>
+    <td valign='top' style='padding-top: 40px;padding-bottom: 40px;border-collapse: collapse;'>
+    
+    <!-- // Begin Header Content \\ -->
+    <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+      <tr>
+        <td colspan='2' valign='top' class='headerContent' style='border-collapse: collapse;color: #202020;font-family: Helvetica;font-size: 34px;font-weight: bold;line-height: 100%;padding: 0;text-align: left;vertical-align: bottom;'>
+        <img src='https://www.paidpunch.com/images/transhoriz_small.png' alt='' border='0' style='margin: 0;padding: 0;max-width: 500px;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;' id='headerImage campaign-icon'>
+        </td>
+        
+        <td width='35%' colspan='2' style='color:#F47B2B; text-align:right; font-size:30px; font-family: Helvetica, Geneva, Verdana; padding-top:6px;'>Welcome!</td>
+      </tr>
+    </table>
+    <!-- // End Header Content \\ -->
+
+    </td>
+  </tr>
+</table>
+<!-- // End Template Header \\ -->
+
+<!-- // Begin Template Body \\ -->
+<table border='0' cellpadding='0' cellspacing='0' width='100%'>
+  <tr>
+    <td valign='top' width='100%' id='templateBody' style='border-collapse: collapse;'>
+    <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+      <tr>
+        <td colspan='2' valign='top' class='bodyContent' style='padding-top: 20px;border-collapse: collapse;'>
+          <div style='color: #FFF; font-family: Helvetica; font-size: 13px; line-height: 150%; text-align: left;'>
+          <h1 style='color: #363636;display: block;font-family: Helvetica;font-size: 32px;font-weight: normal;letter-spacing: -1px;line-height: 100%;margin-top: 0;margin-right: 0;margin-bottom: 0px;margin-left: 0;text-align: left;'>
+          <b id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Arial; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>
+            Blah Blah
+          </span></b>
+          </h1>
+          
+          <p><span id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Testing</span><br>
+          <br>
+          <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>On behalf of </span><a href='https://www.paidpunch.com/about-us.html' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>our entire team</span></a><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '> I would like to personally welcome you to PaidPunch. We are so excited that you have decided to take part in the movement that is sweeping across Seattle! </span><br>
+          <br>
+         
+          <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;padding-left:31px;'>Tony Mandarano</span><br>
+          <img src='https://www.paidpunch.com/images/tonysig.png' width='250'/><br>
+          <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>Co-Founder</span><br>
+          <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>PaidPunch</span></span>
+          </p>
+
+          <p>&nbsp;</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+    </td>
+  </tr>
+</table>
+
+<!-- // End Template Body \\ -->
+
+<!-- // Begin Template Footer \\ -->
+
+<table border='0' cellpadding='0' cellspacing='0' width='100%'>
+  <tr>
+    <td valign='top' style='border-collapse: collapse;'>
+
+    <!-- // Begin Footer Content \\ -->
+    <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templateFooter' style='border-top: 1px dotted #202020;'>
+      <tr>
+        <td valign='top' width='320' class='footerContent' style='padding-top: 40px;padding-right: 20px;padding-bottom: 20px;padding-left: 0;border-collapse: collapse;'>
+        <div style='color: #202020;font-family: Helvetica;font-size: 11px;line-height: 125%;text-align: left;'>
+        <em>Copyright &copy; 2012 PaidPunch, LLC, All rights reserved.</em>
+        <br>
+        <td valign='top' width='200' id='monkeyRewards' class='footerContent' style='padding-top: 40px;padding-right: 0;padding-bottom: 20px;padding-left: 0;border-collapse: collapse;'>
+        <div style='color: #202020;font-family: Helvetica;font-size: 11px;line-height: 125%;text-align: left;'>Stay happy. Save money. Win prizes.</div>
+        </td>
+      </tr>
+
+      <tr></tr>
+    </table>
+    <!-- // End Footer Content \\ -->
+
+    </td>
+  </tr>
+</table>
+
+<!-- // End Template Footer \\ -->
+
+<br>
+
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+</center>
+
+</td>
+</tr>
+</table>
+</body>
+</html>
