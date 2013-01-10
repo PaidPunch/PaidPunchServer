@@ -33,7 +33,7 @@ public class Users extends XmlHttpServlet  {
 	private static final String emailLogin = "EMAIL-LOGIN";
 	private static final String facebookLogin = "FACEBOOK-LOGIN";
 	private static final String passwordChange = "PASSWORD-CHANGE";
-	private static final String mobilePhoneChange = "MOBILE-CHANGE";
+	private static final String infoChange = "INFO-CHANGE";
 	private static final float rewardCreditValue = (float)5.00;
 	
 	@Override
@@ -632,7 +632,7 @@ public class Users extends XmlHttpServlet  {
 		return results;
     }
 	
-	private JSONObject updateMobilePhone(JSONObject requestInputs, HttpServletResponse response)
+	private JSONObject updateInfoPhone(JSONObject requestInputs, HttpServletResponse response)
     {
 		JSONObject results = null;
     	boolean success = false;
@@ -646,16 +646,58 @@ public class Users extends XmlHttpServlet  {
 				String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);
 				if (validateSessionId(validSessionId, requestInputs))
 				{
-					String queryString = "UPDATE app_user SET mobile_no = ? WHERE user_id = ?";
+					String queryString = "UPDATE app_user SET ";
 					ArrayList<String> parameters = new ArrayList<String>();
-					parameters.add(requestInputs.getString(Constants.MOBILENO_PARAMNAME));
+					StringBuilder infoList = new StringBuilder();
+					try
+					{
+						parameters.add(requestInputs.getString(Constants.MOBILENO_PARAMNAME));
+						infoList.append("mobile_no = ?");
+					}
+					catch (JSONException ex)
+			    	{
+						// No action necessary, just means mobileno is empty
+					}
+					
+					try
+					{
+						String zipcode = requestInputs.getString(Constants.ZIPCODE_PARAMNAME);
+						if (infoList.length() > 0)
+						{
+							infoList.append(",");
+						}
+						infoList.append("pincode = ?");
+						parameters.add(zipcode);
+					}
+					catch (JSONException ex)
+			    	{
+						// No action necessary, just means zipcode is empty
+					}
+					
+					try
+					{
+						String username = requestInputs.getString(Constants.NAME_PARAMNAME);
+						if (infoList.length() > 0)
+						{
+							infoList.append(",");
+						}
+						infoList.append("username = ?");
+						parameters.add(username);
+					}
+					catch (JSONException ex)
+			    	{
+						// No action necessary, just means name is empty
+					}
+					
+					queryString = queryString + infoList.toString() + " WHERE user_id = ?";
 					parameters.add(user_id);
+					
 					success = DataAccess.updateDatabase(queryString, parameters);
 					if (success)
 					{
 						results = new JSONObject();
 						results.put("statusCode", "00");
-						results.put("statusMessage", "Mobile phone number updated.");	
+						results.put("statusMessage", "Information updated.");	
 					}
 				}
 				else
@@ -858,9 +900,9 @@ public class Users extends XmlHttpServlet  {
         			{
         				responseMap = changePassword(requestInputs, response);
         			}
-        			else if (putType.equalsIgnoreCase(mobilePhoneChange))
+        			else if (putType.equalsIgnoreCase(infoChange))
         			{
-        				responseMap = updateMobilePhone(requestInputs, response);
+        				responseMap = updateInfoPhone(requestInputs, response);
         			}
         			else
         			{
