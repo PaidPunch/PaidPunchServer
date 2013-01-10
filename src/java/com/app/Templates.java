@@ -1,12 +1,8 @@
 package com.app;
 
-import com.server.ProductsList;
 import com.server.TemplatesList;
-import com.server.Utility;
 
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;

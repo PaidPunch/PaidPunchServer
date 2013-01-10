@@ -18,8 +18,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
-import org.json.JSONException;
-
 import com.db.DataAccess;
 
 public final class Utility {
