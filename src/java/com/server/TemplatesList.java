@@ -1,8 +1,14 @@
 package com.server;
 
+import com.db.DataAccess;
+import com.db.DataAccess.ResultSetHandler;
+
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
-import org.json.JSONObject;
+
+import org.json.*;
 
 public class TemplatesList 
 {
@@ -33,26 +39,56 @@ public class TemplatesList
 		}
 	}
 	
-	private void refreshTemplatesFromFilesIfNecessary()
+	private void refreshTemplatesFromDatabaseIfNecessary()
 	{
 		if (timeForRefresh())
 		{
 			try
 			{
 				currentTemplates = new JSONObject();
-				InputStream inFacebook = this.getClass().getClassLoader().getResourceAsStream("com/server/facebookTemplate");
-	    		if (inFacebook != null)
-	    		{
-	    			String facebookTemplate = Utility.convertInputStreamToString(inFacebook);
-	    			currentTemplates.put("facebook", facebookTemplate);
-	    		}
-	    		
-	    		InputStream inEmail = this.getClass().getClassLoader().getResourceAsStream("com/server/emailTemplate");
-	    		if (inEmail != null)
-	    		{
-	    			String emailTemplate = Utility.convertInputStreamToString(inEmail);
-	    			currentTemplates.put("email", emailTemplate);
-	    		}	
+				
+				String queryString = "SELECT * FROM pptemplates;";
+				try
+				{
+					DataAccess.queryDatabaseCustom(queryString, null, currentTemplates, new ResultSetHandler()
+					{
+						 public void handle(ResultSet results, Object returnObj) throws SQLException
+		                 { 
+							 try
+							 {
+								 // The cast here is a well-known one, so the suppression is OK
+								 //@SuppressWarnings("unchecked")
+			                     JSONObject arrayTemplates = (JSONObject)returnObj;
+			                     while(results.next())
+			                     {
+			                    	 Template currentTemplate = new Template();
+			                    	 
+			                    	 // Populate product information
+			                    	 currentTemplate.setTemplateId(results.getString("pptemplate_id"));
+			                    	 currentTemplate.setName(results.getString("name"));
+			                    	 currentTemplate.setDesc(results.getString("desc"));
+			                    	 currentTemplate.setGroupId(results.getString("group_id"));
+			                    	 currentTemplate.setGroupName(results.getString("group_name"));
+			                    	 currentTemplate.setTemplate(results.getString("template"), results.getString("uses_file"));
+			                    	 currentTemplate.setDisabled(results.getString("disabled"));
+			                    	 currentTemplate.setModifiedDate(results.getString("date_modified"));
+			                    	 
+			                    	 // Add current product to the product list
+			                    	 arrayTemplates.put(results.getString("name"), currentTemplate);
+			                     } 
+							 }
+							 catch (JSONException ex)
+							 {
+								 Constants.logger.error("Error : " + ex.getMessage());
+							 }
+		                 }
+					});
+					lastRefreshTime = new Date();
+				}
+				catch (SQLException ex)
+				{
+					Constants.logger.error("Error : " + ex.getMessage());
+				}
 	    		
 	    		lastRefreshTime = new Date();
 			}
@@ -73,7 +109,7 @@ public class TemplatesList
 	public JSONObject getTemplates()
 	{
 		// Refresh the data if necessary
-		refreshTemplatesFromFilesIfNecessary();
+		refreshTemplatesFromDatabaseIfNecessary();
 		return currentTemplates;
 	}
 	
