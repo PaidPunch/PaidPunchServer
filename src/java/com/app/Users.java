@@ -457,6 +457,7 @@ public class Users extends XmlHttpServlet  {
 			responseMap.put("mobilenumber", userData.get(Constants.MOBILENO_PARAMNAME));
 			responseMap.put("user_code", userData.get(Constants.USERCODE_PARAMNAME));
 			responseMap.put("credit", userData.get(Constants.CREDIT_PARAMNAME));
+			responseMap.put("isprofile_created", userData.get(Constants.PROFILECREATED_PARAMNAME));
 			responseMap.put("statusMessage", "Login Successful");
 		} 
 		catch (JSONException ex) 
