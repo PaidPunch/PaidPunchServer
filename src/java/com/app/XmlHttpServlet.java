@@ -80,6 +80,26 @@ public class XmlHttpServlet extends HttpServlet
 
     }
 	
+	protected void jsonResponse(HttpServletResponse response, JSONArray responseArray)
+            throws IOException 
+    {
+        try 
+        {
+        	response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            
+            String res = responseArray.toString();
+            
+            out.print(res);
+            Constants.logger.info(res);
+        } 
+        catch (Exception e) 
+        {
+            Constants.logger.error(e);
+        }
+
+    }
+	
 	protected void stringResponse(HttpServletResponse response, String responseString)
             throws IOException 
     {

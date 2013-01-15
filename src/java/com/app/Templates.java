@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import com.server.Constants;
 
@@ -56,7 +56,7 @@ public class Templates extends XmlHttpServlet {
         	if (validateVersion(response, expectedAPIVersion))
         	{
         		TemplatesList templates = TemplatesList.getInstance();
-            	JSONObject responseMap = templates.getTemplates();
+            	JSONArray responseMap = templates.getTemplates();
     			if (responseMap != null)
     			{            				
     				// Send a response to caller

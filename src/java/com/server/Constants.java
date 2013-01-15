@@ -33,6 +33,7 @@ public class Constants {
     public static String PUNCHCARDID_PARAMNAME = "punchcardid";
     public static String BUSINESSID_PARAMNAME = "business_userid";
     public static String PRODUCTID_PARAMNAME = "product_id";
+    public static String PROFILECREATED_PARAMNAME = "isprofile_created";
     public static String ZIPCODE_PARAMNAME = "zipcode";
 
     // Used in database connection

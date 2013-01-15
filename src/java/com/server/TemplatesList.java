@@ -3,7 +3,6 @@ package com.server;
 import com.db.DataAccess;
 import com.db.DataAccess.ResultSetHandler;
 
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -14,7 +13,7 @@ public class TemplatesList
 {
 	private static TemplatesList singleton;
 	private Date lastRefreshTime;
-	private JSONObject currentTemplates;
+	private JSONArray currentTemplates;
 	
 	// Private constructor
 	private TemplatesList() 
@@ -45,7 +44,7 @@ public class TemplatesList
 		{
 			try
 			{
-				currentTemplates = new JSONObject();
+				currentTemplates = new JSONArray();
 				
 				String queryString = "SELECT * FROM pptemplates;";
 				try
@@ -54,33 +53,27 @@ public class TemplatesList
 					{
 						 public void handle(ResultSet results, Object returnObj) throws SQLException
 		                 { 
-							 try
-							 {
-								 // The cast here is a well-known one, so the suppression is OK
-								 //@SuppressWarnings("unchecked")
-			                     JSONObject arrayTemplates = (JSONObject)returnObj;
-			                     while(results.next())
-			                     {
-			                    	 Template currentTemplate = new Template();
-			                    	 
-			                    	 // Populate product information
-			                    	 currentTemplate.setTemplateId(results.getString("pptemplate_id"));
-			                    	 currentTemplate.setName(results.getString("name"));
-			                    	 currentTemplate.setDesc(results.getString("desc"));
-			                    	 currentTemplate.setGroupId(results.getString("group_id"));
-			                    	 currentTemplate.setGroupName(results.getString("group_name"));
-			                    	 currentTemplate.setTemplate(results.getString("template"), results.getString("uses_file"));
-			                    	 currentTemplate.setDisabled(results.getString("disabled"));
-			                    	 currentTemplate.setModifiedDate(results.getString("date_modified"));
-			                    	 
-			                    	 // Add current product to the product list
-			                    	 arrayTemplates.put(results.getString("name"), currentTemplate);
-			                     } 
-							 }
-							 catch (JSONException ex)
-							 {
-								 Constants.logger.error("Error : " + ex.getMessage());
-							 }
+							// The cast here is a well-known one, so the suppression is OK
+							 //@SuppressWarnings("unchecked")
+							 JSONArray arrayTemplates = (JSONArray)returnObj;
+		                     while(results.next())
+		                     {
+		                    	 Template currentTemplate = new Template();
+		                    	 
+		                    	 // Populate product information
+		                    	 currentTemplate.setTemplateId(results.getString("pptemplate_id"));
+		                    	 currentTemplate.setName(results.getString("name"));
+		                    	 currentTemplate.setDesc(results.getString("desc"));
+		                    	 currentTemplate.setGroupId(results.getString("group_id"));
+		                    	 currentTemplate.setGroupName(results.getString("group_name"));
+		                    	 currentTemplate.setTemplate(results.getString("template"), results.getString("uses_file"));
+		                    	 currentTemplate.setDisabled(results.getString("disabled"));
+		                    	 currentTemplate.setModifiedDate(results.getString("date_modified"));
+		                    	 
+		                    	 // Add current template to the template list
+		                    	 
+		                    	 arrayTemplates.put(currentTemplate.getMapOfTemplate());
+		                     } 
 		                 }
 					});
 					lastRefreshTime = new Date();
@@ -106,7 +99,7 @@ public class TemplatesList
 		throw new CloneNotSupportedException();
 	}
 	
-	public JSONObject getTemplates()
+	public JSONArray getTemplates()
 	{
 		// Refresh the data if necessary
 		refreshTemplatesFromDatabaseIfNecessary();

@@ -1,6 +1,7 @@
 package com.server;
 
 import java.io.InputStream;
+import org.json.*;
 
 public class Template 
 {
@@ -111,5 +112,26 @@ public class Template
 	public void setModifiedDate(String modifiedDate)
 	{
 		this.modifiedDate = modifiedDate;
+	}
+	
+	public JSONObject getMapOfTemplate()
+	{
+		JSONObject jsonOutput= new JSONObject();
+
+		try
+		{
+	        // adding or set elements in Map by put method key and value pair
+			jsonOutput.put("template_id", templateId);
+			jsonOutput.put("name", name);
+			jsonOutput.put("desc", desc);
+			jsonOutput.put("templateValue", template);
+			jsonOutput.put("group_id", groupId);	
+		}
+		catch (JSONException ex)
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		
+		return jsonOutput;
 	}
 }
