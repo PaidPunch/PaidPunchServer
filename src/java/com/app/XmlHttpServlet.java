@@ -191,6 +191,20 @@ public class XmlHttpServlet extends HttpServlet
 		return resultsArray;
 	}
 	
+	// Get product info
+	protected ArrayList<HashMap<String,String>> getProductInfo(String product_id)
+	{
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		if (product_id != null)
+		{		
+			String queryString = "SELECT * FROM products WHERE product_id = ?;";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(product_id);
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
+		}
+		return resultsArray;
+	}
+	
 	// Get business info
 	protected ArrayList<HashMap<String,String>> getBusinessInfo(String businessid)
 	{

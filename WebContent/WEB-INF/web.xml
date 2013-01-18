@@ -148,6 +148,10 @@
         <servlet-class>com.app.Users</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Businesses</servlet-name>
+        <servlet-class>com.app.Businesses</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Feedback</servlet-name>
         <servlet-class>com.app.Feedback</servlet-class>
     </servlet>
@@ -246,6 +250,10 @@
     <servlet-mapping>
         <servlet-name>Users</servlet-name>
         <url-pattern>/Users/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Businesses</servlet-name>
+        <url-pattern>/Businesses/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Punch</servlet-name>

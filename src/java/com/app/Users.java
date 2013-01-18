@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.*;
 
-public class Users extends XmlHttpServlet  {
+public class Users extends XmlHttpServlet  
+{
 
 	private static final long serialVersionUID = -9044506610414211667L;
 	private static final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";

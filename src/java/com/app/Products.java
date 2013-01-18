@@ -45,20 +45,6 @@ public class Products extends XmlHttpServlet  {
 	   }
     }
 	
-	// Get product info
-	private ArrayList<HashMap<String,String>> getProductInfo(String product_id)
-	{
-		ArrayList<HashMap<String,String>> resultsArray = null;
-		if (product_id != null)
-		{		
-			String queryString = "SELECT * FROM products WHERE product_id = ?;";
-			ArrayList<String> parameters = new ArrayList<String>();
-			parameters.add(product_id);
-			resultsArray = DataAccess.queryDatabase(queryString, parameters);
-		}
-		return resultsArray;
-	}
-	
     private HashMap<String,String> getPaymentInfo(String user_id, String profile_id)
     {
     	HashMap<String,String> results = null;

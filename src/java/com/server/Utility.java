@@ -398,6 +398,12 @@ public final class Utility {
     	return tokens[size-1];
     }
     
+    public static String getTrueLogoPath(String originalLogoPath)
+    {
+    	String filename = getLogoFilename(originalLogoPath);
+		return rootImagePath + filename;
+    }
+    
     public static String getBusinessLogoUrl(String business_id)
     {
     	String logoUrl = "";
@@ -412,8 +418,7 @@ public final class Utility {
 			{
 				HashMap<String,String> businessInfo = resultsArray.get(0);
 				String currentLogoPath = businessInfo.get("logo_path");
-				String filename = getLogoFilename(currentLogoPath);
-				logoUrl = rootImagePath + filename;
+				logoUrl = getTrueLogoPath(currentLogoPath);
 			}
 		}
 		return logoUrl;
