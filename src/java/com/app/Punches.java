@@ -43,34 +43,6 @@ public class Punches extends XmlHttpServlet
 	   }
     }
 	
-	// Get punchcard info
-	private ArrayList<HashMap<String,String>> getPunchCardInfo(String punchcardid)
-	{
-		ArrayList<HashMap<String,String>> resultsArray = null;
-		if (punchcardid != null)
-		{
-			String queryString = "SELECT * FROM punch_card WHERE punch_card_id = ?;";
-			ArrayList<String> parameters = new ArrayList<String>();
-			parameters.add(punchcardid);
-			resultsArray = DataAccess.queryDatabase(queryString, parameters);
-		}
-		return resultsArray;
-	}
-	
-	// Get business info
-	private ArrayList<HashMap<String,String>> getBusinessInfo(String businessid)
-	{
-		ArrayList<HashMap<String,String>> resultsArray = null;
-		if (businessid != null)
-		{
-			String queryString = "SELECT * FROM business_users WHERE business_userid = ?;";
-			ArrayList<String> parameters = new ArrayList<String>();
-			parameters.add(businessid);
-			resultsArray = DataAccess.queryDatabase(queryString, parameters);
-		}
-		return resultsArray;
-	}
-	
 	private boolean punchcardNotExpired(String expireDateString)
 	{
 		boolean valid = false;
@@ -271,8 +243,8 @@ public class Punches extends XmlHttpServlet
             		HashMap<String,String> userInfo = userResultsArray.get(0);
             		
             		// Validate session
-            		String currentSessionId = requestInputs.getString(Constants.SESSIONID_PARAMNAME);
-            		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
+            		String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);	
+    				if (validateSessionId(validSessionId, request))
             		{
             			String punchcardid = requestInputs.getString(Constants.PUNCHCARDID_PARAMNAME);
                     	ArrayList<HashMap<String,String>> punchcardResultsArray = getPunchCardInfo(punchcardid);
@@ -335,7 +307,7 @@ public class Punches extends XmlHttpServlet
             		else
                 	{
                 		// Session mismatch
-                		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
+                		Constants.logger.error("Error: Session mismatch for user: " + user_id);
                 		errorResponse(response, "400", "You have logged in from another device");
                 	}
             	}

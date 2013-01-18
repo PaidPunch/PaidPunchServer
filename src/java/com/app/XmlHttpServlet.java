@@ -46,18 +46,10 @@ public class XmlHttpServlet extends HttpServlet
 		return true;
 	}
 	
-	protected boolean validateSessionId(String validSessionId, JSONObject requestInputs)
+	protected boolean validateSessionId(String validSessionId, HttpServletRequest request)
 	{
-		try 
-		{
-			String currentSessionId = requestInputs.getString(Constants.SESSIONID_PARAMNAME);
-			return validSessionId.equals(currentSessionId);
-		}
-		catch (JSONException ex) 
-		{
-			Constants.logger.error("Error : " + ex.getMessage());
-		}
-		return false;
+		String currentSessionId = request.getHeader(Constants.SESSIONID_PARAMNAME);
+		return validSessionId.equals(currentSessionId);
 	}
 	
 	protected void jsonResponse(HttpServletResponse response, JSONObject responseMap)
@@ -181,6 +173,34 @@ public class XmlHttpServlet extends HttpServlet
 			ArrayList<String> parameters = new ArrayList<String>();
 			parameters.add(user_id);
 			resultsArray = DataAccess.queryDatabase(conn, queryString, parameters);
+		}
+		return resultsArray;
+	}
+	
+	// Get punchcard info
+	protected ArrayList<HashMap<String,String>> getPunchCardInfo(String punchcardid)
+	{
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		if (punchcardid != null)
+		{
+			String queryString = "SELECT * FROM punch_card WHERE punch_card_id = ?;";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(punchcardid);
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
+		}
+		return resultsArray;
+	}
+	
+	// Get business info
+	protected ArrayList<HashMap<String,String>> getBusinessInfo(String businessid)
+	{
+		ArrayList<HashMap<String,String>> resultsArray = null;
+		if (businessid != null)
+		{
+			String queryString = "SELECT * FROM business_users WHERE business_userid = ?;";
+			ArrayList<String> parameters = new ArrayList<String>();
+			parameters.add(businessid);
+			resultsArray = DataAccess.queryDatabase(queryString, parameters);
 		}
 		return resultsArray;
 	}

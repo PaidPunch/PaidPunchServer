@@ -245,7 +245,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Users</servlet-name>
-        <url-pattern>/Users</url-pattern>
+        <url-pattern>/Users/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Punch</servlet-name>

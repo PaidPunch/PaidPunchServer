@@ -270,9 +270,13 @@ public class Products extends XmlHttpServlet  {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException 
     {    	
-    	ProductsList products = ProductsList.getInstance();
-    	String currentProducts = products.getMapOfProducts();
-    	stringResponse(response, currentProducts);
+    	float expectedAPIVersion = getExpectedVersion(request);
+    	if (validateVersion(response, expectedAPIVersion))
+    	{
+	    	ProductsList products = ProductsList.getInstance();
+	    	String currentProducts = products.getMapOfProducts();
+	    	stringResponse(response, currentProducts);
+    	}
     }
     
 	/**
@@ -297,7 +301,7 @@ public class Products extends XmlHttpServlet  {
         	JSONObject requestInputs = getRequestData(request);	
         	
         	try
-        	{
+        	{        		
         		String user_id = requestInputs.getString(Constants.USERID_PARAMNAME);
             	ArrayList<HashMap<String,String>> userResultsArray = getUserInfo(user_id, null);
             	if (userResultsArray.size() == 1)
@@ -305,8 +309,8 @@ public class Products extends XmlHttpServlet  {
             		HashMap<String,String> userInfo = userResultsArray.get(0);
             		
             		// Validate session
-            		String currentSessionId = requestInputs.getString(Constants.SESSIONID_PARAMNAME);
-            		if (currentSessionId.equalsIgnoreCase(userInfo.get("sessionid")))
+            		String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);	
+    				if (validateSessionId(validSessionId, request))
             		{
             			String product_id = requestInputs.getString(Constants.PRODUCTID_PARAMNAME);
                     	ArrayList<HashMap<String,String>> productResultsArray = getProductInfo(product_id);
@@ -371,7 +375,7 @@ public class Products extends XmlHttpServlet  {
             		else
                 	{
                 		// Session mismatch
-                		Constants.logger.error("Error: Session mismatch for user: " + user_id + " and session: " + currentSessionId);
+                		Constants.logger.error("Error: Session mismatch for user: " + user_id);
                 		errorResponse(response, "400", "You have logged in from another device");
                 	}
             	}
@@ -385,7 +389,7 @@ public class Products extends XmlHttpServlet  {
         	catch (JSONException ex)
         	{
         		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
-        		errorResponse(response, "500", "Unable to retrieve products");
+        		errorResponse(response, "500", "An unknown error occurred");
         	}
     	}
     }
