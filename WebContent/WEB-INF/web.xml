@@ -152,6 +152,10 @@
         <servlet-class>com.app.Businesses</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ProposedBusinesses</servlet-name>
+        <servlet-class>com.app.ProposedBusinesses</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Feedback</servlet-name>
         <servlet-class>com.app.Feedback</servlet-class>
     </servlet>
@@ -254,6 +258,10 @@
     <servlet-mapping>
         <servlet-name>Businesses</servlet-name>
         <url-pattern>/Businesses/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProposedBusinesses</servlet-name>
+        <url-pattern>/ProposedBusinesses/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Punch</servlet-name>
