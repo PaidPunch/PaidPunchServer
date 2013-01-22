@@ -6,6 +6,7 @@ import com.db.DataAccess.ResultSetHandler;
 import com.jspservlets.SignupAddPunch;
 import com.server.Constants;
 import com.server.CreditChangeHistory;
+import com.server.RecordsList;
 
 import java.io.IOException;
 
@@ -61,6 +62,8 @@ public class Users extends XmlHttpServlet
 		}
 		return sb.toString();
 	}
+	
+	/********* Registration  *********/
 	
 	private HashMap<String,String> getReferralEntity(String refer_code, String queryString)
 	{
@@ -410,6 +413,78 @@ public class Users extends XmlHttpServlet
 		changeHistory.insertCreditChange(userid, rewardCreditValue, CreditChangeHistory.USER_REFERRAL, referredUserId);
 	}
 	
+	/********* Login  *********/
+	
+	private JSONObject handleLogin(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs)
+	{
+		JSONObject responseMap = null;
+		HashMap<String,String> userData = null;
+		
+		try
+		{
+			String loginType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
+			if (loginType != null)
+			{
+				if (loginType.equalsIgnoreCase(emailLogin))
+				{
+					userData = validateEmailLogin(requestInputs);
+					if (userData != null)
+					{
+						if (userData.get("isemailverified").equals("Y"))
+						{
+							responseMap = createLoginResponse(userData);
+						}
+						else
+						{
+							errorResponse(response, "403", "Please verify your email first being trying to log in.");
+						}
+					}
+					else
+					{
+						errorResponse(response, "404", "User not found. Either email or password is invalid. Please sign up first.");
+					}
+				}
+				else if (loginType.equalsIgnoreCase(facebookLogin))
+				{
+					userData = validateFacebookLogin(requestInputs);
+					if (userData != null)
+					{
+						responseMap = createLoginResponse(userData);
+					}
+					else
+					{
+						errorResponse(response, "404", "User not found. Either facebook id is invalid. Please sign up first.");
+					}
+				}
+				else
+				{
+					// Unknown login type specified by caller
+	        		Constants.logger.error("Error: unknown login type");
+	        		errorResponse(response, "404", "User update error");
+				}
+				
+				if (responseMap != null)
+				{
+					// Update sessionid for user
+					updateSessionForUser(userData, requestInputs);	
+				}
+			}
+			else
+			{
+				// Unknown login type specified by caller
+	    		Constants.logger.error("Error: unknown login type");
+	    		errorResponse(response, "404", "User update error");
+			}
+		}
+		catch (JSONException ex)
+		{
+			Constants.logger.error("Error : " + ex.getMessage());
+			errorResponse(response, "400", "Bad request");
+		}
+		
+		return responseMap;
+	}
+	
 	private HashMap<String,String> validateEmailLogin(JSONObject requestInputs)
 	{
 		HashMap<String,String> results = null;
@@ -523,6 +598,8 @@ public class Users extends XmlHttpServlet
 		return success;
 	}
 	
+	/********* Update Password  *********/
+	
 	private boolean updatePasswordForUser(Connection conn, String user_id, String new_password)
 	{
 		boolean success = false;
@@ -633,7 +710,9 @@ public class Users extends XmlHttpServlet
 		return results;
     }
 	
-	private JSONObject updateInfoPhone(HttpServletRequest request, JSONObject requestInputs, HttpServletResponse response, String user_id)
+	/********* Update User Info  *********/
+	
+	private JSONObject changeUserInfo(HttpServletRequest request, JSONObject requestInputs, HttpServletResponse response, String user_id)
     {
 		JSONObject results = null;
     	boolean success = false;
@@ -712,12 +791,7 @@ public class Users extends XmlHttpServlet
         		errorResponse(response, "404", "Could not find user");
 			}
 		}
-		catch (SQLException ex)
-		{
-			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "Unable to update user info");
-		}
-		catch (JSONException ex)
+		catch (Exception ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
 			errorResponse(response, "500", "Unable to update user info");
@@ -823,6 +897,9 @@ public class Users extends XmlHttpServlet
                 			addRewardCreditToReferrer(referringId, results.get(Constants.CREDIT_PARAMNAME), Integer.toString(new_user_id));
             			}
             			
+            			//
+            			RecordsList.getInstance().recordSignup(Integer.toString(new_user_id), requestInputs.getString(Constants.NAME_PARAMNAME));
+            			
             			// Send a response to caller
             			jsonResponse(response, responseMap);
             		}
@@ -862,112 +939,50 @@ public class Users extends XmlHttpServlet
         	float expectedAPIVersion = getExpectedVersion(request);
         	if (validateVersion(response, expectedAPIVersion))
         	{
-        		String pathInfo = request.getPathInfo();
-        		if (pathInfo != null)
-        		{
-        			String[] pathArray = pathInfo.substring(1).split("/");
-        			if (pathArray.length >= 1)
-        			{
-        				JSONObject requestInputs = getRequestData(request);	
-        				
-        				// /user/login
-        				if (pathArray[0].equalsIgnoreCase("login"))
+        		String[] pathArray = getPathInfoArray(request);
+    			if (pathArray != null && pathArray.length >= 1)
+    			{
+    				JSONObject requestInputs = getRequestData(request);	
+    				
+    				// /user/login
+    				if (pathArray[0].equalsIgnoreCase("login"))
+    				{
+    					handleLogin(request, response, requestInputs);
+    				}
+    				else
+    				{
+    					// else assume it's a user_id
+    					// e.g. /user/1034
+    					String user_id = pathArray[0];
+        				if (pathArray.length > 1)
         				{
-        					HashMap<String,String> userData = null;
-        					String loginType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
-        	        		if (loginType != null)
-        	        		{
-        	        			if (loginType.equalsIgnoreCase(emailLogin))
-        	        			{
-        	        				userData = validateEmailLogin(requestInputs);
-        	        				if (userData != null)
-        	        				{
-        	        					if (userData.get("isemailverified").equals("Y"))
-        	        					{
-        	        						responseMap = createLoginResponse(userData);
-        	        					}
-        	        					else
-        	        					{
-        	        						errorResponse(response, "403", "Please verify your email first being trying to log in.");
-        	        					}
-        	        				}
-        	        				else
-        	        				{
-        	        					errorResponse(response, "404", "User not found. Either email or password is invalid. Please sign up first.");
-        	        				}
-        	        			}
-        	        			else if (loginType.equalsIgnoreCase(facebookLogin))
-        	        			{
-        	        				userData = validateFacebookLogin(requestInputs);
-        	        				if (userData != null)
-        	        				{
-        	        					responseMap = createLoginResponse(userData);
-        	        				}
-        	        				else
-        	        				{
-        	        					errorResponse(response, "404", "User not found. Either facebook id is invalid. Please sign up first.");
-        	        				}
-        	        			}
-                    			else
-                    			{
-                    				// Unknown login type specified by caller
-                            		Constants.logger.error("Error: unknown login type");
-                            		errorResponse(response, "404", "User update error");
-                    			}
-        	        			
-        	        			if (responseMap != null)
-        	        			{
-        	        				// Update sessionid for user
-        	        				updateSessionForUser(userData, requestInputs);	
-        	        			}
-        	        		}
-        	        		else
+        					// /user/l034/password
+        					if (pathArray[1].equalsIgnoreCase("password"))
                 			{
-                				// Unknown login type specified by caller
-                        		Constants.logger.error("Error: unknown login type");
-                        		errorResponse(response, "404", "User update error");
+                				responseMap = changePassword(request, requestInputs, response, user_id);
+                			}
+        					else
+                			{
+                				// No login type specified by caller
+                        		Constants.logger.error("Error: unknown request type");
+                        		errorResponse(response, "403", "unknown request request");
                 			}
         				}
         				else
         				{
-        					// else assume it's a user_id
-        					// e.g. /user/1034
-        					String user_id = pathArray[0];
-            				if (pathArray.length > 1)
-            				{
-            					// /user/l034/password
-            					String putType = pathArray[1];
-            					if (putType.equalsIgnoreCase("password"))
-                    			{
-                    				responseMap = changePassword(request, requestInputs, response, user_id);
-                    			}
-            					else
-                    			{
-                    				// No login type specified by caller
-                            		Constants.logger.error("Error: unknown put type");
-                            		errorResponse(response, "403", "Improper PUT request");
-                    			}
-            				}
-            				else
-            				{
-            					responseMap = updateInfoPhone(request, requestInputs, response, user_id);
-            				}
-        					
+        					// /user/1034
+        					// updating user info
+        					responseMap = changeUserInfo(request, requestInputs, response, user_id);
         				}
-        			}
-        			else
-        			{
-        				// Could not find user
-                		Constants.logger.error("Error: Not enough inputs for PUT operation");
-                		errorResponse(response, "403", "Improper PUT request");
-        			}
-        		}
-        		else
-        		{
-        			// Could not find user
-            		Constants.logger.error("Error: No user id found");
-            		errorResponse(response, "404", "Could not find user");
-        		}
+    					
+    				}
+    			}
+    			else
+    			{
+    				// Could not find user
+            		Constants.logger.error("Error: Not enough inputs for PUT operation");
+            		errorResponse(response, "403", "Improper request");
+    			}
         		
         		if (responseMap != null)
     			{

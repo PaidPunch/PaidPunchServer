@@ -153,6 +153,20 @@ public class XmlHttpServlet extends HttpServlet
 		return null;
 	}
 	
+	protected String[] getPathInfoArray(HttpServletRequest request)
+	{
+		// Split the path info into component strings
+		String pathInfo = request.getPathInfo();
+		if (pathInfo != null)
+		{
+			return pathInfo.substring(1).split("/");
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
 	// Get user info
 	protected ArrayList<HashMap<String,String>> getUserInfo(String user_id, Connection conn)
 	{
