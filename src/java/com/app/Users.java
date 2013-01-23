@@ -293,7 +293,7 @@ public class Users extends XmlHttpServlet
 		            ArrayList<String> parameters = new ArrayList<String>();
 		            parameters.add(name);
 		            parameters.add(email);
-		            parameters.add(requestInputs.getString(Constants.SESSIONID_PARAMNAME));
+		            parameters.add(request.getHeader(Constants.SESSIONID_PARAMNAME));
 					parameters.add(fbid);
 		            parameters.add(requestInputs.getString(Constants.REFERCODE_PARAMNAME));
 		            parameters.add(userCode);
@@ -374,14 +374,14 @@ public class Users extends XmlHttpServlet
 		return responseMap;
 	}
 	
-	private JSONObject createFacebookRegistrationResponse(int new_user_id, String user_code, JSONObject requestInputs)
+	private JSONObject createFacebookRegistrationResponse(int new_user_id, String user_code, HttpServletRequest request)
 	{
 		JSONObject responseMap = new JSONObject();
 		try
 		{
 			responseMap.put("statusCode", "00");
 			responseMap.put("user_id", new_user_id);
-			responseMap.put("sessionid", requestInputs.getString(Constants.SESSIONID_PARAMNAME));
+			responseMap.put("sessionid", request.getHeader(Constants.SESSIONID_PARAMNAME));
 			responseMap.put("is_profileid_created", "false");
 			responseMap.put("user_code", user_code);
 			responseMap.put("credits", rewardCreditValue);
@@ -466,7 +466,7 @@ public class Users extends XmlHttpServlet
 				if (responseMap != null)
 				{
 					// Update sessionid for user
-					updateSessionForUser(userData, requestInputs);	
+					updateSessionForUser(userData, request);	
 				}
 			}
 			else
@@ -575,14 +575,14 @@ public class Users extends XmlHttpServlet
 		return results;
 	}
 	
-	private boolean updateSessionForUser(HashMap<String,String> userData, JSONObject requestInputs)
+	private boolean updateSessionForUser(HashMap<String,String> userData, HttpServletRequest request)
 	{
 		boolean success = false;
 		try
 		{
 			String queryString = "UPDATE app_user SET sessionid = ?, user_status = 'Y' WHERE user_id = ?";
 			ArrayList<String> parameters = new ArrayList<String>();
-			parameters.add(requestInputs.getString(Constants.SESSIONID_PARAMNAME));
+			parameters.add(request.getHeader(Constants.SESSIONID_PARAMNAME));
 			parameters.add(userData.get(Constants.USERID_PARAMNAME));
 			success = DataAccess.updateDatabase(queryString, parameters);
 		}
@@ -590,10 +590,6 @@ public class Users extends XmlHttpServlet
 		{
         	Constants.logger.error(ex);
         }
-		catch (JSONException ex) 
-		{
-			Constants.logger.error("Error : " + ex.getMessage());
-		}
 		
 		return success;
 	}
@@ -871,7 +867,7 @@ public class Users extends XmlHttpServlet
             				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral, userCode);
             				if (new_user_id != 0)
                     		{
-            					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, requestInputs);
+            					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, request);
                     		}
             			}
             			else
