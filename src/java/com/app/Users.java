@@ -943,7 +943,7 @@ public class Users extends XmlHttpServlet
     				// /user/login
     				if (pathArray[0].equalsIgnoreCase("login"))
     				{
-    					handleLogin(request, response, requestInputs);
+    					responseMap = handleLogin(request, response, requestInputs);
     				}
     				else
     				{
