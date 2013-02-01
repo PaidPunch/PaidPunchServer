@@ -528,7 +528,8 @@ public class Users extends XmlHttpServlet
 			responseMap.put("user_id", userData.get(Constants.USERID_PARAMNAME));
 			responseMap.put("username", userData.get(Constants.NAME_PARAMNAME));
 			responseMap.put("email", userData.get(Constants.EMAIL_PARAMNAME));
-			responseMap.put("mobilenumber", userData.get(Constants.MOBILENO_PARAMNAME));
+			responseMap.put("mobile_no", userData.get(Constants.MOBILENO_PARAMNAME));
+			responseMap.put("zipcode", userData.get("pincode"));
 			responseMap.put("user_code", userData.get(Constants.USERCODE_PARAMNAME));
 			responseMap.put("credit", userData.get(Constants.CREDIT_PARAMNAME));
 			responseMap.put("isprofile_created", userData.get(Constants.PROFILECREATED_PARAMNAME));

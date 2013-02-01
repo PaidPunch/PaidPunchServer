@@ -35,6 +35,8 @@ public class Constants {
     public static String PRODUCTID_PARAMNAME = "product_id";
     public static String PROFILECREATED_PARAMNAME = "isprofile_created";
     public static String ZIPCODE_PARAMNAME = "zipcode";
+    public static String BIZNAME_PARAMNAME = "business_name";
+    public static String BIZINFO_PARAMNAME = "business_info";
 
     // Used in database connection
     public static String JDBC_DRIVER = "";
