@@ -1,7 +1,9 @@
 package com.app;
 
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.db.DataAccess;
 import com.db.DataAccessController;
+import com.db.SimpleDB;
 import com.db.DataAccess.ResultSetHandler;
 import com.jspservlets.SignupAddPunch;
 import com.server.Constants;
@@ -13,9 +15,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -795,6 +800,43 @@ public class Users extends XmlHttpServlet
 		}
 		return results;
     }
+	
+	/********* Request invite to PaidPunch  *********/
+	
+	private JSONObject requestInvite(JSONObject requestInputs, HttpServletRequest request, HttpServletResponse response)
+    {
+		JSONObject results = null;
+		
+		try
+		{
+			String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
+			
+			// Get UUID for naming new vote
+			UUID itemName = UUID.randomUUID();
+			
+			// Get current datetime
+			SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String currentDatetime = datetimeFormat.format(new java.util.Date().getTime());	
+			
+			List<ReplaceableAttribute> listAttributes = new ArrayList<ReplaceableAttribute>();
+			listAttributes.add(new ReplaceableAttribute("email", email, true));
+			listAttributes.add(new ReplaceableAttribute("modifiedDatetime", currentDatetime, true));
+			
+			SimpleDB sdb = SimpleDB.getInstance();
+			sdb.updateItem("RequestInvitesTest", itemName.toString(), listAttributes);
+			
+			results = new JSONObject();
+			results.put("statusCode", "00");
+			results.put("statusMessage", "Thank you for submitting your request!");
+		}
+		catch (JSONException ex) 
+		{
+			errorResponse(response, "500", "An unknown failure happened");
+			Constants.logger.error("Error : " + ex.getMessage());
+		}
+		
+		return results;
+    }
 
 	/**
      * Handles the HTTP <code>POST</code> method.
@@ -819,92 +861,114 @@ public class Users extends XmlHttpServlet
         	if (validateVersion(response, expectedAPIVersion))
         	{
         		JSONObject requestInputs = getRequestData(request);	
-            	
-            	String refer_code = requestInputs.getString(Constants.REFERCODE_PARAMNAME);
-            	boolean userReferral = false;
-            	HashMap<String,String> results = getReferringUser(refer_code);
-            	if (results != null)
-            	{
-            		userReferral = true;
-            	}
-            	else
-            	{
-            		// Failed to find a referring user. Check businesses.
-            		results = getReferringBusiness(refer_code);
-            	}
-            	
-            	if (results != null)
-            	{
-        			String referringId = null;
-        			if (userReferral)
+        		
+        		String pathInfo = request.getPathInfo();
+        		if (pathInfo != null)
+        		{
+        			String optionalCommand = pathInfo.substring(1);	
+        			if (optionalCommand.equalsIgnoreCase("requestInvite"))
         			{
-        				// get the user id for the referring user
-        				referringId = results.get(Constants.USERID_PARAMNAME);	
+        				responseMap = requestInvite(requestInputs, request, response);
+        				if (responseMap != null)
+        				{
+        					// Send a response to caller
+                			jsonResponse(response, responseMap);
+        				}
         			}
         			else
         			{
-        				// get the business id for the referring business
-        				referringId = results.get(Constants.BUSINESSID_PARAMNAME);
+        				errorResponse(response, "404", "Unknown command");
         			}
-            		
-            		int new_user_id = 0;
-            		String registrationType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
-            		if (registrationType != null)
-            		{
-            			// Generate a length 5 random alphanumeric code for the new user
-            			String userCode = getRandomAlphaNumericCode(5);
-            			if (registrationType.equalsIgnoreCase(emailRegistration))
+        		}
+        		else
+        		{
+        			// Creating a new user
+        			String refer_code = requestInputs.getString(Constants.REFERCODE_PARAMNAME);
+                	boolean userReferral = false;
+                	HashMap<String,String> results = getReferringUser(refer_code);
+                	if (results != null)
+                	{
+                		userReferral = true;
+                	}
+                	else
+                	{
+                		// Failed to find a referring user. Check businesses.
+                		results = getReferringBusiness(refer_code);
+                	}
+                	
+                	if (results != null)
+                	{
+            			String referringId = null;
+            			if (userReferral)
             			{
-            				// Perform email registration
-            				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral, userCode);
-            				if (new_user_id != 0)
-                    		{
-            					responseMap = createEmailRegistrationResponse(new_user_id, userCode, requestInputs);
-                    		}
-            			}
-            			else if (registrationType.equalsIgnoreCase(facebookRegistration))
-            			{
-            				// Perform Facebook registration
-            				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral, userCode);
-            				if (new_user_id != 0)
-                    		{
-            					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, request);
-                    		}
+            				// get the user id for the referring user
+            				referringId = results.get(Constants.USERID_PARAMNAME);	
             			}
             			else
             			{
-            				// Unknown registration type specified by caller
-                    		Constants.logger.error("Error: unknown registration type");
+            				// get the business id for the referring business
+            				referringId = results.get(Constants.BUSINESSID_PARAMNAME);
+            			}
+                		
+                		int new_user_id = 0;
+                		String registrationType = requestInputs.getString(Constants.TXTYPE_PARAMNAME);
+                		if (registrationType != null)
+                		{
+                			// Generate a length 5 random alphanumeric code for the new user
+                			String userCode = getRandomAlphaNumericCode(5);
+                			if (registrationType.equalsIgnoreCase(emailRegistration))
+                			{
+                				// Perform email registration
+                				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral, userCode);
+                				if (new_user_id != 0)
+                        		{
+                					responseMap = createEmailRegistrationResponse(new_user_id, userCode, requestInputs);
+                        		}
+                			}
+                			else if (registrationType.equalsIgnoreCase(facebookRegistration))
+                			{
+                				// Perform Facebook registration
+                				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral, userCode);
+                				if (new_user_id != 0)
+                        		{
+                					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, request);
+                        		}
+                			}
+                			else
+                			{
+                				// Unknown registration type specified by caller
+                        		Constants.logger.error("Error: unknown registration type");
+                        		errorResponse(response, "404", "Registration error");
+                			}
+                		}
+                		else
+                		{
+                			// No registration type specified by caller
+                    		Constants.logger.error("Error: null registration type");
                     		errorResponse(response, "404", "Registration error");
-            			}
-            		}
-            		else
-            		{
-            			// No registration type specified by caller
-                		Constants.logger.error("Error: null registration type");
-                		errorResponse(response, "404", "Registration error");
-            		}
-            		
-            		if (new_user_id != 0)
-            		{
-                		// Successfully created user, now reward the referring user if there is one
-            			if (userReferral)
-            			{
-            				// Get the referring user's info and then call function to reward them
-                			addRewardCreditToReferrer(referringId, results.get(Constants.CREDIT_PARAMNAME), Integer.toString(new_user_id));
-            			}
-            			
-            			//
-            			RecordsList.getInstance().recordSignup(Integer.toString(new_user_id), requestInputs.getString(Constants.NAME_PARAMNAME));
-            			
-            			// Send a response to caller
-            			jsonResponse(response, responseMap);
-            		}
-            	}
-            	else
-            	{
-            		errorResponse(response, "404", "The referral code is invalid");
-            	}
+                		}
+                		
+                		if (new_user_id != 0)
+                		{
+                    		// Successfully created user, now reward the referring user if there is one
+                			if (userReferral)
+                			{
+                				// Get the referring user's info and then call function to reward them
+                    			addRewardCreditToReferrer(referringId, results.get(Constants.CREDIT_PARAMNAME), Integer.toString(new_user_id));
+                			}
+                			
+                			//
+                			RecordsList.getInstance().recordSignup(Integer.toString(new_user_id), requestInputs.getString(Constants.NAME_PARAMNAME));
+                			
+                			// Send a response to caller
+                			jsonResponse(response, responseMap);
+                		}
+                	}
+                	else
+                	{
+                		errorResponse(response, "404", "The referral code is invalid");
+                	}
+        		}
         	}
     	}
     	catch (JSONException ex)
