@@ -58,7 +58,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 				String validSessionId = userInfo.get(Constants.SESSIONID_PARAMNAME);	
 				if (validateSessionId(validSessionId, request))
 				{
-					// Get UUID for naming new vote
+					// Get UUID for naming new suggestion
 					UUID itemName = UUID.randomUUID();
 					
 					// Get current datetime
@@ -76,7 +76,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 					
 					results = new JSONObject();
 					results.put("statusCode", "00");
-					results.put("statusMessage", "Thank you for your vote!.");
+					results.put("statusMessage", "Thank you for your suggestion!");
 				}
 				else
 				{
@@ -92,7 +92,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 		}
 		catch (JSONException ex) 
 		{
-			errorResponse(response, "500", "Unable to retrieve businesses");
+			errorResponse(response, "500", "An unknown failure happened");
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		
@@ -130,7 +130,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 					
 					results = new JSONObject();
 					results.put("statusCode", "00");
-					results.put("statusMessage", "Thank you for your vote!.");
+					results.put("statusMessage", "Thank you for your vote!");
 				}
 				else
 				{
