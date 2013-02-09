@@ -25,7 +25,6 @@ public class Constants {
     public static String NEWPASSWORD_PARAMNAME = "new_password";
     public static String FBID_PARAMNAME = "fbid";
     public static String CREDIT_PARAMNAME = "credit";
-    public static String CREDITS_PARAMNAME = "credits";
     public static String DISABLED_PARAMNAME = "disabled";
     public static String REFERCODE_PARAMNAME = "refer_code";
     public static String USERCODE_PARAMNAME = "user_code";

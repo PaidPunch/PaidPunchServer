@@ -642,7 +642,7 @@ public class DataAccessController {
         java.util.Date date = new java.util.Date();
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         StringBuffer l_query = new StringBuffer(
-                "SELECT b.business_userid,b.business_name,p.qrcode,addre.latitude,addre.longitude,p.punchcard_category,b.modification_timestamp,addre.city,addre.state,addre.country,addre.zipcode,addre.address_line1 "
+                "SELECT b.business_userid,b.business_name,p.qrcode,addre.latitude,addre.longitude,p.punchcard_category,b.modification_timestamp,addre.city,addre.state,addre.country,addre.zipcode,addre.address_line1,b.contactno "
                         + "FROM business_users b,punch_card p,bussiness_address addre "
                         + "where p.business_userid=b.business_userid and p.business_userid=addre.business_id and p.expiry_date>='"
                         + sqlDate + "' and b.busi_enabled='Y' and b.isemailverified='Y';");
