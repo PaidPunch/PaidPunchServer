@@ -53,7 +53,7 @@ public class Punches extends XmlHttpServlet
             java.util.Date currentDate = new java.util.Date();
 
             // punch expired?
-            valid = !(Utility.isAfterDateTime(currentDate, expireDate));
+            valid = Utility.isAfterDateTime(currentDate, expireDate);
         }
         catch (ParseException ex)
         {
