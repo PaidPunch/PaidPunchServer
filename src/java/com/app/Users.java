@@ -366,7 +366,7 @@ public class Users extends XmlHttpServlet
 			responseMap.put("email", email);
 			responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
 			responseMap.put("user_code", user_code);
-			responseMap.put("credits", rewardCreditValue);
+			responseMap.put("credit", rewardCreditValue);
 			String statusMessage =  "You are almost done!"
 	                + " We have sent an email to " + email + "."
 	                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
@@ -389,7 +389,7 @@ public class Users extends XmlHttpServlet
 			responseMap.put("sessionid", request.getHeader(Constants.SESSIONID_PARAMNAME));
 			responseMap.put("is_profileid_created", "false");
 			responseMap.put("user_code", user_code);
-			responseMap.put("credits", rewardCreditValue);
+			responseMap.put("credit", rewardCreditValue);
 			responseMap.put("statusMessage", "Registration successful!");
 		} 
 		catch (JSONException ex) 
