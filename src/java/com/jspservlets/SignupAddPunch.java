@@ -60,22 +60,235 @@ public class SignupAddPunch extends HttpServlet {
     int restriction_time = 0, minpurval = 0, expirydays = 0;
 
     final String SMTP_HOST_NAME = "smtp.gmail.com";
-    // final String SMTP_AUTH_USER = "mobimedia.mm@gmail.com";
-    // final String SMTP_AUTH_PWD = "mobimedia";
-
-    // final String SMTP_HOST_NAME = "mail.paidpunch.com";
     final String SMTP_AUTH_USER = "noreply@paidpunch.com";
-    // final String SMTP_AUTH_PWD = "nor3ply";
     final String SMTP_AUTH_PWD = "P@idpunch";
 
     String emailMsgTxt = "";
     final String emailSubjectTxt = "PaidPunch Verification Email";
-    // final String emailFromAddress = "mobimedia.mm@gmail.com";
     final String emailFromAddress = "noreply@paidpunch.com";
     // final String SMTP_PORT = "25";
     final String SMTP_PORT = "465";
     final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
     String recipient_email_id = "";
+    
+    final String emailTemplateMsgTxt = "<html xmlns='http://www.w3.org/1999/xhtml'>"
+            +
+            "<head>"
+            +
+            ""
+            +
+            "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />"
+            +
+            "<title>Welcome to PaidPunch</title>"
+            +
+            "</head>"
+            +
+            ""
+            +
+            "<body>"
+            +
+            "<table width='98%' border='0' cellspacing='0' cellpadding='0'>"
+            +
+            "  <tr>"
+            +
+            "    <td bgcolor='#FFFFFF'><table border='0' cellpadding='0' cellspacing='0' height='100%' width='100%' id='backgroundTable' style='margin: 0;padding: 0;background-color: #FAFAFA;height: 100% !important;width: 100% !important;'>"
+            +
+            ""
+            +
+            "<tr>"
+            +
+            " 	<td align='center' valign='top' style='border-collapse: collapse;'>"
+            +
+            "                    	<table border='0' cellpadding='0' cellspacing='0' width='600'>"
+            +
+            "            	<tr>"
+            +
+            "                          	<td align='center' valign='top' width='50' id='colorBar' style='padding-top: 15px;padding-right: 5px;padding-bottom: 40px;padding-left: 5px;border-collapse: collapse;background-color: #F47B2B;'>"
+            +
+            "                              	<img src='http://www.paidpunch.com/images/smile.png' height='40' width='40' style='border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;'>"
+            +
+            "                                </td>"
+            +
+            "                                <td valign='top' width='535' id='templateContainer' style='padding-left: 20px;border-collapse: collapse;'>"
+            +
+            "                                    <!-- // Begin Template Preheader \\ -->"
+            +
+            "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templatePreheader'>"
+            +
+            "                                        <tr>"
+            +
+            "                                            <td valign='top' class='preheaderContent' style='border-collapse: collapse;'>"
+            +
+            "                                                <!-- // Begin Preheader Content \\ -->"
+            +
+            "                                                <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
+            +
+            "                                                    <tr>"
+            +
+            "                      </tr>"
+            +
+            "                                              </table>"
+            +
+            "                                                <!-- // Begin Preheader Content \\ -->"
+            +
+            "                                            </td>"
+            +
+            "                                        </tr>"
+            +
+            "                                    </table>"
+            +
+            "                                    <!-- // End Template Preheader \\ -->"
+            +
+            "                                    <!-- // Begin Template Header \\ -->"
+            +
+            "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templateHeader'>"
+            +
+            "                                    	<tr>"
+            +
+            "                                        	<td valign='top' style='padding-top: 40px;padding-bottom: 40px;border-collapse: collapse;'>"
+            +
+            "                                                <!-- // Begin Header Content \\ -->"
+            +
+            "                                                <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
+            +
+            "                                                    <tr>"
+            +
+            "                                                       <td colspan='2' valign='top' class='headerContent' style='border-collapse: collapse;color: #202020;font-family: Helvetica;font-size: 34px;font-weight: bold;line-height: 100%;padding: 0;text-align: left;vertical-align: bottom;'>"
+            +
+            "                                                            <img src='https://www.paidpunch.com/images/transhoriz_small.png' alt='' border='0' style='margin: 0;padding: 0;max-width: 500px;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;' id='headerImage campaign-icon'></td>"
+            +
+            "                                                            <td width='35%' colspan='2' style='color:#F47B2B; text-align:right; font-size:30px; font-family: Helvetica, Geneva, Verdana; padding-top:6px;'>Welcome!</td>"
+            +
+            "                                                            </tr>"
+            +
+            "                                               </table>"
+            +
+            "                                                <!-- // End Header Content \\ -->"
+            +
+            "                                            </td>"
+            +
+            "                                        </tr>"
+            +
+            "                                    </table>"
+            +
+            "                                    <!-- // End Template Header \\ -->"
+            +
+            "                                    <!-- // Begin Template Body \\ -->"
+            +
+            "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
+            +
+            "                                       <tr>"
+            +
+            "                                            <td valign='top' width='100%' id='templateBody' style='border-collapse: collapse;'>"
+            +
+            "                                               <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
+            +
+            "                                                    <tr>"
+            +
+            "                                                        <td colspan='2' valign='top' class='bodyContent' style='padding-top: 20px;border-collapse: collapse;'>"
+            +
+            "                                                          <div style='color: #FFF; font-family: Helvetica; font-size: 13px; line-height: 150%; text-align: left;'><h1 style='color: #363636;display: block;font-family: Helvetica;font-size: 32px;font-weight: normal;letter-spacing: -1px;line-height: 100%;margin-top: 0;margin-right: 0;margin-bottom: 0px;margin-left: 0;text-align: left;'>"
+            +
+            "	<b id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Arial; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>"
+            + "[USERNAME]</span></b></h1>"
+            +
+            "                                                          <p><span id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Congratulations on successfully signing up for PaidPunch! [VERIFICATION]</span><br>"
+            +
+            "  <br>"
+            +
+            "  <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>On behalf of </span><a href='https://www.paidpunch.com/about-us.html' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>our entire team</span></a><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '> I would like to personally welcome you to PaidPunch. We are so excited that you have decided to take part in the movement that is sweeping across Seattle! </span><br>"
+            +
+            "  <br>"
+            +
+            "  <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Everyday, more and more tech savvy individuals like yourself are discovering the amazing benefits that PaidPunch has to offer. Using PaidPunch you will immediately elevate yourself to VIP status at the businesses you visit. </span><br>"
+            +
+            "  <br>"
+            +
+            " <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>PaidPunch is guaranteed to save you money every visit (no collecting points or stamps in hopes of getting a discount sometime in the future). Plus, on top of saving money every visit you will also get a free prize which can be anything from a free meal to a round of drinks depending on the business you are at.</span><br>"
+            +
+            "  <br>"
+            +
+            "  <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Your experience matters and I want to hear from you. Let&rsquo;s stay in touch (<a href='http://www.facebook.com/pages/PaidPunch/223162497771376' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Facebook</span></a>, <a href='http://www.twitter.com/#!/paidpunch' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Twitter</span></a>, <a href='http://blog.paidpunch.com' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '> blog</span></a>, <a href='mailto:tony@paidpunch.com' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>email</span></a>).</span><br>"
+            +
+            "  </span></p>"
+            +
+            "                                                            <p><span style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><br>"
+            +
+            "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;padding-left:31px;'>Tony Mandarano</span><br>"
+            +
+            "                                                            <img src='https://www.paidpunch.com/images/tonysig.png' width='250'/><br>"
+            +
+            "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>Co-Founder</span><br>"
+            +
+            "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>PaidPunch</span></span> </p>"
+            +
+            "<p>&nbsp;</p>"
+            +
+            "                                                          </div>"
+            +
+            "                                                        </td>"
+            +
+            "                                                    </tr>"
+            +
+            "                                                </table>"
+            +
+            "                                            </td>"
+            +
+            "                                        </tr>"
+            +
+            "                                    </table>"
+            +
+            "                                    <!-- // End Template Body \\ -->"
+            +
+            "                                    <!-- // Begin Template Footer \\ -->"
+            +
+            "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
+            +
+            "                                   	<tr>"
+            +
+            "                                        	<td valign='top' style='border-collapse: collapse;'>"
+            +
+            "               <!-- // Begin Footer Content \\ -->"
+            +
+            "                                                <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templateFooter' style='border-top: 1px dotted #202020;'>"
+            +
+            "                                                    <tr>"
+            +
+            "                                                        <td valign='top' width='320' class='footerContent' style='padding-top: 40px;padding-right: 20px;padding-bottom: 20px;padding-left: 0;border-collapse: collapse;'>"
+            +
+            "                                                            <div style='color: #202020;font-family: Helvetica;font-size: 11px;line-height: 125%;text-align: left;'>"
+            +
+            "                                                                <em>Copyright &copy; 2012 PaidPunch, LLC, All rights reserved.</em>"
+            +
+            "                                                                <br>"
+            +
+            "</td>                                                        <td valign='top' width='200' id='monkeyRewards' class='footerContent' style='padding-top: 40px;padding-right: 0;padding-bottom: 20px;padding-left: 0;border-collapse: collapse;'>"
+            +
+            "                                                          <div style='color: #202020;font-family: Helvetica;font-size: 11px;line-height: 125%;text-align: left;'>Stay happy. Save money. Win prizes.</div>"
+            +
+            "                                                       </td>" +
+            "                                                    </tr>" +
+            "                                                    <tr>" +
+            "                       </tr>" +
+            "</table>" +
+            "                   <!-- // End Footer Content \\ -->" +
+            "                   </td>" +
+            "                </tr>" +
+            "               </table>" +
+            "          <!-- // End Template Footer \\ -->" +
+            "	<br>" +
+            "      </td>" +
+            " </tr>" +
+            "    </table>" +
+            "  </td>" +
+            "  </tr>" +
+            " </table>" +
+            "  </center>" +
+            "</td>" +
+            "  </tr>" +
+            "</table>" +
+            "</body>" +
+            "</html>";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -582,29 +795,11 @@ public class SignupAddPunch extends HttpServlet {
             // Setting the Subject and Content Type
             com.server.Constants.logger.info("Setting Subject and Receipient");
             msg.setSubject(emailSubjectTxt);
-            // emailMsgTxt =
-            // "Congratulations for Signing Up with Paid Punch!!! \nPlease click on the Following link to complete your registration : \n\n";
             emailMsgTxt = "You\'re almost done! Please click the following link to verify your email and complete your PaidPunch registration:  \n\n";
             emailMsgTxt += com.server.Constants.IP_URL + "/" + com.server.Constants.applicationName
                     + "/verifybususer?uid=" + businessuserid + "&email=" + email + "\n\n";
             msg.setContent(emailMsgTxt, "text/plain");
             Transport.send(msg);
-
-            // emailMsgTxt =
-            // "You\'re almost done! Please click the following link to verify your email and complete your PaidPunch registration:  \n\n";
-            // emailMsgTxt +=
-            // com.server.Constants.IP_URL+"/paid_punch/verifybususer?uid="+businessuserid+"&email="+email+"\n\n";
-            // emailMsgTxt +=
-            // com.server.Constants.IP_URL+"/"+com.server.Constants.applicationName+"/verifybususer?uid="+businessuserid+"&email="+email+"\n\n";
-
-            // messageSending(emailSubjectTxt, recipient_email_id , emailMsgTxt);
-
-            /*
-             * TODO output your page here out.println("<html>"); out.println("<head>");
-             * out.println("<title>Servlet forgot_pass_mail_send</title>"); out.println("</head>");
-             * out.println("<body>"); out.println("<h1>Servlet forgot_pass_mail_send at " + request.getContextPath () +
-             * "</h1>"); out.println("</body>"); out.println("</html>");
-             */
         } catch (Exception e) {
             com.server.Constants.logger.info("Error in Sending Email : " + e.getMessage());
             e.printStackTrace();
@@ -642,14 +837,12 @@ public class SignupAddPunch extends HttpServlet {
             InternetAddress addressTo = new InternetAddress(recipient_email_id);
             msg.setRecipient(Message.RecipientType.TO, addressTo);
             msg.setSubject(emailSubjectTxt);
-            emailContentforapp = "Thank you for signing up with PaidPunch!<br> You\'re just a couple steps away from saving lots of money at great businesses throughout your city!<br>Click the following link to confirm your email address:<br> ";
-            // emailContentforapp +=
-            // com.server.Constants.IP_URL+"/paid_punch/verifyappuser?userid="+appid+"&email="+useremail+"<br>";
+            emailContentforapp = "You\'re just a couple steps away from saving lots of money at great businesses throughout your city!<br>Click the following link to confirm your email address:<br> ";
             emailContentforapp += com.server.Constants.IP_URL + "/" + com.server.Constants.applicationName
                     + "/verifyappuser?userid=" + appid + "&email=" + useremail + "<br>";
-            emailContentforapp += "<br>Enjoy!<br>"
-                    + "The <a href=http://twitter.com/#!/paidpunch>@PaidPunch</a> Team";
-            msg.setContent(emailContentforapp, "text/html");
+            emailMsgTxt = emailTemplateMsgTxt.replaceAll("[USERNAME]", "");
+            emailMsgTxt = emailMsgTxt.replaceAll("[VERIFICATION]", emailContentforapp);
+            msg.setContent(emailMsgTxt, "text/html");
             Transport.send(msg);
 
             // appUsermessageSending(emailSubjectTxt,recipient_email_id , emailContentforapp);
@@ -695,8 +888,6 @@ public class SignupAddPunch extends HttpServlet {
                     + ",<br><br>We have processed your request for password retrieval. Your account details are mentioned below:"
                     + "<br><br>UserName:  " + useremail + "<br>Password:  " + Password
                     + "<br><br>Please keep them safe.<br><br>Regards,<br>PaidPunch Team ";
-            // emailMsgTxt +=
-            // com.server.Constants.IP_URL+"/paid_punch/verifyappuser?userid="+appid+"&email="+useremail+"<br>";
             msg.setContent(emailContentforForgotPassword, "text/html");
             Transport.send(msg);
 
@@ -755,246 +946,10 @@ public class SignupAddPunch extends HttpServlet {
             com.server.Constants.logger.info("Setting Subject and Receipient");
             String email_sub_txt = "Welcome to PaidPunch";
             msg.setSubject(email_sub_txt);
-            // emailMsgTxt =
-            // "Congratulations for Signing Up with Paid Punch!!! \nPlease click on the Following link to complete your registration : \n\n";
-            emailMsgTxt = "<html xmlns='http://www.w3.org/1999/xhtml'>"
-                    +
-                    "<head>"
-                    +
-                    ""
-                    +
-                    "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />"
-                    +
-                    "<title>Welcome to PaidPunch</title>"
-                    +
-                    "</head>"
-                    +
-                    ""
-                    +
-                    "<body>"
-                    +
-                    "<table width='98%' border='0' cellspacing='0' cellpadding='0'>"
-                    +
-                    "  <tr>"
-                    +
-                    "    <td bgcolor='#FFFFFF'><table border='0' cellpadding='0' cellspacing='0' height='100%' width='100%' id='backgroundTable' style='margin: 0;padding: 0;background-color: #FAFAFA;height: 100% !important;width: 100% !important;'>"
-                    +
-                    ""
-                    +
-                    "<tr>"
-                    +
-                    " 	<td align='center' valign='top' style='border-collapse: collapse;'>"
-                    +
-                    "                    	<table border='0' cellpadding='0' cellspacing='0' width='600'>"
-                    +
-                    "            	<tr>"
-                    +
-                    "                          	<td align='center' valign='top' width='50' id='colorBar' style='padding-top: 15px;padding-right: 5px;padding-bottom: 40px;padding-left: 5px;border-collapse: collapse;background-color: #F47B2B;'>"
-                    +
-                    "                              	<img src='http://www.paidpunch.com/images/smile.png' height='40' width='40' style='border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;'>"
-                    +
-                    "                                </td>"
-                    +
-                    "                                <td valign='top' width='535' id='templateContainer' style='padding-left: 20px;border-collapse: collapse;'>"
-                    +
-                    "                                    <!-- // Begin Template Preheader \\ -->"
-                    +
-                    "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templatePreheader'>"
-                    +
-                    "                                        <tr>"
-                    +
-                    "                                            <td valign='top' class='preheaderContent' style='border-collapse: collapse;'>"
-                    +
-                    "                                                <!-- // Begin Preheader Content \\ -->"
-                    +
-                    "                                                <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
-                    +
-                    "                                                    <tr>"
-                    +
-                    "                      </tr>"
-                    +
-                    "                                              </table>"
-                    +
-                    "                                                <!-- // Begin Preheader Content \\ -->"
-                    +
-                    "                                            </td>"
-                    +
-                    "                                        </tr>"
-                    +
-                    "                                    </table>"
-                    +
-                    "                                    <!-- // End Template Preheader \\ -->"
-                    +
-                    "                                    <!-- // Begin Template Header \\ -->"
-                    +
-                    "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templateHeader'>"
-                    +
-                    "                                    	<tr>"
-                    +
-                    "                                        	<td valign='top' style='padding-top: 40px;padding-bottom: 40px;border-collapse: collapse;'>"
-                    +
-                    "                                                <!-- // Begin Header Content \\ -->"
-                    +
-                    "                                                <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
-                    +
-                    "                                                    <tr>"
-                    +
-                    "                                                       <td colspan='2' valign='top' class='headerContent' style='border-collapse: collapse;color: #202020;font-family: Helvetica;font-size: 34px;font-weight: bold;line-height: 100%;padding: 0;text-align: left;vertical-align: bottom;'>"
-                    +
-                    "                                                            <img src='https://www.paidpunch.com/images/transhoriz_small.png' alt='' border='0' style='margin: 0;padding: 0;max-width: 500px;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;' id='headerImage campaign-icon'></td>"
-                    +
-                    "                                                            <td width='35%' colspan='2' style='color:#F47B2B; text-align:right; font-size:30px; font-family: Helvetica, Geneva, Verdana; padding-top:6px;'>Welcome!</td>"
-                    +
-                    "                                                            </tr>"
-                    +
-                    "                                               </table>"
-                    +
-                    "                                                <!-- // End Header Content \\ -->"
-                    +
-                    "                                            </td>"
-                    +
-                    "                                        </tr>"
-                    +
-                    "                                    </table>"
-                    +
-                    "                                    <!-- // End Template Header \\ -->"
-                    +
-                    "                                    <!-- // Begin Template Body \\ -->"
-                    +
-                    "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
-                    +
-                    "                                       <tr>"
-                    +
-                    "                                            <td valign='top' width='100%' id='templateBody' style='border-collapse: collapse;'>"
-                    +
-                    "                                               <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
-                    +
-                    "                                                    <tr>"
-                    +
-                    "                                                        <td colspan='2' valign='top' class='bodyContent' style='padding-top: 20px;border-collapse: collapse;'>"
-                    +
-                    "                                                          <div style='color: #FFF; font-family: Helvetica; font-size: 13px; line-height: 150%; text-align: left;'><h1 style='color: #363636;display: block;font-family: Helvetica;font-size: 32px;font-weight: normal;letter-spacing: -1px;line-height: 100%;margin-top: 0;margin-right: 0;margin-bottom: 0px;margin-left: 0;text-align: left;'>"
-                    +
-                    "	<b id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Arial; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>"
-                    + userName
-                    + ",</span></b></h1>"
-                    +
-                    "                                                          <p><span id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Congratulations on successfully signing up for PaidPunch!</span><br>"
-                    +
-                    "  <br>"
-                    +
-                    "  <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>On behalf of </span><a href='https://www.paidpunch.com/about-us.html' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>our entire team</span></a><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '> I would like to personally welcome you to PaidPunch. We are so excited that you have decided to take part in the movement that is sweeping across Seattle! </span><br>"
-                    +
-                    "  <br>"
-                    +
-                    "  <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Everyday, more and more tech savvy individuals like yourself are discovering the amazing benefits that PaidPunch has to offer. Using PaidPunch you will immediately elevate yourself to VIP status at the businesses you visit. </span><br>"
-                    +
-                    "  <br>"
-                    +
-                    " <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>PaidPunch is guaranteed to save you money every visit (no collecting points or stamps in hopes of getting a discount sometime in the future). Plus, on top of saving money every visit you will also get a free prize which can be anything from a free meal to a round of drinks depending on the business you are at.</span><br>"
-                    +
-                    "  <br>"
-                    +
-                    "  <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Your experience matters and I want to hear from you. Let&rsquo;s stay in touch (<a href='http://www.facebook.com/pages/PaidPunch/223162497771376' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Facebook</span></a>, <a href='http://www.twitter.com/#!/paidpunch' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Twitter</span></a>, <a href='http://blog.paidpunch.com' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '> blog</span></a>, <a href='mailto:tony@paidpunch.com' style='font-weight: bold;color: #26ABE2;text-decoration: none;'><span style='font-size: 15px; font-family: Arial; color: rgb(17, 85, 204); background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>email</span></a>).</span><br>"
-                    +
-                    "  </span></p>"
-                    +
-                    "                                                            <p><span style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><br>"
-                    +
-                    "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;padding-left:31px;'>Tony Mandarano</span><br>"
-                    +
-                    "                                                            <img src='https://www.paidpunch.com/images/tonysig.png' width='250'/><br>"
-                    +
-                    "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>Co-Founder</span><br>"
-                    +
-                    "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>PaidPunch</span></span> </p>"
-                    +
-                    "<p>&nbsp;</p>"
-                    +
-                    "                                                          </div>"
-                    +
-                    "                                                        </td>"
-                    +
-                    "                                                    </tr>"
-                    +
-                    "                                                </table>"
-                    +
-                    "                                            </td>"
-                    +
-                    "                                        </tr>"
-                    +
-                    "                                    </table>"
-                    +
-                    "                                    <!-- // End Template Body \\ -->"
-                    +
-                    "                                    <!-- // Begin Template Footer \\ -->"
-                    +
-                    "                                    <table border='0' cellpadding='0' cellspacing='0' width='100%'>"
-                    +
-                    "                                   	<tr>"
-                    +
-                    "                                        	<td valign='top' style='border-collapse: collapse;'>"
-                    +
-                    "               <!-- // Begin Footer Content \\ -->"
-                    +
-                    "                                                <table border='0' cellpadding='0' cellspacing='0' width='100%' id='templateFooter' style='border-top: 1px dotted #202020;'>"
-                    +
-                    "                                                    <tr>"
-                    +
-                    "                                                        <td valign='top' width='320' class='footerContent' style='padding-top: 40px;padding-right: 20px;padding-bottom: 20px;padding-left: 0;border-collapse: collapse;'>"
-                    +
-                    "                                                            <div style='color: #202020;font-family: Helvetica;font-size: 11px;line-height: 125%;text-align: left;'>"
-                    +
-                    "                                                                <em>Copyright &copy; 2012 PaidPunch, LLC, All rights reserved.</em>"
-                    +
-                    "                                                                <br>"
-                    +
-                    "</td>                                                        <td valign='top' width='200' id='monkeyRewards' class='footerContent' style='padding-top: 40px;padding-right: 0;padding-bottom: 20px;padding-left: 0;border-collapse: collapse;'>"
-                    +
-                    "                                                          <div style='color: #202020;font-family: Helvetica;font-size: 11px;line-height: 125%;text-align: left;'>Stay happy. Save money. Win prizes.</div>"
-                    +
-                    "                                                       </td>" +
-                    "                                                    </tr>" +
-                    "                                                    <tr>" +
-                    "                       </tr>" +
-                    "</table>" +
-                    "                   <!-- // End Footer Content \\ -->" +
-                    "                   </td>" +
-                    "                </tr>" +
-                    "               </table>" +
-                    "          <!-- // End Template Footer \\ -->" +
-                    "	<br>" +
-                    "      </td>" +
-                    " </tr>" +
-                    "    </table>" +
-                    "  </td>" +
-                    "  </tr>" +
-                    " </table>" +
-                    "  </center>" +
-                    "</td>" +
-                    "  </tr>" +
-                    "</table>" +
-                    "</body>" +
-                    "</html>";
+            emailMsgTxt = emailTemplateMsgTxt.replace("[USERNAME]", userName);
 
             msg.setContent(emailMsgTxt, "text/html");
             Transport.send(msg);
-
-            // emailMsgTxt =
-            // "You\'re almost done! Please click the following link to verify your email and complete your PaidPunch registration:  \n\n";
-            // emailMsgTxt +=
-            // com.server.Constants.IP_URL+"/paid_punch/verifybususer?uid="+businessuserid+"&email="+email+"\n\n";
-            // emailMsgTxt +=
-            // com.server.Constants.IP_URL+"/"+com.server.Constants.applicationName+"/verifybususer?uid="+businessuserid+"&email="+email+"\n\n";
-
-            // messageSending(emailSubjectTxt, recipient_email_id , emailMsgTxt);
-
-            /*
-             * TODO output your page here out.println("<html>"); out.println("<head>");
-             * out.println("<title>Servlet forgot_pass_mail_send</title>"); out.println("</head>");
-             * out.println("<body>"); out.println("<h1>Servlet forgot_pass_mail_send at " + request.getContextPath () +
-             * "</h1>"); out.println("</body>"); out.println("</html>");
-             */
         } catch (Exception e) {
             com.server.Constants.logger.info("Error in Sending Email : " + e.getMessage());
             e.printStackTrace();

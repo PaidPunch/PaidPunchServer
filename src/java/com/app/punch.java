@@ -378,7 +378,7 @@ public class Punch extends HttpServlet {
             }
             boolean b = timelimitcheck(down_id, restrict_min);
             if (!b) {
-                mark_Punch_Card_Xml(response, "01", "You just used a Punch. You must wait " + restrict_min
+                mark_Punch_Card_Xml(response, "01", "You just used a coupon. You must wait " + restrict_min
                         + " minutes before using another.", -1, pid, barcodeimage);
                 return;
             }

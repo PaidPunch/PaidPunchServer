@@ -19,8 +19,6 @@ public class ProposedBusinessList
 	private JSONArray arrayBusinesses;
 	private JSONArray arrayEnabledBusinesses;
 	
-	private static String businessDomain = "BusinessesTest";
-	
 	// Private constructor
 	private ProposedBusinessList() 
 	{
@@ -53,7 +51,7 @@ public class ProposedBusinessList
 			try
 			{
 				SimpleDB sdb = SimpleDB.getInstance();
-				String allQuery = "select * from `" + businessDomain + "`";
+				String allQuery = "select * from `" + Constants.BUSINESSES_DOMAIN + "`";
 				currentBusinesses = sdb.selectQuery(allQuery);
 				
 	    		lastRefreshTime = new Date();

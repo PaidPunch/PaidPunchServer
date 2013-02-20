@@ -823,7 +823,7 @@ public class Users extends XmlHttpServlet
 			listAttributes.add(new ReplaceableAttribute("modifiedDatetime", currentDatetime, true));
 			
 			SimpleDB sdb = SimpleDB.getInstance();
-			sdb.updateItem("RequestInvitesTest", itemName.toString(), listAttributes);
+			sdb.updateItem(Constants.REQUESTINVITES_DOMAIN, itemName.toString(), listAttributes);
 			
 			results = new JSONObject();
 			results.put("statusCode", "00");

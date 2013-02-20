@@ -36,6 +36,13 @@ public class Constants {
     public static String ZIPCODE_PARAMNAME = "zipcode";
     public static String BIZNAME_PARAMNAME = "business_name";
     public static String BIZINFO_PARAMNAME = "business_info";
+    
+    // SimpleDB domain names
+    public static String BUSINESSES_DOMAIN = "Businesses";
+    public static String RECORDS_DOMAIN = "Records";
+    public static String REQUESTINVITES_DOMAIN = "RequestInvites";
+    public static String SUGGESTBUSINESSES_DOMAIN = "SuggestBusinesses";
+    public static String VOTES_DOMAIN = "Votes";
 
     // Used in database connection
     public static String JDBC_DRIVER = "";
@@ -52,9 +59,6 @@ public class Constants {
     public static String Pdf_Write_Path = "";
     public static String imagePath = "";
     public static String logoActualPath = "";
-    // public static String LOG_FOLDER_PATH ="";
-    // public static String DATA_FOLDER_PATH ="";
-    // public static String DATA_FOLDER_URL ="";
 
     public static String APP_HOME_PATH = "";
 

@@ -501,7 +501,7 @@ public class Register extends HttpServlet {
             out.print("<statusMessage>" + statusMessage + "</statusMessage>");
             if (statusCode.equalsIgnoreCase("00")) {
                 byte[] l_imageData = null;
-                l_imageData = (byte[]) businessdata.elementAt(16);// 14
+                l_imageData = (byte[]) businessdata.elementAt(17);// 14
                 Base64 baseimage = new Base64();
                 baseimage.encode(l_imageData);
 
@@ -517,14 +517,14 @@ public class Register extends HttpServlet {
                         + "<punchcardid>" + businessdata.elementAt(0) + "</punchcardid>"
                         + "<punchcardname>" + StringEscapeUtils.escapeXml(businessdata.elementAt(1).toString())
                         + "</punchcardname>"
-                        + "<pucnchcarddesc>" + StringEscapeUtils.escapeXml(businessdata.elementAt(17).toString())
+                        + "<pucnchcarddesc>" + StringEscapeUtils.escapeXml(businessdata.elementAt(18).toString())
                         + "</pucnchcarddesc>"
                         + "<totalnoofpunches>" + businessdata.elementAt(2) + "</totalnoofpunches>"
                         + "<eachpunchvalue>" + businessdata.elementAt(3) + "</eachpunchvalue>"
                         + "<actualprice>" + val1 * val2 + "</actualprice>"
                         + "<sellingprice>" + businessdata.elementAt(4) + "</sellingprice>"
                         + "<discount>" + businessdata.elementAt(6) + "</discount>"
-                        + "<expiredate>" + new String(businessdata.elementAt(18).toString()) + "</expiredate>"
+                        + "<expiredate>" + new String(businessdata.elementAt(19).toString()) + "</expiredate>"
                         + "<isfreepunch>" + isfreepunch + "</isfreepunch>"
                         + "<is_mystery_punch>" + businessdata.elementAt(11) + "</is_mystery_punch>"
                         + "<minimum_value>" + businessdata.elementAt(14) + "</minimum_value>"
@@ -532,7 +532,8 @@ public class Register extends HttpServlet {
                         + "<discount_value_of_each_punch>" + businessdata.elementAt(9)
                         + "</discount_value_of_each_punch>"
                         + "<redeem_time_diff>" + businessdata.elementAt(10) + "</redeem_time_diff>"
-                        + "<bussinesslogo_url>" + businessdata.elementAt(19).toString() + "</bussinesslogo_url>";// 10
+                        + "<bussinesslogo_url>" + businessdata.elementAt(20).toString() + "</bussinesslogo_url>"
+                        + "<punchcard_code>" + businessdata.elementAt(15).toString() + "</punchcard_code>";// 10
 
                 out.print(respons);
                 // out.print("<bussinesslogo>" + new String(baseimage.encode(l_imageData)) + "</bussinesslogo>");

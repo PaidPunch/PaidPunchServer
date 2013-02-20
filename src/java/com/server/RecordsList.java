@@ -76,7 +76,7 @@ public class RecordsList
 			listAttributes.add(new ReplaceableAttribute("modifiedDatetime", currentDatetime, true));
 			
 			SimpleDB sdb = SimpleDB.getInstance();
-			sdb.updateItem("RecordsTest", itemName.toString(), listAttributes);
+			sdb.updateItem(Constants.RECORDS_DOMAIN, itemName.toString(), listAttributes);
 			
 			success = true;
 		}

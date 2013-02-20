@@ -72,7 +72,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 					listAttributes.add(new ReplaceableAttribute("modifiedDatetime", currentDatetime, true));
 					
 					SimpleDB sdb = SimpleDB.getInstance();
-					sdb.updateItem("SuggestBusinessesTest", itemName.toString(), listAttributes);
+					sdb.updateItem(Constants.SUGGESTBUSINESSES_DOMAIN, itemName.toString(), listAttributes);
 					
 					results = new JSONObject();
 					results.put("statusCode", "00");
@@ -126,7 +126,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 					listAttributes.add(new ReplaceableAttribute("modifiedDatetime", currentDatetime, true));
 					
 					SimpleDB sdb = SimpleDB.getInstance();
-					sdb.updateItem("VotesTest", itemName.toString(), listAttributes);
+					sdb.updateItem(Constants.VOTES_DOMAIN, itemName.toString(), listAttributes);
 					
 					results = new JSONObject();
 					results.put("statusCode", "00");

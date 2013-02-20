@@ -11,17 +11,11 @@
     </security-constraint>
     <context-param>
         <param-name>URL</param-name>
-        <!--<param-value>https://122.179.131.164:8186</param-value>-->
-        <param-value>https://192.168.1.109:8443</param-value>
-        <!--<param-value>http://63.247.83.219</param-value>-->
-        <!--<param-value>http://localhost:8084</param-value>-->
-        <!--<param-value>https://paidpunch.com</param-value>-->
-
+        <param-value>https://api.paidpunch.com</param-value>
     </context-param>
 
     <context-param>
         <param-name>application_name</param-name>
-        <!--<param-value>paid_punch_test</param-value>-->
         <param-value>paid_punch</param-value>
     </context-param>
     <context-param>
@@ -30,7 +24,6 @@
     </context-param>
     <context-param>
         <param-name>filereader</param-name>
-        <!-- for barcode image store in folder-->
         <param-value>/</param-value>
     </context-param>
     <context-param>
@@ -39,11 +32,7 @@
     </context-param>
     <context-param>
         <param-name>HOST_IP</param-name>
-        <!--<param-value>https://paidpunch.com</param-value>-->
-        <!--<param-value>http://localhost:8084</param-value>-->
-        <!--<param-value>http://63.247.83.219</param-value>-->
-        <param-value>https://192.168.1.109:8443</param-value>
-        <!--<param-value>https://122.179.131.164:8186</param-value>-->
+        <param-value>https://api.paidpunch.com</param-value>
     </context-param>
     <context-param>
         <param-name>LOGO_TEMP_PATH</param-name>
