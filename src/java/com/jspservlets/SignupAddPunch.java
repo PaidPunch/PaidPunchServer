@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.Security;
 import java.sql.ResultSet;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpSession;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
+import com.server.Utility;
 
 /**
  * @author admin
@@ -105,7 +107,7 @@ public class SignupAddPunch extends HttpServlet {
             +
             "                          	<td align='center' valign='top' width='50' id='colorBar' style='padding-top: 15px;padding-right: 5px;padding-bottom: 40px;padding-left: 5px;border-collapse: collapse;background-color: #F47B2B;'>"
             +
-            "                              	<img src='http://www.paidpunch.com/images/smile.png' height='40' width='40' style='border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;'>"
+            "                              	<img src='https://s3-us-west-2.amazonaws.com/paidpunch.company/smile.png' height='40' width='40' style='border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;'>"
             +
             "                                </td>"
             +
@@ -155,7 +157,7 @@ public class SignupAddPunch extends HttpServlet {
             +
             "                                                       <td colspan='2' valign='top' class='headerContent' style='border-collapse: collapse;color: #202020;font-family: Helvetica;font-size: 34px;font-weight: bold;line-height: 100%;padding: 0;text-align: left;vertical-align: bottom;'>"
             +
-            "                                                            <img src='https://www.paidpunch.com/images/transhoriz_small.png' alt='' border='0' style='margin: 0;padding: 0;max-width: 500px;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;' id='headerImage campaign-icon'></td>"
+            "                                                            <img src='https://s3-us-west-2.amazonaws.com/paidpunch.company/transhoriz_small.png' alt='' border='0' style='margin: 0;padding: 0;max-width: 500px;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;' id='headerImage campaign-icon'></td>"
             +
             "                                                            <td width='35%' colspan='2' style='color:#F47B2B; text-align:right; font-size:30px; font-family: Helvetica, Geneva, Verdana; padding-top:6px;'>Welcome!</td>"
             +
@@ -192,7 +194,7 @@ public class SignupAddPunch extends HttpServlet {
             "	<b id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Arial; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>"
             + "[USERNAME]</span></b></h1>"
             +
-            "                                                          <p><span id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Congratulations on successfully signing up for PaidPunch! [VERIFICATION]</span><br>"
+            "                                                          <p><span id='internal-source-marker_0.7230599608737975' style='color: rgb(0, 0, 0); font-family: Times; line-height: normal; text-align: -webkit-auto; -webkit-text-size-adjust: auto; font-size: medium; '><span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; '>Congratulations on successfully signing up for PaidPunch!</span><br>"
             +
             "  <br>"
             +
@@ -808,7 +810,6 @@ public class SignupAddPunch extends HttpServlet {
 
     public void sendEmail_For_app_user(String appid, String useremail) {
         try {
-            String emailContentforapp = "";
             try {
                 recipient_email_id = useremail;
             } catch (Exception e) {
@@ -837,15 +838,18 @@ public class SignupAddPunch extends HttpServlet {
             InternetAddress addressTo = new InternetAddress(recipient_email_id);
             msg.setRecipient(Message.RecipientType.TO, addressTo);
             msg.setSubject(emailSubjectTxt);
-            emailContentforapp = "You\'re just a couple steps away from saving lots of money at great businesses throughout your city!<br>Click the following link to confirm your email address:<br> ";
-            emailContentforapp += com.server.Constants.IP_URL + "/" + com.server.Constants.applicationName
-                    + "/verifyappuser?userid=" + appid + "&email=" + useremail + "<br>";
-            emailMsgTxt = emailTemplateMsgTxt.replaceAll("[USERNAME]", "");
-            emailMsgTxt = emailMsgTxt.replaceAll("[VERIFICATION]", emailContentforapp);
-            msg.setContent(emailMsgTxt, "text/html");
+            
+            String templatePath = "com/server/verificationEmail";
+			InputStream inStreamTemplate = this.getClass().getClassLoader().getResourceAsStream(templatePath);
+			String templateEmail = "";
+    		if (inStreamTemplate != null)
+    		{
+    			templateEmail = Utility.convertInputStreamToString(inStreamTemplate);
+    		}
+            String verificationUrl = com.server.Constants.IP_URL + "/" + "/verifyappuser?userid=" + appid + "&email=" + useremail + "<br>";
+            String finalEmail = templateEmail.replace("[VERIFICATION]", verificationUrl);
+            msg.setContent(finalEmail, "text/html");
             Transport.send(msg);
-
-            // appUsermessageSending(emailSubjectTxt,recipient_email_id , emailContentforapp);
 
         } catch (Exception e) {
             e.printStackTrace();
