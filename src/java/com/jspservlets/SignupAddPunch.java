@@ -218,7 +218,7 @@ public class SignupAddPunch extends HttpServlet {
             +
             "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;padding-left:31px;'>Tony Mandarano</span><br>"
             +
-            "                                                            <img src='https://www.paidpunch.com/images/tonysig.png' width='250'/><br>"
+            "                                                            <img src='https://s3-us-west-2.amazonaws.com/paidpunch.company/tonysig.png' width='250'/><br>"
             +
             "                                                            <span style='font-size: 15px; font-family: Arial; background-color: transparent; font-weight: normal; vertical-align: baseline; white-space: pre-wrap; padding-left:31px; '>Co-Founder</span><br>"
             +
