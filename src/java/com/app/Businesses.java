@@ -1,6 +1,7 @@
 package com.app;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -10,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
-import com.server.Constants;
 import com.server.BusinessesList;
+import com.server.Constants;
 
 public class Businesses extends XmlHttpServlet
 {
@@ -75,7 +76,7 @@ public class Businesses extends XmlHttpServlet
     			if (responseMap != null)
     			{            				
     				// Send a response to caller
-        			jsonResponse(response, responseMap);
+        			jsonResponse(request, response, responseMap);
     			}
     			else
     			{
@@ -87,6 +88,12 @@ public class Businesses extends XmlHttpServlet
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
+    }
+    
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        CorsUtils.addOptionsCorsHeaderInfo(req, resp);
+        super.doOptions(req, resp);
     }
 
 }

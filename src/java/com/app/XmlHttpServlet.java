@@ -72,12 +72,13 @@ public class XmlHttpServlet extends HttpServlet
 
     }
 	
-	protected void jsonResponse(HttpServletResponse response, JSONArray responseArray)
+	protected void jsonResponse(HttpServletRequest request, HttpServletResponse response, JSONArray responseArray)
             throws IOException 
     {
         try 
         {
         	response.setContentType("application/json");
+        	CorsUtils.addCorsHeaderInfo(request, response);
             PrintWriter out = response.getWriter();
             
             String res = responseArray.toString();

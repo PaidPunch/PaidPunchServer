@@ -195,7 +195,7 @@ public class ProposedBusinesses extends XmlHttpServlet
     			if (responseMap != null)
     			{            				
     				// Send a response to caller
-        			jsonResponse(response, responseMap);
+        			jsonResponse(request, response, responseMap);
     			}
     			else
     			{
