@@ -29,7 +29,7 @@ public class CorsUtils {
             response.addHeader("Access-Control-Allow-Origin", requestOrigin);
             response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             response.addHeader("Access-Control-Allow-Headers",
-                    "content-type, accept, x-requested-with, api-version, enabled-only");
+                    "content-type, accept, x-requested-with, api-version, enabled-only, Authorization, X-Authorization");
             response.addHeader("access-control-max-age", "10");
         } else {
             Constants.logger.trace("Incoming request from origin " + requestOrigin + " rejected.");
