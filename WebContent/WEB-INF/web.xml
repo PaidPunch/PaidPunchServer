@@ -53,8 +53,6 @@
     <context-param>
         <param-name>IMAGES_PATH</param-name>
         <param-value>C:\\Documents and Settings\\admin\\My Documents\\NetBeansProjects\\Development\\web\\images\\</param-value>
-        <!--<param-value>/usr/share/apache-tomcat-7.0.19/webapps/paid_punch_test/images/</param-value>-->
-       <!-- <param-value>/var/lib/tomcat6/webapps/paid_punch/images/</param-value>-->
     </context-param>
     <context-param>
         <param-name>JDBC_DRIVER</param-name>
@@ -62,15 +60,15 @@
     </context-param>
     <context-param>
         <param-name>JDBC_URL</param-name>
-        <param-value>jdbc:mysql://paidpunchprod.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchprod</param-value>
-        <!--<param-value>jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchtest</param-value>-->
+        <!--<param-value>jdbc:mysql://paidpunchprod.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchprod</param-value>-->
+        <param-value>jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchtest</param-value>
         <!--<param-value>jdbc:mysql://localhost:3306/paidpunch</param-value>-->
     </context-param>
     <context-param>
         <param-name>USERID</param-name>
         <!--<param-value>root</param-value>-->
-        <!--<param-value>paidpunch</param-value>-->
-        <param-value>paidpunchprod</param-value>
+        <param-value>paidpunch</param-value>
+        <!--<param-value>paidpunchprod</param-value>-->
     </context-param>
     <context-param>
         <param-name>PASSWORD</param-name>
