@@ -330,7 +330,7 @@ public class Products extends XmlHttpServlet  {
                 	            		responseMap.put("statusMessage", "Credit product purchased successfully");
                 	            		
                 	            		// Send a response to caller
-                	        			jsonResponse(response, responseMap);
+                	        			jsonResponse(request, response, responseMap);
                     				}
                     				catch (JSONException ex)
                     				{

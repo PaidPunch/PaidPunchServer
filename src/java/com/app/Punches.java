@@ -273,7 +273,7 @@ public class Punches extends XmlHttpServlet
                     	            		responseMap.put("statusMessage", "Punch card purchased successfully");
                     	            		
                     	            		// Send a response to caller
-                    	        			jsonResponse(response, responseMap);
+                    	        			jsonResponse(request, response, responseMap);
                     	            	}
                     	            }
                     	            else

@@ -879,7 +879,7 @@ public class Users extends XmlHttpServlet
         				if (responseMap != null)
         				{
         					// Send a response to caller
-                			jsonResponse(response, responseMap);
+                			jsonResponse(request, response, responseMap);
         				}
         			}
         			else
@@ -968,7 +968,7 @@ public class Users extends XmlHttpServlet
                 			RecordsList.getInstance().recordSignup(Integer.toString(new_user_id), requestInputs.getString(Constants.NAME_PARAMNAME));
                 			
                 			// Send a response to caller
-                			jsonResponse(response, responseMap);
+                			jsonResponse(request, response, responseMap);
                 		}
                 	}
                 	else
@@ -1055,7 +1055,7 @@ public class Users extends XmlHttpServlet
         		if (responseMap != null)
     			{
     				// Send a response to caller
-        			jsonResponse(response, responseMap);
+        			jsonResponse(request, response, responseMap);
     			}
         	}
     	}
@@ -1104,7 +1104,7 @@ public class Users extends XmlHttpServlet
         					if (responseMap != null)
                 			{            				
                 				// Send a response to caller
-                    			jsonResponse(response, responseMap);
+                    			jsonResponse(request, response, responseMap);
                 			}
         				}
         				else
@@ -1132,5 +1132,11 @@ public class Users extends XmlHttpServlet
 			Constants.logger.error("Error : " + ex.getMessage());
 			errorResponse(response, "500", "An unknown error occurred");
 		}
+    }
+    
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        CorsUtils.addOptionsCorsHeaderInfo(req, resp);
+        super.doOptions(req, resp);
     }
 }

@@ -52,12 +52,13 @@ public class XmlHttpServlet extends HttpServlet
 		return validSessionId.equals(currentSessionId);
 	}
 	
-	protected void jsonResponse(HttpServletResponse response, JSONObject responseMap)
+	protected void jsonResponse(HttpServletRequest request, HttpServletResponse response, JSONObject responseMap)
             throws IOException 
     {
         try 
         {
         	response.setContentType("application/json");
+        	CorsUtils.addCorsHeaderInfo(request, response);
             PrintWriter out = response.getWriter();
             
             String res = responseMap.toString();
