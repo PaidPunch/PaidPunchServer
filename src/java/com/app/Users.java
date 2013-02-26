@@ -8,6 +8,7 @@ import com.db.DataAccess.ResultSetHandler;
 import com.jspservlets.SignupAddPunch;
 import com.server.Constants;
 import com.server.CreditChangeHistory;
+import com.server.MailingListSubscribers;
 import com.server.RecordsList;
 
 import java.io.IOException;
@@ -245,6 +246,9 @@ public class Users extends XmlHttpServlet
 						// Send confirmation email
 						SignupAddPunch mail = new SignupAddPunch();
 		                mail.sendEmail_For_app_user(Integer.toString(user_id), email);
+		                
+		             // Adding email to subscribers list on mailchimp
+						MailingListSubscribers.getInstance().subscribeToMailingList(email);
 					}
 					else
 					{
@@ -327,6 +331,9 @@ public class Users extends XmlHttpServlet
 						changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
 						
 						sendWelcomeEmail(name, email);
+						
+						// Adding email to subscribers list on mailchimp
+						MailingListSubscribers.getInstance().subscribeToMailingList(email);
 					}
 					else
 					{
