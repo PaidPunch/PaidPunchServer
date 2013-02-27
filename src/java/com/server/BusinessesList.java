@@ -47,7 +47,7 @@ public class BusinessesList
 			{
 				currentBusinesses = new ArrayList<Business>();
 				
-				String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,b.contactno,b.logo_path,b.busi_enabled,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude FROM business_users b, bussiness_address a WHERE b.business_userid = a.business_id;";
+				String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude FROM business_users b, bussiness_address a WHERE b.business_userid = a.business_id;";
 				try
 				{
 					DataAccess.queryDatabaseCustom(queryString, null, currentBusinesses, new ResultSetHandler()
