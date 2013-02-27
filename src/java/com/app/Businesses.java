@@ -1,7 +1,6 @@
 package com.app;
 
 import java.io.IOException;
-import java.util.HashSet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -91,7 +90,8 @@ public class Businesses extends XmlHttpServlet
     }
     
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException 
+    {
         CorsUtils.addOptionsCorsHeaderInfo(req, resp);
         super.doOptions(req, resp);
     }
