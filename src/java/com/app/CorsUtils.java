@@ -18,7 +18,8 @@ public class CorsUtils {
     private final static Set<String> allowedOrigins = new HashSet<String>(Arrays.asList(new String[] {
             "http://localhost:8080",
             "http://tb-mac.local:8080",
-            "http://www.paidpunch.com"}));
+            "http://www.paidpunch.com",
+            "https://www.paidpunch.com"}));
 
     public static void addOptionsCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) {
         String requestOrigin = request.getHeader("origin");
