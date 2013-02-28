@@ -80,19 +80,19 @@ public class ProposedBusinesses extends XmlHttpServlet
 				}
 				else
 				{
-					errorResponse(response, "403", "You are already logged into a different device");
+					errorResponse(request, response, "403", "You are already logged into a different device");
 				}
 	    	}
 			else
 			{
 				// Could not find user
 	    		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-	    		errorResponse(response, "404", "Could not find user");
+	    		errorResponse(request, response, "404", "Could not find user");
 	    	}
 		}
 		catch (JSONException ex) 
 		{
-			errorResponse(response, "500", "An unknown failure happened");
+			errorResponse(request, response, "500", "An unknown failure happened");
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		
@@ -134,19 +134,19 @@ public class ProposedBusinesses extends XmlHttpServlet
 				}
 				else
 				{
-					errorResponse(response, "403", "You are already logged into a different device");
+					errorResponse(request, response, "403", "You are already logged into a different device");
 				}
 	    	}
 			else
 			{
 				// Could not find user
 	    		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-	    		errorResponse(response, "404", "Could not find user");
+	    		errorResponse(request, response, "404", "Could not find user");
 	    	}
 		}
 		catch (JSONException ex) 
 		{
-			errorResponse(response, "500", "Unable to retrieve businesses");
+			errorResponse(request, response, "500", "Unable to retrieve businesses");
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		
@@ -172,7 +172,7 @@ public class ProposedBusinesses extends XmlHttpServlet
     	try
     	{    		
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		boolean enabledOnly = false;
         		String enabledOnlyString = request.getHeader("enabled-only");
@@ -199,13 +199,13 @@ public class ProposedBusinesses extends XmlHttpServlet
     			}
     			else
     			{
-    				errorResponse(response, "500", "Unable to retrieve businesses");
+    				errorResponse(request, response, "500", "Unable to retrieve businesses");
     			}
         	}
     	}
     	catch (Exception ex)
     	{
-    		errorResponse(response, "500", "Unable to retrieve businesses");
+    		errorResponse(request, response, "500", "Unable to retrieve businesses");
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
     }
@@ -230,7 +230,7 @@ public class ProposedBusinesses extends XmlHttpServlet
     	{
     		JSONObject responseMap = null;
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		String pathInfo = request.getPathInfo();
         		if (pathInfo != null)
@@ -256,13 +256,13 @@ public class ProposedBusinesses extends XmlHttpServlet
                 			}
         					else
         					{
-        						errorResponse(response, "403", "Incorrect API usage");
+        						errorResponse(request, response, "403", "Incorrect API usage");
         					}
         				}
         			}
         			else
         			{
-        				errorResponse(response, "403", "Incorrect API usage");
+        				errorResponse(request, response, "403", "Incorrect API usage");
         			}
         		}
         		
@@ -273,14 +273,14 @@ public class ProposedBusinesses extends XmlHttpServlet
     			}
         		else
         		{
-        			errorResponse(response, "400", "Unable to process voting request");
+        			errorResponse(request, response, "400", "Unable to process voting request");
         		}
         	}
     	}
     	catch (Exception ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "An unknown error occurred");
+			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }
 }

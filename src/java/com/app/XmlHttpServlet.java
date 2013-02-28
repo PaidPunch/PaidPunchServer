@@ -36,11 +36,11 @@ public class XmlHttpServlet extends HttpServlet
 		}
 	}
 	
-	protected boolean validateVersion(HttpServletResponse response, float expectedVersion)
+	protected boolean validateVersion(HttpServletRequest request, HttpServletResponse response, float expectedVersion)
 	{
 		if (expectedVersion < minValidVersion)
 		{
-			errorResponse(response, "405", "There is a newer version of PaidPunch available. Please update to continue using this application.");
+			errorResponse(request, response, "405", "There is a newer version of PaidPunch available. Please update to continue using this application.");
 			return false;
 		}
 		return true;
@@ -111,11 +111,12 @@ public class XmlHttpServlet extends HttpServlet
 
     }
 	
-	protected void errorResponse(HttpServletResponse response, String statusCode, String statusMessage) 
+	protected void errorResponse(HttpServletRequest request, HttpServletResponse response, String statusCode, String statusMessage) 
 	{
         try 
         {
         	response.setContentType("application/json");
+        	CorsUtils.addCorsHeaderInfo(request, response);
         	PrintWriter out = response.getWriter();
             
         	JSONObject responseMap = new JSONObject().put("statusMessage", statusMessage);

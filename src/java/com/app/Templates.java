@@ -53,7 +53,7 @@ public class Templates extends XmlHttpServlet {
     	try
     	{    		
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		TemplatesList templates = TemplatesList.getInstance();
             	JSONArray responseMap = templates.getTemplates();
@@ -64,7 +64,7 @@ public class Templates extends XmlHttpServlet {
     			}
     			else
     			{
-    				errorResponse(response, "500", "Unable to retrieve templates");
+    				errorResponse(request, response, "500", "Unable to retrieve templates");
     			}
         	}
     	}

@@ -52,7 +52,7 @@ public class Businesses extends XmlHttpServlet
     	try
     	{    		
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		boolean enabledOnly = false;
         		String enabledOnlyString = request.getHeader("enabled-only");
@@ -79,7 +79,7 @@ public class Businesses extends XmlHttpServlet
     			}
     			else
     			{
-    				errorResponse(response, "500", "Unable to retrieve businesses");
+    				errorResponse(request, response, "500", "Unable to retrieve businesses");
     			}
         	}
     	}

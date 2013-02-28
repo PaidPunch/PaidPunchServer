@@ -257,7 +257,7 @@ public class Products extends XmlHttpServlet  {
             throws ServletException, IOException 
     {    	
     	float expectedAPIVersion = getExpectedVersion(request);
-    	if (validateVersion(response, expectedAPIVersion))
+    	if (validateVersion(request, response, expectedAPIVersion))
     	{
 	    	ProductsList products = ProductsList.getInstance();
 	    	String currentProducts = products.getMapOfProducts();
@@ -282,7 +282,7 @@ public class Products extends XmlHttpServlet  {
             throws ServletException, IOException 
     {
     	float expectedAPIVersion = getExpectedVersion(request);
-    	if (validateVersion(response, expectedAPIVersion))
+    	if (validateVersion(request, response, expectedAPIVersion))
     	{
         	JSONObject requestInputs = getRequestData(request);	
         	
@@ -341,41 +341,41 @@ public class Products extends XmlHttpServlet  {
                         		{
                         			// Could not retrieve payment information
                             		Constants.logger.error("Error: Unable to retrieve  " + product_id);
-                            		errorResponse(response, "400", "Unable to purchase credits");
+                            		errorResponse(request, response, "400", "Unable to purchase credits");
                         		}
                     		}
                     		else
                     		{
                     			// Product is disabled
                         		Constants.logger.error("Error: Attempt to purchase disabled product " + product_id);
-                        		errorResponse(response, "403", "This product is no longer available for purchase");
+                        		errorResponse(request, response, "403", "This product is no longer available for purchase");
                     		}
                     	}
                     	else
                     	{
                     		// Could not find product
                     		Constants.logger.error("Error: Unable to find product with id: " + product_id);
-                    		errorResponse(response, "404", "Unknown credit product");
+                    		errorResponse(request, response, "404", "Unknown credit product");
                     	}	
             		}
             		else
                 	{
                 		// Session mismatch
                 		Constants.logger.error("Error: Session mismatch for user: " + user_id);
-                		errorResponse(response, "400", "You have logged in from another device");
+                		errorResponse(request, response, "400", "You have logged in from another device");
                 	}
             	}
             	else
             	{
             		// Could not find user
             		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-            		errorResponse(response, "404", "Unknown user");
+            		errorResponse(request, response, "404", "Unknown user");
             	}
         	}
         	catch (JSONException ex)
         	{
         		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
-        		errorResponse(response, "500", "An unknown error occurred");
+        		errorResponse(request, response, "500", "An unknown error occurred");
         	}
     	}
     }

@@ -254,7 +254,7 @@ public class Users extends XmlHttpServlet
 					{
 						// The referral code returned more than a single user. Return an error after logging.
 			    		Constants.logger.error("Error: Unable to register new user");
-			    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
+			    		errorResponse(request, response, "500", "Server is currently unavailable. Please try again later.");
 					}
 				}
 				catch (Exception ex)
@@ -266,7 +266,7 @@ public class Users extends XmlHttpServlet
 			{
 				// The referral code returned more than a single user. Return an error after logging.
 	    		Constants.logger.error("Error: Email " + email + " is already being used");
-	    		errorResponse(response, "403", "Cannot register. Email is already in use.");
+	    		errorResponse(request, response, "403", "Cannot register. Email is already in use.");
 			}
 		} 
 		catch (JSONException ex) 
@@ -339,7 +339,7 @@ public class Users extends XmlHttpServlet
 					{
 						// The referral code returned more than a single user. Return an error after logging.
 			    		Constants.logger.error("Error: Unable to register new user");
-			    		errorResponse(response, "500", "Server is currently unavailable. Please try again later.");
+			    		errorResponse(request, response, "500", "Server is currently unavailable. Please try again later.");
 					}
 				}
 				catch (Exception ex)
@@ -351,7 +351,7 @@ public class Users extends XmlHttpServlet
 			{
 				// The referral code returned more than a single user. Return an error after logging.
 	    		Constants.logger.error("Error: Facebook id " + fbid + " is already being used");
-	    		errorResponse(response, "403", "Cannot register. Facebook account is already in use.");
+	    		errorResponse(request, response, "403", "Cannot register. Facebook account is already in use.");
 			}
 		} 
 		catch (JSONException ex) 
@@ -448,12 +448,12 @@ public class Users extends XmlHttpServlet
 						}
 						else
 						{
-							errorResponse(response, "403", "Please verify your email first being trying to log in.");
+							errorResponse(request, response, "403", "Please verify your email first being trying to log in.");
 						}
 					}
 					else
 					{
-						errorResponse(response, "404", "User not found. Either email or password is invalid. Please sign up first.");
+						errorResponse(request, response, "404", "User not found. Either email or password is invalid. Please sign up first.");
 					}
 				}
 				else if (loginType.equalsIgnoreCase(facebookLogin))
@@ -465,14 +465,14 @@ public class Users extends XmlHttpServlet
 					}
 					else
 					{
-						errorResponse(response, "404", "User not found. Either facebook id is invalid. Please sign up first.");
+						errorResponse(request, response, "404", "User not found. Either facebook id is invalid. Please sign up first.");
 					}
 				}
 				else
 				{
 					// Unknown login type specified by caller
 	        		Constants.logger.error("Error: unknown login type");
-	        		errorResponse(response, "404", "User update error");
+	        		errorResponse(request, response, "404", "User update error");
 				}
 				
 				if (responseMap != null)
@@ -485,13 +485,13 @@ public class Users extends XmlHttpServlet
 			{
 				// Unknown login type specified by caller
 	    		Constants.logger.error("Error: unknown login type");
-	    		errorResponse(response, "404", "User update error");
+	    		errorResponse(request, response, "404", "User update error");
 			}
 		}
 		catch (JSONException ex)
 		{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "400", "Bad request");
+			errorResponse(request, response, "400", "Bad request");
 		}
 		
 		return responseMap;
@@ -666,24 +666,24 @@ public class Users extends XmlHttpServlet
 						}
 						else
 						{
-							errorResponse(response, "500", "Password update failed");
+							errorResponse(request, response, "500", "Password update failed");
 						}
 					}
 					else
 					{
-						errorResponse(response, "403", "Existing password does not match");
+						errorResponse(request, response, "403", "Existing password does not match");
 					}
 				}
 				else
 				{
-					errorResponse(response, "403", "You are already logged into a different device");
+					errorResponse(request, response, "403", "You are already logged into a different device");
 				}
         	}
 			else
 			{
 				// Could not find user
         		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-        		errorResponse(response, "404", "Could not find user");
+        		errorResponse(request, response, "404", "Could not find user");
 			}
 			
 			if (success)
@@ -698,12 +698,12 @@ public class Users extends XmlHttpServlet
 		catch (SQLException ex)
 		{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "Unable to update password");
+			errorResponse(request, response, "500", "Unable to update password");
 		}
 		catch (JSONException ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "Unable to update password");
+			errorResponse(request, response, "500", "Unable to update password");
 		}
 		finally
 		{
@@ -790,20 +790,20 @@ public class Users extends XmlHttpServlet
 				}
 				else
 				{
-					errorResponse(response, "403", "You are already logged into a different device");
+					errorResponse(request, response, "403", "You are already logged into a different device");
 				}
         	}
 			else
 			{
 				// Could not find user
         		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-        		errorResponse(response, "404", "Could not find user");
+        		errorResponse(request, response, "404", "Could not find user");
 			}
 		}
 		catch (Exception ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "Unable to update user info");
+			errorResponse(request, response, "500", "Unable to update user info");
 		}
 		return results;
     }
@@ -838,7 +838,7 @@ public class Users extends XmlHttpServlet
 		}
 		catch (JSONException ex) 
 		{
-			errorResponse(response, "500", "An unknown failure happened");
+			errorResponse(request, response, "500", "An unknown failure happened");
 			Constants.logger.error("Error : " + ex.getMessage());
 		}
 		
@@ -865,7 +865,7 @@ public class Users extends XmlHttpServlet
     	{
     		JSONObject responseMap = null;
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		JSONObject requestInputs = getRequestData(request);	
         		
@@ -884,7 +884,7 @@ public class Users extends XmlHttpServlet
         			}
         			else
         			{
-        				errorResponse(response, "404", "Unknown command");
+        				errorResponse(request, response, "404", "Unknown command");
         			}
         		}
         		else
@@ -945,14 +945,14 @@ public class Users extends XmlHttpServlet
                 			{
                 				// Unknown registration type specified by caller
                         		Constants.logger.error("Error: unknown registration type");
-                        		errorResponse(response, "404", "Registration error");
+                        		errorResponse(request, response, "404", "Registration error");
                 			}
                 		}
                 		else
                 		{
                 			// No registration type specified by caller
                     		Constants.logger.error("Error: null registration type");
-                    		errorResponse(response, "404", "Registration error");
+                    		errorResponse(request, response, "404", "Registration error");
                 		}
                 		
                 		if (new_user_id != 0)
@@ -973,7 +973,7 @@ public class Users extends XmlHttpServlet
                 	}
                 	else
                 	{
-                		errorResponse(response, "404", "The referral code is invalid");
+                		errorResponse(request, response, "404", "The referral code is invalid");
                 	}
         		}
         	}
@@ -981,7 +981,7 @@ public class Users extends XmlHttpServlet
     	catch (JSONException ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "An unknown error occurred");
+			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }
     
@@ -1005,7 +1005,7 @@ public class Users extends XmlHttpServlet
     	{
     		JSONObject responseMap = null;
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		String[] pathArray = getPathInfoArray(request);
     			if (pathArray != null && pathArray.length >= 1)
@@ -1033,7 +1033,7 @@ public class Users extends XmlHttpServlet
                 			{
                 				// No login type specified by caller
                         		Constants.logger.error("Error: unknown request type");
-                        		errorResponse(response, "403", "unknown request request");
+                        		errorResponse(request, response, "403", "unknown request request");
                 			}
         				}
         				else
@@ -1049,7 +1049,7 @@ public class Users extends XmlHttpServlet
     			{
     				// Could not find user
             		Constants.logger.error("Error: Not enough inputs for PUT operation");
-            		errorResponse(response, "403", "Improper request");
+            		errorResponse(request, response, "403", "Improper request");
     			}
         		
         		if (responseMap != null)
@@ -1062,7 +1062,7 @@ public class Users extends XmlHttpServlet
     	catch (Exception ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "An unknown error occurred");
+			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }
     
@@ -1086,7 +1086,7 @@ public class Users extends XmlHttpServlet
     	{
     		JSONObject responseMap = null;
         	float expectedAPIVersion = getExpectedVersion(request);
-        	if (validateVersion(response, expectedAPIVersion))
+        	if (validateVersion(request, response, expectedAPIVersion))
         	{
         		String pathInfo = request.getPathInfo();
         		if (pathInfo != null)
@@ -1109,28 +1109,28 @@ public class Users extends XmlHttpServlet
         				}
         				else
         				{
-        					errorResponse(response, "403", "You are already logged into a different device");
+        					errorResponse(request, response, "403", "You are already logged into a different device");
         				}
                 	}
         			else
         			{
         				// Could not find user
                 		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-                		errorResponse(response, "404", "Could not find user");
+                		errorResponse(request, response, "404", "Could not find user");
         			}
         		}
         		else
         		{
         			// Could not find user
             		Constants.logger.error("Error: No user id found");
-            		errorResponse(response, "404", "Could not find user");
+            		errorResponse(request, response, "404", "Could not find user");
         		}
         	}
     	}
     	catch (Exception ex)
     	{
 			Constants.logger.error("Error : " + ex.getMessage());
-			errorResponse(response, "500", "An unknown error occurred");
+			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }
     

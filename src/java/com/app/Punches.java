@@ -139,7 +139,7 @@ public class Punches extends XmlHttpServlet
 		return success;
 	}
 	
-	private boolean buyPunch(HttpServletResponse response, String user_id, String punch_id, String costString, String punch_num, String expirydays)
+	private boolean buyPunch(HttpServletRequest request, HttpServletResponse response, String user_id, String punch_id, String costString, String punch_num, String expirydays)
 	{
 		boolean success = false;
 		Connection conn = DataAccessController.createConnection();
@@ -181,7 +181,7 @@ public class Punches extends XmlHttpServlet
 					{
 						// Could not insert punch_card_download
 		        		Constants.logger.error("Error: Unable purchase punchcard " + punch_id + " for user " + user_id);
-		        		errorResponse(response, "500", "An error happened. Could not purchase punchcard.");
+		        		errorResponse(request, response, "500", "An error happened. Could not purchase punchcard.");
 					}
 				}
 				else
@@ -189,14 +189,14 @@ public class Punches extends XmlHttpServlet
 					// Not enough credits
 	        		Constants.logger.error("Error: Not enough credits (" + Float.toString(credit) + 
 	        				") for user " + user_id + " to purchase punchcard " + punch_id);
-	        		errorResponse(response, "403", "Not enough credits");
+	        		errorResponse(request, response, "403", "Not enough credits");
 				}
         	}
 			else
 			{
 				// Could not find user
         		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-        		errorResponse(response, "404", "Unknown user");
+        		errorResponse(request, response, "404", "Unknown user");
 			}
 			
 			if (success)
@@ -230,7 +230,7 @@ public class Punches extends XmlHttpServlet
             throws ServletException, IOException 
     {
     	float expectedAPIVersion = getExpectedVersion(request);
-    	if (validateVersion(response, expectedAPIVersion))
+    	if (validateVersion(request, response, expectedAPIVersion))
     	{
         	JSONObject requestInputs = getRequestData(request);	
         	
@@ -265,7 +265,7 @@ public class Punches extends XmlHttpServlet
                     	            	String cost = punchcardInfo.get("selling_price_of_punch_card");
                     	            	String expirydays = punchcardInfo.get("expirydays");
                     	            	String punch_num = punchcardInfo.get("no_of_punches_per_card");
-                    	            	if (buyPunch(response, user_id, punchcardid, cost, punch_num, expirydays))
+                    	            	if (buyPunch(request, response, user_id, punchcardid, cost, punch_num, expirydays))
                     	            	{
                     	            		// Provide successful response to caller
                     	            		JSONObject responseMap = new JSONObject();
@@ -280,48 +280,48 @@ public class Punches extends XmlHttpServlet
                     	            {
                         				// Business is not enabled
                                 		Constants.logger.error("Error: Tried to purchase punchcard from expired business: " + business_id);
-                                		errorResponse(response, "404", "Unknown business.");
+                                		errorResponse(request, response, "404", "Unknown business.");
                     	            }
                     			}
                     			else
                     			{
                     				// Could not find business
                             		Constants.logger.error("Error: Unable to find business with id: " + business_id);
-                            		errorResponse(response, "404", "Unknown business.");
+                            		errorResponse(request, response, "404", "Unknown business.");
                     			}
                     		}
                     		else
                     		{
                     			// Punchcard is expired
                         		Constants.logger.error("Error: Tried to purchase expired punchcard: " + punchcardid);
-                        		errorResponse(response, "403", "Punchcard is expired.");
+                        		errorResponse(request, response, "403", "Punchcard is expired.");
                     		}
                     	}
                     	else
                     	{
                 			// Could not find punchcard
                     		Constants.logger.error("Error: Unable to find punchcard with id: " + punchcardid);
-                    		errorResponse(response, "404", "Unknown punchcard");
+                    		errorResponse(request, response, "404", "Unknown punchcard");
                     	}
             		}
             		else
                 	{
                 		// Session mismatch
                 		Constants.logger.error("Error: Session mismatch for user: " + user_id);
-                		errorResponse(response, "400", "You have logged in from another device");
+                		errorResponse(request, response, "400", "You have logged in from another device");
                 	}
             	}
             	else
             	{
         			// Could not find user
             		Constants.logger.error("Error: Unable to find user with id: " + user_id);
-            		errorResponse(response, "404", "Unknown user");
+            		errorResponse(request, response, "404", "Unknown user");
             	}
 	    	}
 	    	catch (JSONException ex)
 	    	{
 	    		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
-	    		errorResponse(response, "500", "Unable to retrieve products");
+	    		errorResponse(request, response, "500", "Unable to retrieve products");
 	    	}
     	}
     }
