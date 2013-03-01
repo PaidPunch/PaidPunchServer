@@ -49,10 +49,7 @@ public class MailingListSubscribers
 			// Subscribe a person
 			ListSubscribeMethod listSubscribeMethod = new ListSubscribeMethod();
 			listSubscribeMethod.apikey = "3b36b9bee071e226ca34df164816f24b-us5";
-			// TestList ID 
-			listSubscribeMethod.id = "4ded3248b9";
-			// Paidpunch consumers list
-			//listSubscribeMethod.id = "e7350c242f";
+			listSubscribeMethod.id = Constants.MAILCHIMP_LIST_ID;
 			listSubscribeMethod.email_address = currentMail;
 			listSubscribeMethod.double_optin = false;
 			listSubscribeMethod.update_existing = true;

@@ -5,6 +5,7 @@ import com.db.DataAccessController;
 import com.server.Constants;
 import com.server.CreditChangeHistory;
 import com.server.ProductsList;
+import com.server.SimpleLogger;
 
 import java.io.IOException;
 
@@ -33,6 +34,7 @@ public class Products extends XmlHttpServlet  {
     public void init(ServletConfig config) throws ServletException
     {
 	   super.init(config);
+	   currentClassName = Products.class.getSimpleName();
 
 	   try
 	   {
@@ -41,7 +43,7 @@ public class Products extends XmlHttpServlet  {
 	   }
 	   catch(Exception e)
 	   {
-		   Constants.logger.error(e);
+	       SimpleLogger.getInstance().error(currentClassName, e.getMessage());
 	   }
     }
 	
@@ -69,13 +71,13 @@ public class Products extends XmlHttpServlet  {
             }	
             else
             {
-            	Constants.logger.error("Error: Payment info retrieval failed for user_id " + user_id +
-            			"with error code " + code + " and message: " + profile_data.elementAt(1));
+                SimpleLogger.getInstance().error(currentClassName, "Status:Payment info retrieval failed|User_id:" + user_id +
+            			"|ErrorCode:" + code + "|Message:" + profile_data.elementAt(1));
             }
     	}
     	catch (Exception ex)
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
     	
         return results;
@@ -95,7 +97,7 @@ public class Products extends XmlHttpServlet  {
 		catch (SQLException ex)
         {
     		success = false;
-        	Constants.logger.error(ex);
+    		SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
         }
 		
 		return success;
@@ -118,15 +120,15 @@ public class Products extends XmlHttpServlet  {
         	int new_id = DataAccess.insertDatabase(queryString, parameters);
         	if (new_id == 0)
         	{
-        		Constants.logger.error("Error: Could not insert new row into payment_details for user_id: " +
+        	    SimpleLogger.getInstance().error(currentClassName, "InsertPaymentDetails failed|User_id:" +
         				user_id +
-        				"and product_id: " +
+        				"|Product_id:" +
         				product_id);
         	}
     	}
     	catch (SQLException ex)
         {
-        	Constants.logger.error(ex);
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
         }
     }
     
@@ -158,13 +160,13 @@ public class Products extends XmlHttpServlet  {
 				else
 				{
 					// credit update failed
-	        		Constants.logger.error("Credit update failed for user_id " + user_id);
+				    SimpleLogger.getInstance().error(currentClassName, "CreditUpdateFailed|User_id:" + user_id);
 				}
         	}
 			else
 			{
 				// Could not find user
-        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+			    SimpleLogger.getInstance().error(currentClassName, "NoSuchUser|User_id:" + user_id);
 			}
 			
 			if (success)
@@ -178,7 +180,7 @@ public class Products extends XmlHttpServlet  {
 		}
 		catch (SQLException ex)
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		finally
 		{
@@ -188,7 +190,7 @@ public class Products extends XmlHttpServlet  {
 			}
 			catch (SQLException ex)
 			{
-				Constants.logger.error("Error : " + ex.getMessage());
+			    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			}
 		}
 		return success;
@@ -230,12 +232,12 @@ public class Products extends XmlHttpServlet  {
             }
             else
             {
-            	Constants.logger.error("Error: Unable to purchase credits for user: " + user_id);
+                SimpleLogger.getInstance().error(currentClassName, "UnableToPurchaseCredits|User_id:" + user_id);
             }
     	}
     	catch (Exception ex)
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
     	return success;
     }
@@ -334,47 +336,47 @@ public class Products extends XmlHttpServlet  {
                     				}
                     				catch (JSONException ex)
                     				{
-                    					Constants.logger.error("Error : " + ex.getMessage());
+                    				    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
                     				}
                     			}
                     			else
                         		{
                         			// Could not retrieve payment information
-                            		Constants.logger.error("Error: Unable to retrieve  " + product_id);
+                    			    SimpleLogger.getInstance().error(currentClassName, "UnableToPurchaseCredits|Product_id:" + product_id);
                             		errorResponse(request, response, "400", "Unable to purchase credits");
                         		}
                     		}
                     		else
                     		{
                     			// Product is disabled
-                        		Constants.logger.error("Error: Attempt to purchase disabled product " + product_id);
+                    		    SimpleLogger.getInstance().error(currentClassName, "DisabledProduct|Product_id:" + product_id);
                         		errorResponse(request, response, "403", "This product is no longer available for purchase");
                     		}
                     	}
                     	else
                     	{
                     		// Could not find product
-                    		Constants.logger.error("Error: Unable to find product with id: " + product_id);
+                    	    SimpleLogger.getInstance().error(currentClassName, "ProductMissing|Product_id:" + product_id);
                     		errorResponse(request, response, "404", "Unknown credit product");
                     	}	
             		}
             		else
                 	{
                 		// Session mismatch
-                		Constants.logger.error("Error: Session mismatch for user: " + user_id);
+            		    SimpleLogger.getInstance().sessionMismatch(currentClassName, user_id);
                 		errorResponse(request, response, "400", "You have logged in from another device");
                 	}
             	}
             	else
             	{
             		// Could not find user
-            		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+            	    SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
             		errorResponse(request, response, "404", "Unknown user");
             	}
         	}
         	catch (JSONException ex)
         	{
-        		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
+        	    SimpleLogger.getInstance().error(currentClassName, ex.toString());
         		errorResponse(request, response, "500", "An unknown error occurred");
         	}
     	}

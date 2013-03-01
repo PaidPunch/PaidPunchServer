@@ -10,6 +10,7 @@ import com.server.Constants;
 import com.server.CreditChangeHistory;
 import com.server.MailingListSubscribers;
 import com.server.RecordsList;
+import com.server.SimpleLogger;
 
 import java.io.IOException;
 
@@ -46,6 +47,7 @@ public class Users extends XmlHttpServlet
     public void init(ServletConfig config) throws ServletException
     {
 	   super.init(config);
+	   currentClassName = Users.class.getSimpleName();
 
 	   try
 	   {
@@ -54,7 +56,7 @@ public class Users extends XmlHttpServlet
 	   }
 	   catch(Exception e)
 	   {
-		   Constants.logger.error(e);
+	       SimpleLogger.getInstance().error(currentClassName, e);
 	   }
     }
 	
@@ -80,19 +82,21 @@ public class Users extends XmlHttpServlet
 			ArrayList<String> parameters = new ArrayList<String>();
 			parameters.add(refer_code);
 			resultsArray = DataAccess.queryDatabase(queryString, parameters);
-			if (resultsArray.size() == 1)
+			if (resultsArray.size() >= 1)
 			{
 				results = resultsArray.get(0);
-			}
-			else if (resultsArray.size() > 1)
-        	{
-        		// The referral code returned more than a single entity. Return an error after logging.
-        		Constants.logger.error("Error: Refer code " + refer_code + " returned more than one user or business");
-        	}
+				
+				// Warn if multiple entries were returned
+				if (resultsArray.size() > 1)
+	            {
+	                // The referral code returned more than a single entity. Return an error after logging.
+	                SimpleLogger.getInstance().warn(currentClassName, "MultipleEntriesReferralCode|Refer_code:" + refer_code);
+	            }
+			} 
         	else
         	{
         		// The refer code does not match an existing entity
-        		Constants.logger.info("Warning: Refer code " + refer_code + " does not match any known users or businesses");
+        	    SimpleLogger.getInstance().warn(currentClassName, "NoEntityReferralCode|Refer_code:" + refer_code);
         	}
 		}
 		return results;
@@ -129,7 +133,7 @@ public class Users extends XmlHttpServlet
 		// Send a welcome/confirmation mail to the person who signed up
         SignupAddPunch emailsender = new SignupAddPunch();
         emailsender.sendConfirmationEmail(email, firstName);
-        Constants.logger.info("Created new user with name " + name + " and email " + email);
+        SimpleLogger.getInstance().info(currentClassName, "CreateNewUser|name:" + name + "|email:" + email);
 	}
 	
 	private boolean doesAccountExistInternal(String queryString, String value)
@@ -165,7 +169,7 @@ public class Users extends XmlHttpServlet
 			}
 			catch (SQLException ex)
 			{
-				Constants.logger.error("Error : " + ex.getMessage());
+			    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			}
 		}
 		return exists;
@@ -253,25 +257,25 @@ public class Users extends XmlHttpServlet
 					else
 					{
 						// The referral code returned more than a single user. Return an error after logging.
-			    		Constants.logger.error("Error: Unable to register new user");
+					    SimpleLogger.getInstance().error(currentClassName, "UnableToRegisterNewUser");
 			    		errorResponse(request, response, "500", "Server is currently unavailable. Please try again later.");
 					}
 				}
 				catch (Exception ex)
 				{
-					Constants.logger.error("Error : " + ex.getMessage());
+				    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 				}
 			}
 			else
 			{
 				// The referral code returned more than a single user. Return an error after logging.
-	    		Constants.logger.error("Error: Email " + email + " is already being used");
+			    SimpleLogger.getInstance().error(currentClassName, "EmailInUse|Email:" + email);
 	    		errorResponse(request, response, "403", "Cannot register. Email is already in use.");
 			}
 		} 
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return user_id;
 	}
@@ -338,25 +342,25 @@ public class Users extends XmlHttpServlet
 					else
 					{
 						// The referral code returned more than a single user. Return an error after logging.
-			    		Constants.logger.error("Error: Unable to register new user");
+					    SimpleLogger.getInstance().error(currentClassName, "UnableToRegisterNewUser");
 			    		errorResponse(request, response, "500", "Server is currently unavailable. Please try again later.");
 					}
 				}
 				catch (Exception ex)
 				{
-					Constants.logger.error("Error : " + ex.getMessage());
+				    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 				}
 			}
 			else
 			{
 				// The referral code returned more than a single user. Return an error after logging.
-	    		Constants.logger.error("Error: Facebook id " + fbid + " is already being used");
+			    SimpleLogger.getInstance().error(currentClassName, "FacebookIdInUser|fbid:" + fbid);
 	    		errorResponse(request, response, "403", "Cannot register. Facebook account is already in use.");
 			}
 		} 
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return user_id;
 	}
@@ -381,7 +385,7 @@ public class Users extends XmlHttpServlet
 		} 
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return responseMap;
 	}
@@ -401,7 +405,7 @@ public class Users extends XmlHttpServlet
 		} 
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return responseMap;
 	}
@@ -413,11 +417,11 @@ public class Users extends XmlHttpServlet
 		int res = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "credit", Float.toString(updatedAmount));
         if (res == 1)
         {
-        	Constants.logger.info("Updated credit with referral reward for user_id: " + userid);
+            SimpleLogger.getInstance().info(currentClassName, "Updated credit with referral reward for user_id:" + userid);
         }
         else
         {
-        	Constants.logger.error("Unable to update credit with referral reward for user_id: " + userid);
+            SimpleLogger.getInstance().error(currentClassName, "CreditFromReferralRewardFailed|User_id:" + userid);
         }
         
         // Insert tracking row into change history table
@@ -471,7 +475,7 @@ public class Users extends XmlHttpServlet
 				else
 				{
 					// Unknown login type specified by caller
-	        		Constants.logger.error("Error: unknown login type");
+				    SimpleLogger.getInstance().error(currentClassName, "UnknownLoginType|Login_type:" + loginType);
 	        		errorResponse(request, response, "404", "User update error");
 				}
 				
@@ -484,13 +488,13 @@ public class Users extends XmlHttpServlet
 			else
 			{
 				// Unknown login type specified by caller
-	    		Constants.logger.error("Error: unknown login type");
+			    SimpleLogger.getInstance().error(currentClassName, "UnknownLoginType|Login_type:" + loginType);
 	    		errorResponse(request, response, "404", "User update error");
 			}
 		}
 		catch (JSONException ex)
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "400", "Bad request");
 		}
 		
@@ -516,17 +520,17 @@ public class Users extends XmlHttpServlet
 			else if (resultsArray.size() > 1)
 	    	{
 	    		// The referral code returned more than a single entity. Return an error after logging.
-	    		Constants.logger.error("Error: Email " + requestInputs.getString(Constants.EMAIL_PARAMNAME) + " returned more than one user");
+			    SimpleLogger.getInstance().error(currentClassName, "MultipleEmailAccts|Email:" + requestInputs.getString(Constants.EMAIL_PARAMNAME));
 	    	}
 	    	else
 	    	{
 	    		// The refer code does not match an existing entity
-	    		Constants.logger.info("Warning: Email " + requestInputs.getString(Constants.EMAIL_PARAMNAME) + " does not match any known users or password did not match");
+	    	    SimpleLogger.getInstance().warn(currentClassName, "NoSuchEmailAcct|Email:" + requestInputs.getString(Constants.EMAIL_PARAMNAME));
 	    	}	
 		}
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return results;
 	}
@@ -549,7 +553,7 @@ public class Users extends XmlHttpServlet
 		} 
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return responseMap;
 	}
@@ -573,17 +577,17 @@ public class Users extends XmlHttpServlet
 			else if (resultsArray.size() > 1)
 	    	{
 	    		// The referral code returned more than a single entity. Return an error after logging.
-	    		Constants.logger.error("Error: FBID " + requestInputs.getString(Constants.FBID_PARAMNAME) + " returned more than one user");
+			    SimpleLogger.getInstance().error(currentClassName, "MultipleFBAccts|FBID:" + requestInputs.getString(Constants.FBID_PARAMNAME));
 	    	}
 	    	else
 	    	{
 	    		// The refer code does not match an existing entity
-	    		Constants.logger.info("Warning: FBID " + requestInputs.getString(Constants.FBID_PARAMNAME) + " does not match any known users or password did not match");
+	    	    SimpleLogger.getInstance().warn(currentClassName, "NoFBAcct|FBID:" + requestInputs.getString(Constants.FBID_PARAMNAME));
 	    	}	
 		}
 		catch (JSONException ex) 
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		return results;
 	}
@@ -601,7 +605,7 @@ public class Users extends XmlHttpServlet
 		}
 		catch (SQLException ex)
 		{
-        	Constants.logger.error(ex);
+		    SimpleLogger.getInstance().error(currentClassName, ex);
         }
 		
 		return success;
@@ -623,7 +627,7 @@ public class Users extends XmlHttpServlet
 		catch (SQLException ex)
         {
     		success = false;
-        	Constants.logger.error(ex);
+    		SimpleLogger.getInstance().error(currentClassName, ex);
         }
 		
 		return success;
@@ -660,7 +664,7 @@ public class Users extends XmlHttpServlet
 							} 
 							catch (JSONException ex) 
 							{
-								Constants.logger.error("Error : " + ex.getMessage());
+							    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 							}
 							success = true;
 						}
@@ -682,7 +686,7 @@ public class Users extends XmlHttpServlet
 			else
 			{
 				// Could not find user
-        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+        		SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
         		errorResponse(request, response, "404", "Could not find user");
 			}
 			
@@ -697,12 +701,12 @@ public class Users extends XmlHttpServlet
 		}
 		catch (SQLException ex)
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "Unable to update password");
 		}
 		catch (JSONException ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "Unable to update password");
 		}
 		finally
@@ -713,7 +717,7 @@ public class Users extends XmlHttpServlet
 			}
 			catch (SQLException ex)
 			{
-				Constants.logger.error("Error : " + ex.getMessage());
+			    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			}
 		}
 		return results;
@@ -796,13 +800,13 @@ public class Users extends XmlHttpServlet
 			else
 			{
 				// Could not find user
-        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+        		SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
         		errorResponse(request, response, "404", "Could not find user");
 			}
 		}
 		catch (Exception ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "Unable to update user info");
 		}
 		return results;
@@ -839,7 +843,7 @@ public class Users extends XmlHttpServlet
 		catch (JSONException ex) 
 		{
 			errorResponse(request, response, "500", "An unknown failure happened");
-			Constants.logger.error("Error : " + ex.getMessage());
+			SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		
 		return results;
@@ -944,14 +948,14 @@ public class Users extends XmlHttpServlet
                 			else
                 			{
                 				// Unknown registration type specified by caller
-                        		Constants.logger.error("Error: unknown registration type");
+                			    SimpleLogger.getInstance().error(currentClassName, "UnknownRegistrationType|RegistrationType:" + registrationType);
                         		errorResponse(request, response, "404", "Registration error");
                 			}
                 		}
                 		else
                 		{
                 			// No registration type specified by caller
-                    		Constants.logger.error("Error: null registration type");
+                		    SimpleLogger.getInstance().error(currentClassName, "NullRegistrationType");
                     		errorResponse(request, response, "404", "Registration error");
                 		}
                 		
@@ -980,7 +984,7 @@ public class Users extends XmlHttpServlet
     	}
     	catch (JSONException ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }
@@ -1032,7 +1036,7 @@ public class Users extends XmlHttpServlet
         					else
                 			{
                 				// No login type specified by caller
-                        		Constants.logger.error("Error: unknown request type");
+        					    SimpleLogger.getInstance().error(currentClassName, "UnknownRequestType");
                         		errorResponse(request, response, "403", "unknown request request");
                 			}
         				}
@@ -1048,7 +1052,7 @@ public class Users extends XmlHttpServlet
     			else
     			{
     				// Could not find user
-            		Constants.logger.error("Error: Not enough inputs for PUT operation");
+    			    SimpleLogger.getInstance().error(currentClassName, "MissingUserId");
             		errorResponse(request, response, "403", "Improper request");
     			}
         		
@@ -1061,7 +1065,7 @@ public class Users extends XmlHttpServlet
     	}
     	catch (Exception ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }
@@ -1116,20 +1120,21 @@ public class Users extends XmlHttpServlet
         			{
         				// Could not find user
                 		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+                		SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
                 		errorResponse(request, response, "404", "Could not find user");
         			}
         		}
         		else
         		{
         			// Could not find user
-            		Constants.logger.error("Error: No user id found");
+        		    SimpleLogger.getInstance().error(currentClassName, "MissingUserId");
             		errorResponse(request, response, "404", "Could not find user");
         		}
         	}
     	}
     	catch (Exception ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }

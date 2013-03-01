@@ -100,17 +100,8 @@ public class VerifyBusinessUser extends HttpServlet {
             email = request.getParameter("email");
             com.server.Constants.logger.info("The Business User with UserId=" + businessUserId + " and Email=" + email);
             getBusinessInfo(businessUserId);
-            RESULT = com.server.Constants.Pdf_Write_Path + businessName + "_flyer.pdf";
-            com.server.Constants.logger.info("Pdf_Path : " + RESULT);
-            // RESULT1 = com.server.Constants.Pdf_Write_Path+bussname+"_orangecode.pdf";
             images_path = com.server.Constants.imagePath;
             com.server.Constants.logger.info("Images Path for pdf : " + images_path);
-            try {
-                // createFlyerPdf(RESULT);
-                // createOrangeQRPdf(RESULT1);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             boolean flag = userVerified(businessUserId, email);
             if (flag) {
                 response.sendRedirect("login.jsp");

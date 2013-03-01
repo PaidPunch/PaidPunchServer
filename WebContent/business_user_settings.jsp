@@ -601,11 +601,6 @@ div.tableContainer {
                     	  com.server.Constants.logger.error("Error in closing SQL in checksecretcode.java"+e.getMessage());
                       }
                    }
-            pdf_Path = com.server.Constants.Pdf_Read_Path;
-            String orange_code_pdf = pdf_Path+business_name+"_orangecode.pdf";
-            //orange_code_pdf = "http://localhost:8084/paid_punch/pdf_folder/"+business_name+"_orangecode.pdf";
-            String flyer_pdf = pdf_Path +business_name+"_flyer.pdf";
-            System.out.println(orange_code_pdf);
 
     %>
 <div id="pagewrap">

@@ -21,6 +21,7 @@ import com.db.DataAccess;
 import com.db.DataAccessController;
 import com.server.Constants;
 import com.server.CreditChangeHistory;
+import com.server.SimpleLogger;
 import com.server.Utility;
 
 public class Punches extends XmlHttpServlet 
@@ -31,6 +32,7 @@ public class Punches extends XmlHttpServlet
     public void init(ServletConfig config) throws ServletException
     {
 	   super.init(config);
+	   currentClassName = Punches.class.getSimpleName();
 
 	   try
 	   {
@@ -39,7 +41,7 @@ public class Punches extends XmlHttpServlet
 	   }
 	   catch(Exception e)
 	   {
-		   Constants.logger.error(e);
+	       SimpleLogger.getInstance().error(currentClassName, e);
 	   }
     }
 	
@@ -57,7 +59,7 @@ public class Punches extends XmlHttpServlet
         }
         catch (ParseException ex)
         {
-        	Constants.logger.error(ex);
+            SimpleLogger.getInstance().error(currentClassName, ex);
         }
         return valid;
 	}
@@ -99,7 +101,7 @@ public class Punches extends XmlHttpServlet
         }
         catch (ParseException ex)
         {
-        	Constants.logger.error(ex);
+            SimpleLogger.getInstance().error(currentClassName, ex);
         }
         
         if (success)
@@ -112,7 +114,7 @@ public class Punches extends XmlHttpServlet
         	catch (SQLException ex)
             {
         		success = false;
-            	Constants.logger.error(ex);
+        		SimpleLogger.getInstance().error(currentClassName, ex);
             }
         }
 		
@@ -133,7 +135,7 @@ public class Punches extends XmlHttpServlet
 		catch (SQLException ex)
         {
     		success = false;
-        	Constants.logger.error(ex);
+    		SimpleLogger.getInstance().error(currentClassName, ex);
         }
 		
 		return success;
@@ -174,28 +176,28 @@ public class Punches extends XmlHttpServlet
 						{
 							// credits update failed
 							// NOTE: Don't return an error
-			        		Constants.logger.error("Credit update failed for user_id " + user_id);
+						    SimpleLogger.getInstance().error(currentClassName, "CreditUpdateFailed|User_id:" + user_id);
 						}
 					}
 					else
 					{
 						// Could not insert punch_card_download
-		        		Constants.logger.error("Error: Unable purchase punchcard " + punch_id + " for user " + user_id);
+					    SimpleLogger.getInstance().error(currentClassName, "PunchcardPurchaseFailed|Punch_id: " + punch_id + "|User_id:" + user_id);
 		        		errorResponse(request, response, "500", "An error happened. Could not purchase punchcard.");
 					}
 				}
 				else
 				{
 					// Not enough credits
-	        		Constants.logger.error("Error: Not enough credits (" + Float.toString(credit) + 
-	        				") for user " + user_id + " to purchase punchcard " + punch_id);
+				    SimpleLogger.getInstance().error(currentClassName, "InsufficientCredits|Credits:" + Float.toString(credit) + 
+	        				"|User_id:" + user_id + "|Punchcard:" + punch_id);
 	        		errorResponse(request, response, "403", "Not enough credits");
 				}
         	}
 			else
 			{
 				// Could not find user
-        		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+			    SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
         		errorResponse(request, response, "404", "Unknown user");
 			}
 			
@@ -210,7 +212,7 @@ public class Punches extends XmlHttpServlet
 		}
 		catch (SQLException ex)
 		{
-			Constants.logger.error("Error : " + ex.getMessage());
+		    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		finally
 		{
@@ -220,7 +222,7 @@ public class Punches extends XmlHttpServlet
 			}
 			catch (SQLException ex)
 			{
-				Constants.logger.error("Error : " + ex.getMessage());
+			    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			}
 		}
 		return success;
@@ -279,48 +281,48 @@ public class Punches extends XmlHttpServlet
                     	            else
                     	            {
                         				// Business is not enabled
-                                		Constants.logger.error("Error: Tried to purchase punchcard from expired business: " + business_id);
+                    	                SimpleLogger.getInstance().error(currentClassName, "ExpiredBusiness|Business_id:" + business_id);
                                 		errorResponse(request, response, "404", "Unknown business.");
                     	            }
                     			}
                     			else
                     			{
                     				// Could not find business
-                            		Constants.logger.error("Error: Unable to find business with id: " + business_id);
+                    			    SimpleLogger.getInstance().error(currentClassName, "UnknownBusiness|Busness_id:" + business_id);
                             		errorResponse(request, response, "404", "Unknown business.");
                     			}
                     		}
                     		else
                     		{
                     			// Punchcard is expired
-                        		Constants.logger.error("Error: Tried to purchase expired punchcard: " + punchcardid);
+                    		    SimpleLogger.getInstance().error(currentClassName, "ExpiredPunchcard|Punchcard_id:" + punchcardid);
                         		errorResponse(request, response, "403", "Punchcard is expired.");
                     		}
                     	}
                     	else
                     	{
                 			// Could not find punchcard
-                    		Constants.logger.error("Error: Unable to find punchcard with id: " + punchcardid);
+                    	    SimpleLogger.getInstance().error(currentClassName, "UnknownPunchcard|Punchcard_id:" + punchcardid);
                     		errorResponse(request, response, "404", "Unknown punchcard");
                     	}
             		}
             		else
                 	{
                 		// Session mismatch
-                		Constants.logger.error("Error: Session mismatch for user: " + user_id);
+            		    SimpleLogger.getInstance().sessionMismatch(currentClassName, user_id);
                 		errorResponse(request, response, "400", "You have logged in from another device");
                 	}
             	}
             	else
             	{
         			// Could not find user
-            		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+            	    SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
             		errorResponse(request, response, "404", "Unknown user");
             	}
 	    	}
 	    	catch (JSONException ex)
 	    	{
-	    		Constants.logger.error("Error: JSON parsing failed with: " + ex.toString() );
+	    	    SimpleLogger.getInstance().error(currentClassName, ex.toString());
 	    		errorResponse(request, response, "500", "Unable to retrieve products");
 	    	}
     	}

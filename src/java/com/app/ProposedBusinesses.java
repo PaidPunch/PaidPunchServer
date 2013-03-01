@@ -23,6 +23,7 @@ import com.db.SimpleDB;
 
 import com.server.ProposedBusinessList;
 import com.server.Constants;
+import com.server.SimpleLogger;
 
 public class ProposedBusinesses extends XmlHttpServlet
 {
@@ -32,6 +33,7 @@ public class ProposedBusinesses extends XmlHttpServlet
     public void init(ServletConfig config) throws ServletException
     {
 	   super.init(config);
+	   currentClassName = ProposedBusinesses.class.getSimpleName();
 
 	   try
 	   {
@@ -40,7 +42,7 @@ public class ProposedBusinesses extends XmlHttpServlet
 	   }
 	   catch(Exception e)
 	   {
-		   Constants.logger.error(e);
+	       SimpleLogger.getInstance().error(currentClassName, e);
 	   }
     }
 	
@@ -86,14 +88,14 @@ public class ProposedBusinesses extends XmlHttpServlet
 			else
 			{
 				// Could not find user
-	    		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+			    SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
 	    		errorResponse(request, response, "404", "Could not find user");
 	    	}
 		}
 		catch (JSONException ex) 
 		{
 			errorResponse(request, response, "500", "An unknown failure happened");
-			Constants.logger.error("Error : " + ex.getMessage());
+			SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		
 		return results;
@@ -134,20 +136,21 @@ public class ProposedBusinesses extends XmlHttpServlet
 				}
 				else
 				{
+				    SimpleLogger.getInstance().sessionMismatch(currentClassName, user_id);
 					errorResponse(request, response, "403", "You are already logged into a different device");
 				}
 	    	}
 			else
 			{
 				// Could not find user
-	    		Constants.logger.error("Error: Unable to find user with id: " + user_id);
+			    SimpleLogger.getInstance().unknownUser(currentClassName, user_id);
 	    		errorResponse(request, response, "404", "Could not find user");
 	    	}
 		}
 		catch (JSONException ex) 
 		{
 			errorResponse(request, response, "500", "Unable to retrieve businesses");
-			Constants.logger.error("Error : " + ex.getMessage());
+			SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
 		
 		return results;
@@ -206,7 +209,7 @@ public class ProposedBusinesses extends XmlHttpServlet
     	catch (Exception ex)
     	{
     		errorResponse(request, response, "500", "Unable to retrieve businesses");
-			Constants.logger.error("Error : " + ex.getMessage());
+    		SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
     }
     
@@ -279,7 +282,7 @@ public class ProposedBusinesses extends XmlHttpServlet
     	}
     	catch (Exception ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 			errorResponse(request, response, "500", "An unknown error occurred");
 		}
     }

@@ -19,10 +19,6 @@
         <param-value>paid_punch</param-value>
     </context-param>
     <context-param>
-        <param-name>punchTime</param-name>
-        <param-value>2</param-value>
-    </context-param>
-    <context-param>
         <param-name>filereader</param-name>
         <param-value>/</param-value>
     </context-param>
@@ -53,27 +49,6 @@
     <context-param>
         <param-name>IMAGES_PATH</param-name>
         <param-value>C:\\Documents and Settings\\admin\\My Documents\\NetBeansProjects\\Development\\web\\images\\</param-value>
-    </context-param>
-    <context-param>
-        <param-name>JDBC_DRIVER</param-name>
-        <param-value>com.mysql.jdbc.Driver</param-value>
-    </context-param>
-    <context-param>
-        <param-name>JDBC_URL</param-name>
-        <!--<param-value>jdbc:mysql://paidpunchprod.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchprod</param-value>-->
-        <param-value>jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchtest</param-value>
-        <!--<param-value>jdbc:mysql://localhost:3306/paidpunch</param-value>-->
-    </context-param>
-    <context-param>
-        <param-name>USERID</param-name>
-        <!--<param-value>root</param-value>-->
-        <param-value>paidpunch</param-value>
-        <!--<param-value>paidpunchprod</param-value>-->
-    </context-param>
-    <context-param>
-        <param-name>PASSWORD</param-name>
-        <param-value>Biscuit-1</param-value>
-        <!--<param-value>root</param-value>-->
     </context-param>
     <servlet>
         <servlet-name>Register</servlet-name>

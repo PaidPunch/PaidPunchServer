@@ -12,6 +12,7 @@ import org.json.JSONArray;
 
 import com.server.BusinessesList;
 import com.server.Constants;
+import com.server.SimpleLogger;
 
 public class Businesses extends XmlHttpServlet
 {
@@ -21,6 +22,7 @@ public class Businesses extends XmlHttpServlet
     public void init(ServletConfig config) throws ServletException
     {
 	   super.init(config);
+	   currentClassName = Businesses.class.getSimpleName();
 
 	   try
 	   {
@@ -29,7 +31,7 @@ public class Businesses extends XmlHttpServlet
 	   }
 	   catch(Exception e)
 	   {
-		   Constants.logger.error(e);
+		   SimpleLogger.getInstance().error(currentClassName, e.getMessage());
 	   }
     }
 	
@@ -85,7 +87,7 @@ public class Businesses extends XmlHttpServlet
     	}
     	catch (Exception ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
     }
     

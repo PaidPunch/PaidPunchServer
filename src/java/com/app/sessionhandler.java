@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.Random;
 
 import com.db.DataAccessController;
-import com.server.Constants;
+import com.server.SimpleLogger;
 
 /**
  * @author qube26
@@ -14,10 +14,13 @@ public class SessionHandler {
     public boolean sessionidverify(String userid, String sessionid)
     {
         boolean verify = false;
-        try {
+        try 
+        {
             verify = DataAccessController.getDataTable("app_user", "user_id", "sessionid", userid, sessionid);
-        } catch (SQLException ex) {
-            Constants.logger.error(ex.toString());
+        } 
+        catch (SQLException ex) 
+        {
+            SimpleLogger.getInstance().error(SessionHandler.class.getSimpleName(), ex.toString());
         }
         return verify;
     }
@@ -29,8 +32,10 @@ public class SessionHandler {
 
             verify = DataAccessController.updatetDataToTable("app_user", "user_id", userid, "sessionid", sessionid);
 
-        } catch (Exception ex) {
-            Constants.logger.error(ex.toString());
+        } 
+        catch (Exception ex) 
+        {
+            SimpleLogger.getInstance().error(SessionHandler.class.getSimpleName(), ex.toString());
         }
         return verify;
     }
@@ -57,7 +62,7 @@ public class SessionHandler {
         long fraction = (long) (range * aRandom.nextDouble());
         // System.out.println("fraction>>>>>>>>>>>>>>>>>>>>" + fraction);
         long randomNumber = fraction + (long) aStart;
-        System.out.println("Generated : " + randomNumber + " length " + ("" + randomNumber).length());
+        SimpleLogger.getInstance().info(SessionHandler.class.getSimpleName(), "Generated : " + randomNumber + " length " + ("" + randomNumber).length());
         return "" + randomNumber;
     }
 }

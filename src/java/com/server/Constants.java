@@ -1,16 +1,17 @@
 package com.server;
 
-import java.io.FileInputStream;
 import javax.servlet.ServletContext;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.apache.log4j.*;
-import org.apache.log4j.PropertyConfigurator;
-import java.util.Properties;
 
 /**
  * @author user
  */
-public class Constants {
-
+public class Constants 
+{
     public static Logger logger = Logger.getLogger(Constants.class.getName());
     public final static String SQL_DATE_FORMAT = "yyyyMMdd";
     public final static String SQL_TIME_FORMAT = "HHmm";
@@ -45,18 +46,18 @@ public class Constants {
     public static String VOTES_DOMAIN = "Votes";
 
     // Used in database connection
-    public static String JDBC_DRIVER = "";
+    public static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     public static String JDBC_URL = "";
     public static String USERID = "";
     public static String PASSWORD = "";
+    
+    // MailChimp list ID
+    public static String MAILCHIMP_LIST_ID = "";
 
     public static String TEMP_IMAGE_FOLDER_URL = "";
     public static String TEMP_IMAGE_FOLDER_PATH = "";
     public static String IP_URL = "";
     public static String LOGO_TEMP_PATH = "";
-    public static String PunchTime = "";
-    public static String Pdf_Read_Path = "";
-    public static String Pdf_Write_Path = "";
     public static String imagePath = "";
     public static String logoActualPath = "";
 
@@ -77,15 +78,7 @@ public class Constants {
     	{
     		init(context);
 
-            JDBC_DRIVER = context.getInitParameter("JDBC_DRIVER");
-            JDBC_URL = context.getInitParameter("JDBC_URL");
-            USERID = context.getInitParameter("USERID");
-            PASSWORD = context.getInitParameter("PASSWORD");
-            IP_URL = context.getInitParameter("URL");
             LOGO_TEMP_PATH = context.getInitParameter("LOGO_TEMP_PATH");
-            PunchTime = context.getInitParameter("punchTime");
-            Pdf_Read_Path = context.getInitParameter("PDF_READ_PATH");
-            Pdf_Write_Path = context.getInitParameter("PDF_WRITE_PATH");
             imagePath = context.getInitParameter("IMAGES_PATH");
             logoActualPath = context.getInitParameter("LOGO_IMAGE_PATH");
             merchant_code_validate_time = context.getInitParameter("merchant_code_validate_time");
@@ -95,21 +88,69 @@ public class Constants {
             initialized = true;
     	}
     }
-
-    public static void init(ServletContext context) {
-        try {
-            Properties props = new Properties();
-            // context=getServletContext();
-            String path = context.getRealPath("paidpunch.properties").toString();
-
-            props.load(new FileInputStream(path));
-
-            PropertyConfigurator.configure(props);
-        } catch (java.io.IOException ioe) {
-            System.out.println("Error in loading log file" + ioe.getMessage());
+    
+    private static boolean isProduction() 
+    {
+        Object o;
+        try 
+        {
+           o = (new InitialContext()).lookup("java:comp/env/isProduction");
+        }  
+        catch (NamingException e) 
+        {
+           o = Boolean.FALSE; // assumes FALSE if the value isn't declared
         }
+        return o == null ? Boolean.FALSE : (Boolean) o;
+     }
+    
+    private static void initEndPoints()
+    {
+        if (isProduction())
+        {
+            SimpleLogger.getInstance().info(Constants.class.getSimpleName(), "Initializing production server endpoints");
+            
+            // Settings for production server
+            JDBC_URL = "jdbc:mysql://paidpunchprod.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchprod";
+            USERID = "paidpunchprod";
+            PASSWORD = "Biscuit-1";
+            
+            BUSINESSES_DOMAIN = "Businesses";
+            RECORDS_DOMAIN = "Records";
+            REQUESTINVITES_DOMAIN = "RequestInvites";
+            SUGGESTBUSINESSES_DOMAIN = "SuggestBusinesses";
+            VOTES_DOMAIN = "Votes";
+            
+            MAILCHIMP_LIST_ID = "e7350c242f";
+            
+            IP_URL = "https://api.paidpunch.com";
+        }
+        else
+        {
+            SimpleLogger.getInstance().info(Constants.class.getSimpleName(), "Initializing test server endpoints");
+            
+            // Settings for test server
+            JDBC_URL = "jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchtest";
+            USERID = "paidpunch";
+            PASSWORD = "Biscuit-1";
+            
+            BUSINESSES_DOMAIN = "BusinessesTest";
+            RECORDS_DOMAIN = "RecordsTest";
+            REQUESTINVITES_DOMAIN = "RequestInvitesTest";
+            SUGGESTBUSINESSES_DOMAIN = "SuggestBusinessesTest";
+            VOTES_DOMAIN = "VotesTest";
+            
+            MAILCHIMP_LIST_ID = "4ded3248b9";
+            
+            IP_URL = "https://test.paidpunch.com";
+        }
+    }
+
+    private static void init(ServletContext context) 
+    {        
         java.util.Properties prop = System.getProperties();
         java.util.Enumeration enum1 = prop.propertyNames();
+        
+        initEndPoints();
     }
 
 }

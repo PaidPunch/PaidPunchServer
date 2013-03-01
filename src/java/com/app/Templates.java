@@ -1,5 +1,6 @@
 package com.app;
 
+import com.server.SimpleLogger;
 import com.server.TemplatesList;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class Templates extends XmlHttpServlet {
     public void init(ServletConfig config) throws ServletException
     {
 	   super.init(config);
+	   currentClassName = Templates.class.getSimpleName();
 
 	   try
 	   {
@@ -30,7 +32,7 @@ public class Templates extends XmlHttpServlet {
 	   }
 	   catch(Exception e)
 	   {
-		   Constants.logger.error(e);
+	       SimpleLogger.getInstance().error(currentClassName, e);
 	   }
     }
 	
@@ -70,7 +72,7 @@ public class Templates extends XmlHttpServlet {
     	}
     	catch (Exception ex)
     	{
-			Constants.logger.error("Error : " + ex.getMessage());
+    	    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 		}
     }
 }

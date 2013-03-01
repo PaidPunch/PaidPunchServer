@@ -7,9 +7,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.server.Constants;
+import com.server.SimpleLogger;
 
-public class CorsUtils {
+public class CorsUtils 
+{
+    private final static String currentClassName = CorsUtils.class.getSimpleName();
 
     // Hard-coded list for domains which are allowed to send requests to all methods that add the
     // CORS header info defined in this class to the response objects, used e.g. by dev/test/prod
@@ -21,29 +23,36 @@ public class CorsUtils {
             "http://www.paidpunch.com",
             "https://www.paidpunch.com"}));
 
-    public static void addOptionsCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) {
+    public static void addOptionsCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) 
+    {
         String requestOrigin = request.getHeader("origin");
         response.setStatus(204);
         response.setContentType("application/json");
-        if (allowedOrigins.contains(requestOrigin)) {
-            Constants.logger.trace("Incoming request from origin: " + requestOrigin + " allowed.");
+        if (allowedOrigins.contains(requestOrigin)) 
+        {
+            SimpleLogger.getInstance().trace(currentClassName, "Incoming request from origin: " + requestOrigin + " allowed.");
             response.addHeader("Access-Control-Allow-Origin", requestOrigin);
             response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             response.addHeader("Access-Control-Allow-Headers",
                     "content-type, accept, x-requested-with, api-version, enabled-only, Authorization, X-Authorization");
             response.addHeader("access-control-max-age", "10");
-        } else {
-            Constants.logger.trace("Incoming request from origin " + requestOrigin + " rejected.");
+        }
+        else 
+        {
+            SimpleLogger.getInstance().trace(currentClassName, "Incoming request from origin " + requestOrigin + " rejected.");
         }
     }
 
-    public static void addCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) {
+    public static void addCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) 
+    {
         String requestOrigin = request.getHeader("origin");
         if (allowedOrigins.contains(requestOrigin)) {
-            Constants.logger.trace("Incoming request from origin: " + requestOrigin + " allowed.");
+            SimpleLogger.getInstance().trace(currentClassName, "Incoming request from origin: " + requestOrigin + " allowed.");
             response.addHeader("Access-Control-Allow-Origin", requestOrigin);
-        } else {
-            Constants.logger.trace("Incoming request from origin " + requestOrigin + " rejected.");
+        } 
+        else 
+        {
+            SimpleLogger.getInstance().trace(currentClassName, "Incoming request from origin " + requestOrigin + " rejected.");
         }
     }
 

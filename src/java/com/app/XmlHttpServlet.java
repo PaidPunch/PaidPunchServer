@@ -2,6 +2,7 @@ package com.app;
 
 import com.db.DataAccess;
 import com.server.Constants;
+import com.server.SimpleLogger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,6 +23,7 @@ public class XmlHttpServlet extends HttpServlet
 	private static final long serialVersionUID = -567922895839259243L;
 	private static final String versionHeader = "api-version";
 	protected float minValidVersion = (float)1.0;
+	protected String currentClassName;
 	
 	protected float getExpectedVersion(HttpServletRequest request)
 	{
@@ -64,11 +66,11 @@ public class XmlHttpServlet extends HttpServlet
             String res = responseMap.toString();
             
             out.print(res);
-            Constants.logger.info(res);
+            SimpleLogger.getInstance().info(currentClassName, res);
         } 
         catch (Exception e) 
         {
-            Constants.logger.error(e);
+            SimpleLogger.getInstance().error(currentClassName, e.getMessage());
         }
 
     }
@@ -85,11 +87,11 @@ public class XmlHttpServlet extends HttpServlet
             String res = responseArray.toString();
             
             out.print(res);
-            Constants.logger.info(res);
+            SimpleLogger.getInstance().info(currentClassName, res);
         } 
         catch (Exception e) 
         {
-            Constants.logger.error(e);
+            SimpleLogger.getInstance().error(currentClassName, e.getMessage());
         }
 
     }
@@ -102,11 +104,11 @@ public class XmlHttpServlet extends HttpServlet
         	response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             out.print(responseString);
-            Constants.logger.info(responseString);
+            SimpleLogger.getInstance().info(currentClassName, responseString);
         } 
         catch (Exception e) 
         {
-            Constants.logger.error(e);
+            SimpleLogger.getInstance().error(currentClassName, e.getMessage());
         }
 
     }
@@ -124,11 +126,11 @@ public class XmlHttpServlet extends HttpServlet
             
             out.print(res);
             response.setStatus(Integer.parseInt(statusCode));
-            Constants.logger.info("Error response - Status Code: " + statusCode + ", Message: " + statusMessage);
+            SimpleLogger.getInstance().info(currentClassName, "Status Code:" + statusCode + "|Message:" + statusMessage);
         } 
         catch (Exception e) 
         {
-            Constants.logger.error(e);
+            SimpleLogger.getInstance().error(currentClassName, e.getMessage());
         }
     }
 	
@@ -149,7 +151,7 @@ public class XmlHttpServlet extends HttpServlet
 		}
     	catch (Exception e) 
         {
-            Constants.logger.error(e);
+    	    SimpleLogger.getInstance().error(currentClassName, e.getMessage());
         }
 		
 		// Something blew up, return null
