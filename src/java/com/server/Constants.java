@@ -37,6 +37,7 @@ public class Constants
     public static String ZIPCODE_PARAMNAME = "zipcode";
     public static String BIZNAME_PARAMNAME = "business_name";
     public static String BIZINFO_PARAMNAME = "business_info";
+    public static String AMOUNT_PARAMNAME = "Amount";
     
     // SimpleDB domain names
     public static String BUSINESSES_DOMAIN = "Businesses";
@@ -44,6 +45,7 @@ public class Constants
     public static String REQUESTINVITES_DOMAIN = "RequestInvites";
     public static String SUGGESTBUSINESSES_DOMAIN = "SuggestBusinesses";
     public static String VOTES_DOMAIN = "Votes";
+    public static String CODES_DOMAIN = "Codes";
 
     // Used in database connection
     public static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -119,6 +121,7 @@ public class Constants
             REQUESTINVITES_DOMAIN = "RequestInvites";
             SUGGESTBUSINESSES_DOMAIN = "SuggestBusinesses";
             VOTES_DOMAIN = "Votes";
+            CODES_DOMAIN = "Codes";
             
             MAILCHIMP_LIST_ID = "e7350c242f";
             
@@ -138,10 +141,11 @@ public class Constants
             REQUESTINVITES_DOMAIN = "RequestInvitesTest";
             SUGGESTBUSINESSES_DOMAIN = "SuggestBusinessesTest";
             VOTES_DOMAIN = "VotesTest";
+            CODES_DOMAIN = "CodesTest";
             
             MAILCHIMP_LIST_ID = "4ded3248b9";
             
-            IP_URL = "https://test.paidpunch.com";
+            IP_URL = "http://test.paidpunch.com";
         }
     }
 

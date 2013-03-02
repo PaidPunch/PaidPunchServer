@@ -16,6 +16,7 @@ public class CreditChangeHistory
 	public static final int USER_REFERRAL = 3;
 	public static final int PURCHASE = 4;
 	public static final int PUNCHCARD = 5;
+	public static final int SPECIAL_INVITE_SIGNUP = 6;
 	
 	// Private constructor
 	private CreditChangeHistory() 

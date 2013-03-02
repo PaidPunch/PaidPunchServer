@@ -1,6 +1,9 @@
 package com.app;
 
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.Item;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+
 import com.db.DataAccess;
 import com.db.DataAccessController;
 import com.db.SimpleDB;
@@ -116,6 +119,36 @@ public class Users extends XmlHttpServlet
 		return getReferralEntity(refer_code, queryString);
 	}
 	
+	// Get information about special invite code associated with the referral code used by new registering user
+	private HashMap<String,String> getReferringSpecialCode(String refer_code)
+    {
+	    HashMap<String,String> results = null;
+        String queryString = "select * from `" + Constants.CODES_DOMAIN + "` where InviteCode = \"" + refer_code + "\"";
+        SimpleDB sdb = SimpleDB.getInstance();
+        List<Item> items = sdb.selectQuery(queryString);
+        
+        if (items.size() > 1)
+        {
+            // Warn if more than one item found
+            SimpleLogger.getInstance().warn(currentClassName, "MultipleSpecialCodeMatches|Refer_code:" + refer_code);
+        }
+        
+        if (items.size() >= 1)
+        {
+            // get the first item
+            Item currentItem = items.get(0);
+            
+            results = new HashMap<String,String>();
+            
+            for (Attribute attribute : currentItem.getAttributes()) 
+            {
+                results.put(attribute.getName(), attribute.getValue());
+            }
+        }
+        
+        return results;
+    }
+	
 	private void sendWelcomeEmail(String name, String email)
 	{
 		// Get the first name from the name field
@@ -189,7 +222,7 @@ public class Users extends XmlHttpServlet
 		return doesAccountExistInternal(queryString, fbid);
 	}
 	
-	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred, String userCode)
+	private int registerEmailUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred, boolean specialCodeReferred, String userCode, float amount)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
@@ -212,7 +245,7 @@ public class Users extends XmlHttpServlet
 		                    time + "','" + 
 		            		date + 
 		            		"','N'," + 
-		    	            rewardCreditValue + 
+		    	            amount + 
 		    	            ",?,?,?);";
 	
 		            ArrayList<String> parameters = new ArrayList<String>();
@@ -237,7 +270,11 @@ public class Users extends XmlHttpServlet
 						// Put a tracking row into the credit change history table
 						CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
 						int reason = 0;
-						if (userReferred)
+						if (specialCodeReferred)
+						{
+						    reason = CreditChangeHistory.SPECIAL_INVITE_SIGNUP;
+						}
+						else if (userReferred)
 						{
 							reason = CreditChangeHistory.USER_INVITE_SIGNUP;
 						}
@@ -245,7 +282,7 @@ public class Users extends XmlHttpServlet
 						{
 							reason = CreditChangeHistory.BUSINESS_INVITE_SIGNUP;
 						}
-						changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
+						changeHistory.insertCreditChange(Integer.toString(user_id), amount, reason, referringId);
 						
 						// Send confirmation email
 						SignupAddPunch mail = new SignupAddPunch();
@@ -280,7 +317,7 @@ public class Users extends XmlHttpServlet
 		return user_id;
 	}
 	
-	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred, String userCode)
+	private int registerFBUser(HttpServletRequest request, HttpServletResponse response, JSONObject requestInputs, String referringId, boolean userReferred, boolean specialCodeReferred, String userCode, float amount)
             throws ServletException, IOException 
 	{
 		int user_id = 0;
@@ -301,7 +338,7 @@ public class Users extends XmlHttpServlet
 		            		"values(?,?,'Y','Y','" + 
 		            		date + "','" + 
 		            		time + "',?,'Y',?," + 
-		            		rewardCreditValue + 
+		            		amount + 
 		            		",?,?,?);";
 		            ArrayList<String> parameters = new ArrayList<String>();
 		            parameters.add(name);
@@ -324,7 +361,11 @@ public class Users extends XmlHttpServlet
 						// Put a tracking row into the credit change history table
 						CreditChangeHistory changeHistory = CreditChangeHistory.getInstance();
 						int reason = 0;
-						if (userReferred)
+						if (specialCodeReferred)
+						{
+						    reason = CreditChangeHistory.SPECIAL_INVITE_SIGNUP;
+						}
+						else if (userReferred)
 						{
 							reason = CreditChangeHistory.USER_INVITE_SIGNUP;
 						}
@@ -332,7 +373,7 @@ public class Users extends XmlHttpServlet
 						{
 							reason = CreditChangeHistory.BUSINESS_INVITE_SIGNUP;
 						}
-						changeHistory.insertCreditChange(Integer.toString(user_id), rewardCreditValue, reason, referringId);
+						changeHistory.insertCreditChange(Integer.toString(user_id), amount, reason, referringId);
 						
 						sendWelcomeEmail(name, email);
 						
@@ -365,7 +406,7 @@ public class Users extends XmlHttpServlet
 		return user_id;
 	}
 	
-	private JSONObject createEmailRegistrationResponse(int new_user_id, String user_code, JSONObject requestInputs)
+	private JSONObject createEmailRegistrationResponse(int new_user_id, String user_code, float amount, JSONObject requestInputs)
 	{
 		JSONObject responseMap = new JSONObject();
 		try
@@ -377,7 +418,7 @@ public class Users extends XmlHttpServlet
 			responseMap.put("email", email);
 			responseMap.put("mobilenumber", requestInputs.get(Constants.MOBILENO_PARAMNAME));
 			responseMap.put("user_code", user_code);
-			responseMap.put("credit", rewardCreditValue);
+			responseMap.put("credit", amount);
 			String statusMessage =  "You are almost done!"
 	                + " We have sent an email to " + email + "."
 	                + " Click the link within the email to confirm your account and begin saving money with PaidPunch!";
@@ -390,7 +431,7 @@ public class Users extends XmlHttpServlet
 		return responseMap;
 	}
 	
-	private JSONObject createFacebookRegistrationResponse(int new_user_id, String user_code, HttpServletRequest request)
+	private JSONObject createFacebookRegistrationResponse(int new_user_id, String user_code, float amount, HttpServletRequest request)
 	{
 		JSONObject responseMap = new JSONObject();
 		try
@@ -400,7 +441,7 @@ public class Users extends XmlHttpServlet
 			responseMap.put("sessionid", request.getHeader(Constants.SESSIONID_PARAMNAME));
 			responseMap.put("is_profileid_created", "false");
 			responseMap.put("user_code", user_code);
-			responseMap.put("credit", rewardCreditValue);
+			responseMap.put("credit", amount);
 			responseMap.put("statusMessage", "Registration successful!");
 		} 
 		catch (JSONException ex) 
@@ -896,21 +937,43 @@ public class Users extends XmlHttpServlet
         			// Creating a new user
         			String refer_code = requestInputs.getString(Constants.REFERCODE_PARAMNAME);
                 	boolean userReferral = false;
-                	HashMap<String,String> results = getReferringUser(refer_code);
+                	boolean specialCodeReferral = false;
+                	
+                	HashMap<String,String> results;
+                	// Start by checking for special code usage
+                	results = getReferringSpecialCode(refer_code);
                 	if (results != null)
                 	{
-                		userReferral = true;
+                	    specialCodeReferral = true;
                 	}
                 	else
                 	{
-                		// Failed to find a referring user. Check businesses.
-                		results = getReferringBusiness(refer_code);
+                	    results = getReferringUser(refer_code);
+                        if (results != null)
+                        {
+                            userReferral = true;
+                        }
+                        else
+                        {
+                            // Failed to find a referring user. Check businesses.
+                            results = getReferringBusiness(refer_code);
+                        }    
                 	}
                 	
                 	if (results != null)
                 	{
             			String referringId = null;
-            			if (userReferral)
+            			float amount = rewardCreditValue;
+            			if (specialCodeReferral)
+            			{
+            			    // No referring id for special code referrals
+            			    referringId = "";
+            			    
+            			    // Amount attached to special code
+            			    String amtString = results.get(Constants.AMOUNT_PARAMNAME);
+            			    amount = Float.parseFloat(amtString);
+            			}
+            			else if (userReferral)
             			{
             				// get the user id for the referring user
             				referringId = results.get(Constants.USERID_PARAMNAME);	
@@ -930,19 +993,19 @@ public class Users extends XmlHttpServlet
                 			if (registrationType.equalsIgnoreCase(emailRegistration))
                 			{
                 				// Perform email registration
-                				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral, userCode);
+                				new_user_id = registerEmailUser(request, response, requestInputs, referringId, userReferral, specialCodeReferral, userCode, amount);
                 				if (new_user_id != 0)
                         		{
-                					responseMap = createEmailRegistrationResponse(new_user_id, userCode, requestInputs);
+                					responseMap = createEmailRegistrationResponse(new_user_id, userCode, amount, requestInputs);
                         		}
                 			}
                 			else if (registrationType.equalsIgnoreCase(facebookRegistration))
                 			{
                 				// Perform Facebook registration
-                				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral, userCode);
+                				new_user_id = registerFBUser(request, response, requestInputs, referringId, userReferral, specialCodeReferral, userCode, amount);
                 				if (new_user_id != 0)
                         		{
-                					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, request);
+                					responseMap = createFacebookRegistrationResponse(new_user_id, userCode, amount, request);
                         		}
                 			}
                 			else
