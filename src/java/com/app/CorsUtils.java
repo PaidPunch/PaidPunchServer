@@ -21,7 +21,8 @@ public class CorsUtils
             "http://localhost:8080",
             "http://tb-mac.local:8080",
             "http://www.paidpunch.com",
-            "https://www.paidpunch.com"}));
+            "https://www.paidpunch.com",
+            "http://dev.paidpunch.com:8080"}));
 
     public static void addOptionsCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) 
     {
@@ -34,7 +35,7 @@ public class CorsUtils
             response.addHeader("Access-Control-Allow-Origin", requestOrigin);
             response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             response.addHeader("Access-Control-Allow-Headers",
-                    "content-type, accept, x-requested-with, api-version, enabled-only, Authorization, X-Authorization");
+                    "content-type, accept, x-requested-with, api-version, enabled-only, sessionid, Authorization, X-Authorization");
             response.addHeader("access-control-max-age", "10");
         }
         else 
