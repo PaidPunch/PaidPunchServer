@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 
 import com.server.BusinessesList;
+import com.server.BusinessesList2;
 import com.server.Constants;
 import com.server.SimpleLogger;
 
@@ -56,33 +57,66 @@ public class Businesses extends XmlHttpServlet
         	float expectedAPIVersion = getExpectedVersion(request);
         	if (validateVersion(request, response, expectedAPIVersion))
         	{
-        		boolean enabledOnly = false;
-        		String enabledOnlyString = request.getHeader("enabled-only");
-        		if (enabledOnlyString != null)
-        		{
-        			enabledOnly = enabledOnlyString.equals("1");
-        		}
-        		
-        		BusinessesList businesses = BusinessesList.getInstance();
-            	JSONArray responseMap = null;
-            	if (enabledOnly)
-            	{
-            		responseMap = businesses.getEnabledBusinesses();
-            	}
-            	else
-            	{
-            		responseMap = businesses.getBusinesses();
-            	}
-            	
-    			if (responseMap != null)
-    			{            				
-    				// Send a response to caller
-        			jsonResponse(request, response, responseMap);
-    			}
-    			else
-    			{
-    				errorResponse(request, response, "500", "Unable to retrieve businesses");
-    			}
+        	    boolean enabledOnly = false;
+                String enabledOnlyString = request.getHeader("enabled-only");
+                if (enabledOnlyString != null)
+                {
+                    enabledOnly = enabledOnlyString.equals("1");
+                }
+                
+                String APIVersionText = Float.toString(expectedAPIVersion);
+                
+        	    if (APIVersionText.equals("1.0"))
+        	    {                    
+                    BusinessesList businesses = BusinessesList.getInstance();
+                    JSONArray responseMap = null;
+                    if (enabledOnly)
+                    {
+                        responseMap = businesses.getEnabledBusinesses();
+                    }
+                    else
+                    {
+                        responseMap = businesses.getBusinesses();
+                    }
+                    
+                    if (responseMap != null)
+                    {                           
+                        // Send a response to caller
+                        jsonResponse(request, response, responseMap);
+                    }
+                    else
+                    {
+                        errorResponse(request, response, "500", "Unable to retrieve businesses");
+                    }    
+        	    }
+        	    else if (APIVersionText.equals("1.1"))
+        	    {
+        	        BusinessesList2 businesses = BusinessesList2.getInstance();
+                    JSONArray responseMap = null;
+                    if (enabledOnly)
+                    {
+                        responseMap = businesses.getAllEnabledBusinesses();
+                    }
+                    else
+                    {
+                        responseMap = businesses.getAllBusinesses();
+                    }
+                    
+                    if (responseMap != null)
+                    {                           
+                        // Send a response to caller
+                        jsonResponse(request, response, responseMap);
+                    }
+                    else
+                    {
+                        errorResponse(request, response, "500", "Unable to retrieve businesses");
+                    }  
+        	    }
+        	    else
+        	    {
+        	        SimpleLogger.getInstance().error(currentClassName, "UnknownAPIVersion");
+        	        errorResponse(request, response, "405", "Unable to retrieve businesses");
+        	    }
         	}
     	}
     	catch (Exception ex)
