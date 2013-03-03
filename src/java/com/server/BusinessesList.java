@@ -10,10 +10,9 @@ import org.json.JSONArray;
 import com.db.DataAccess;
 import com.db.DataAccess.ResultSetHandler;
 
-public class BusinessesList 
+public class BusinessesList extends DataObjectBase
 {
 	private static BusinessesList singleton;
-	private Date lastRefreshTime;
 	private ArrayList<Business> currentBusinesses;
 	
 	// Private constructor
@@ -21,22 +20,9 @@ public class BusinessesList
 	{
 		lastRefreshTime = null;
 		currentBusinesses = null;
-	}
-	
-	private boolean timeForRefresh()
-	{
-		if (lastRefreshTime != null)
-		{
-			Date currentTime = new Date();
-			// Refresh interval in milliseconds
-			final long refreshInterval = 15 * 60 * 1000L;
-			Date refreshTime = new Date(lastRefreshTime.getTime() + refreshInterval);
-			return (currentTime.compareTo(refreshTime) > 0);	
-		}
-		else
-		{
-			return true;
-		}
+		currentClassName = Business.class.getSimpleName();
+		// Refresh interval in milliseconds
+        refreshInterval = 15 * 60 * 1000L;
 	}
 	
 	private void refreshBusinessesFromDatabaseIfNecessary()
@@ -47,7 +33,9 @@ public class BusinessesList
 			{
 				currentBusinesses = new ArrayList<Business>();
 				
-				String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude FROM business_users b, bussiness_address a WHERE b.business_userid = a.business_id;";
+				String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled," + 
+				                             "a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude " +
+				                             "FROM business_users b, bussiness_address a WHERE b.business_userid = a.business_id;";
 				try
 				{
 					DataAccess.queryDatabaseCustom(queryString, null, currentBusinesses, new ResultSetHandler()
@@ -62,6 +50,7 @@ public class BusinessesList
 		                    	 Business currentBusiness = new Business();
 		                    	 
 		                    	 // Populate product information
+		                    	 currentBusiness.setVersion(1);
 		                    	 currentBusiness.setBusinessUserId(results.getString("business_userid"));
 		                    	 currentBusiness.setName(results.getString("business_name"));
 		                    	 currentBusiness.setDesc(results.getString("buss_desc"));
@@ -84,14 +73,14 @@ public class BusinessesList
 				}
 				catch (SQLException ex)
 				{
-					Constants.logger.error("Error : " + ex.getMessage());
+				    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 				}
 	    		
 	    		lastRefreshTime = new Date();
 			}
 			catch (Exception ex)
 	    	{
-				Constants.logger.error("Error : " + ex.getMessage());
+			    SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
 				lastRefreshTime = null;
 				currentBusinesses = null;
 			}
@@ -110,7 +99,7 @@ public class BusinessesList
 		JSONArray jsonBusinesses = new JSONArray();
 		for (Business current : currentBusinesses)
 		{
-			jsonBusinesses.put(current.getMapOfBusiness());
+			jsonBusinesses.put(current.getJSONOfBusiness());
 		}
 		return jsonBusinesses;
 	}
@@ -124,7 +113,7 @@ public class BusinessesList
 		{
 			if (current.getBusiEnabled())
 			{
-				jsonBusinesses.put(current.getMapOfBusiness());	
+				jsonBusinesses.put(current.getJSONOfBusiness());	
 			}
 		}
 		return jsonBusinesses;
