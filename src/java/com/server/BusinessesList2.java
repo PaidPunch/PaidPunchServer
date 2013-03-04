@@ -30,9 +30,9 @@ public class BusinessesList2 extends DataObjectBase
     {
         String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled," + 
                 "a.address_id,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude," +
-                "o.offer_id,o.discount,o.price,o.offertype,o.code,o.name,o.description,o.condition1,o.condition2,o.condition3,o.disabled,o.expiry_date " +
-                "FROM business_users b, bussiness_address a, offers o " +
-                "WHERE b.business_userid = a.business_id AND b.business_userid = o.business_id;";
+                "p.punch_card_id,p.no_of_punches_per_card,p.value_of_each_punch,p.selling_price_of_punch_card,p.restriction_time,p.punchcard_category,p.expirydays,p.minimumvalue,p.punchcard_code " +
+                "FROM business_users b, bussiness_address a, punch_card p " +
+                "WHERE b.business_userid = a.business_id AND b.business_userid = p.business_userid;";
         try
         {
             DataAccess.queryDatabaseCustom(queryString, null, currentBusinesses, new ResultSetHandler()
@@ -88,31 +88,30 @@ public class BusinessesList2 extends DataObjectBase
                              currentBusiness.insertBranch(address_id, currentBranch);    
                          }
                          
-                         String offer_id = results.getString("offer_id");
-                         BusinessOffer currentOffer = null;
-                         if (currentBusiness.getOffers() != null)
+                         String punchcard_id = results.getString("punch_card_id");
+                         Punchcard currentPunchcard = null;
+                         if (currentBusiness.getPunchcards() != null)
                          {
-                             currentBusiness.getOffers().get(offer_id);
+                             currentBusiness.getPunchcards().get(punchcard_id);
                          }
-                         if (currentOffer == null)
+                         if (currentPunchcard == null)
                          {
                              // Create a new offer
-                             currentOffer = new BusinessOffer();
+                             currentPunchcard = new Punchcard();
                              
                              // Populate offer information
-                             currentOffer.setOfferId(results.getString("offer_id"));
-                             currentOffer.setDiscount(Float.parseFloat(results.getString("discount")));
-                             currentOffer.setType(Integer.parseInt(results.getString("offertype")));
-                             currentOffer.setCouponCode(results.getString("code"));
-                             currentOffer.setDesc(results.getString("description"));
-                             currentOffer.setCondition1(results.getString("condition1"));
-                             currentOffer.setCondition2(results.getString("condition2"));
-                             currentOffer.setCondition3(results.getString("condition3"));
-                             currentOffer.setDisabled(Boolean.parseBoolean(results.getString("disabled")));
-                             currentOffer.setExpiryDate(results.getString("expiry_date"));
+                             currentPunchcard.setPunchcardId(punchcard_id);
+                             currentPunchcard.setNumPunches(results.getString("no_of_punches_per_card"));
+                             currentPunchcard.setValuePerPunch(results.getString("value_of_each_punch"));
+                             currentPunchcard.setCost(results.getString("selling_price_of_punch_card"));
+                             currentPunchcard.setRestrictionTime(results.getString("restriction_time"));
+                             currentPunchcard.setCategory(results.getString("punchcard_category"));
+                             currentPunchcard.setExpiryDays(results.getString("expirydays"));
+                             currentPunchcard.setMinValue(results.getString("minimumvalue"));
+                             currentPunchcard.setCouponCode(results.getString("punchcard_code"));
                              
                              // Add current branch to the Business 
-                             currentBusiness.insertOffer(offer_id, currentOffer);
+                             currentBusiness.insertPunchcard(punchcard_id, currentPunchcard);
                          }
                      } 
                  }

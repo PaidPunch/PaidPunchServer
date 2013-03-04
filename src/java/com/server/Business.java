@@ -20,7 +20,7 @@ public class Business
 	
 	// V2-only arrays
 	private HashMap<String,BusinessBranch> businessBranches;
-	private HashMap<String,BusinessOffer> businessOffers;
+	private HashMap<String,Punchcard> punchcards;
 	
 	// Moved to BusinessBranches in V2.
 	// This is here for V1 backward compatibility only
@@ -112,9 +112,9 @@ public class Business
 	    return businessBranches;
 	}
 	
-	public HashMap<String,BusinessOffer> getOffers()
+	public HashMap<String,Punchcard> getPunchcards()
     {
-        return businessOffers;
+        return punchcards;
     }
 	
 	public void setVersion(int version)
@@ -192,14 +192,14 @@ public class Business
 	    businessBranches.put(address_id, branch);
 	}
 	
-	public void insertOffer(String offer_id, BusinessOffer offer)
+	public void insertPunchcard(String punchcardid, Punchcard punchcard)
     {
-        if (businessOffers == null)
+        if (punchcards == null)
         {
-            businessOffers = new HashMap<String,BusinessOffer>();
+            punchcards = new HashMap<String,Punchcard>();
         }
         
-        businessOffers.put(offer_id, offer);
+        punchcards.put(punchcardid, punchcard);
     }
 	
 	public JSONObject getJSONOfBusiness()
@@ -233,12 +233,12 @@ public class Business
 			    }
 		        jsonOutput.put("branches", jsonBranches);
 		        
-		        JSONArray jsonOffers = new JSONArray();
-		        for (Map.Entry<String, BusinessOffer> entry : businessOffers.entrySet())
+		        JSONArray jsonPunchcards = new JSONArray();
+		        for (Map.Entry<String, Punchcard> entry : punchcards.entrySet())
                 {
-		            jsonOffers.put(entry.getValue().getJSONOfOffer());  
+		            jsonPunchcards.put(entry.getValue().getJSONOfOffer());  
                 }
-                jsonOutput.put("offers", jsonOffers);
+                jsonOutput.put("offers", jsonPunchcards);
 			}
 		}
 		catch (JSONException ex)
