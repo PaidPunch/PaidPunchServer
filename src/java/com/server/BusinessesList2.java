@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.db.DataAccess;
 import com.db.DataAccess.ResultSetHandler;
@@ -170,6 +171,19 @@ public class BusinessesList2 extends DataObjectBase
             }
         }
         return jsonBusinesses;
+    }
+    
+    public JSONObject getSingleBusiness(String business_id, boolean enabledOnly)
+    {
+        // Refresh the data if necessary
+        refreshBusinessesFromDatabaseIfNecessary();
+        JSONObject jsonBusiness = null;
+        Business current = currentBusinesses.get(business_id);
+        if (current != null && (current.getBusiEnabled() || !enabledOnly))
+        {
+            jsonBusiness = current.getJSONOfBusiness();
+        }
+        return jsonBusiness;
     }
     
     // Disable cloning for singletons

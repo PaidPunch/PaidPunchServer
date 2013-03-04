@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.server.BusinessesList;
 import com.server.BusinessesList2;
@@ -34,6 +35,61 @@ public class Businesses extends XmlHttpServlet
 	   {
 		   SimpleLogger.getInstance().error(currentClassName, e.getMessage());
 	   }
+    }
+	
+	// Process /Businesses requests
+	private void getAllBusinesses(HttpServletRequest request, HttpServletResponse response, BusinessesList2 businesses, boolean enabledOnly)
+	{
+	    JSONArray responseMap = null;
+        if (enabledOnly)
+        {
+            responseMap = businesses.getAllEnabledBusinesses();
+        }
+        else
+        {
+            responseMap = businesses.getAllBusinesses();
+        }
+        
+        if (responseMap != null)
+        {                           
+            try
+            {
+                // Send a response to caller
+                jsonResponse(request, response, responseMap);    
+            }
+            catch (IOException e)
+            {
+                SimpleLogger.getInstance().error(currentClassName, e);
+                errorResponse(request, response, "500", "Unable to retrieve businesses");
+            }
+        }
+        else
+        {
+            errorResponse(request, response, "500", "Unable to retrieve businesses");
+        } 
+	}
+	
+	// Process /Businesses requests
+    private void getSingleBusiness(HttpServletRequest request, HttpServletResponse response, BusinessesList2 businesses, boolean enabledOnly, String business_id)
+    {
+        JSONObject responseMap = businesses.getSingleBusiness(business_id, enabledOnly);
+        if (responseMap != null)
+        {                           
+            try
+            {
+                // Send a response to caller
+                jsonResponse(request, response, responseMap);    
+            }
+            catch (IOException e)
+            {
+                SimpleLogger.getInstance().error(currentClassName, e);
+                errorResponse(request, response, "500", "Unable to retrieve business");
+            }
+        }
+        else
+        {
+            errorResponse(request, response, "404", "Unable to retrieve business");
+        } 
     }
 	
 	/**
@@ -92,30 +148,23 @@ public class Businesses extends XmlHttpServlet
         	    else if (APIVersionText.equals("1.1"))
         	    {
         	        BusinessesList2 businesses = BusinessesList2.getInstance();
-                    JSONArray responseMap = null;
-                    if (enabledOnly)
-                    {
-                        responseMap = businesses.getAllEnabledBusinesses();
-                    }
-                    else
-                    {
-                        responseMap = businesses.getAllBusinesses();
-                    }
+                    String[] pathArray = getPathInfoArray(request);
                     
-                    if (responseMap != null)
-                    {                           
-                        // Send a response to caller
-                        jsonResponse(request, response, responseMap);
+                    // /Businesses
+                    if (pathArray == null)
+                    {
+                        getAllBusinesses(request, response, businesses, enabledOnly);
                     }
                     else
                     {
-                        errorResponse(request, response, "500", "Unable to retrieve businesses");
-                    }  
+                        String business_id = pathArray[0];
+                        getSingleBusiness(request, response, businesses, enabledOnly, business_id);
+                    } 
         	    }
         	    else
         	    {
         	        SimpleLogger.getInstance().error(currentClassName, "UnknownAPIVersion");
-        	        errorResponse(request, response, "405", "Unable to retrieve businesses");
+        	        errorResponse(request, response, "405", "Unknown API version");
         	    }
         	}
     	}
