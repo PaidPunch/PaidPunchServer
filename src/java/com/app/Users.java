@@ -334,12 +334,12 @@ public class Users extends XmlHttpServlet
 		            String name = requestInputs.getString(Constants.NAME_PARAMNAME);
 		            String email = requestInputs.getString(Constants.EMAIL_PARAMNAME);
 		            String queryString = "insert into app_user " +
-		            		"(username,email_id,user_status,isemailverified,Date,Time,sessionid,isfbaccount,fbid,credit,refer_code,user_code,user_referred)" + 
+		            		"(username,email_id,user_status,isemailverified,Date,Time,sessionid,isfbaccount,fbid,credit,refer_code,user_code,user_referred,pincode)" + 
 		            		"values(?,?,'Y','Y','" + 
 		            		date + "','" + 
 		            		time + "',?,'Y',?," + 
 		            		amount + 
-		            		",?,?,?);";
+		            		",?,?,?,?);";
 		            ArrayList<String> parameters = new ArrayList<String>();
 		            parameters.add(name);
 		            parameters.add(email);
@@ -355,6 +355,7 @@ public class Users extends XmlHttpServlet
 		            {
 		            	parameters.add("0");
 		            }
+		            parameters.add(requestInputs.getString(Constants.ZIPCODE_PARAMNAME));
 		            user_id = DataAccess.insertDatabase(queryString, parameters);	
 					if (user_id != 0)
 					{

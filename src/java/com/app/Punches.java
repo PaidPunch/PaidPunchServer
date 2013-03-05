@@ -50,12 +50,12 @@ public class Punches extends XmlHttpServlet
 		boolean valid = false;
         try
         {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date expireDate = dateFormat.parse(expireDateString);
             java.util.Date currentDate = new java.util.Date();
 
             // punch expired?
-            valid = Utility.isAfterDateTime(currentDate, expireDate);
+            valid = Utility.isAfterDateTime(expireDate, currentDate);
         }
         catch (ParseException ex)
         {
