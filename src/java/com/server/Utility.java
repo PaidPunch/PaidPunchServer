@@ -20,7 +20,41 @@ import java.util.zip.ZipEntry;
 
 import com.db.DataAccess;
 
-public final class Utility {
+public final class Utility 
+{
+    public static int compareFloats(double f1, double f2, float delta)
+    {
+        if (Math.abs(f1 - f2) < delta)
+        {
+             return 0;
+        } else
+        {
+            if (f1 < f2)
+            {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    /**
+     * Uses <code>0.001f</code> for delta.
+     */
+    public static int compareFloats(double f1, double f2)
+    {
+         return compareFloats(f1, f2, 0.001f);
+    }
+    
+    public static double round(double value, int places) 
+    {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
     
     public static Date addDays(Date date, int days) {
         Calendar cal = Calendar.getInstance();

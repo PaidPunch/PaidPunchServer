@@ -91,6 +91,31 @@ public class Businesses extends XmlHttpServlet
             errorResponse(request, response, "404", "Unable to retrieve business");
         } 
     }
+    
+ // Process /Businesses/closeby requests
+    private void getBusinessesCloseby(HttpServletRequest request, HttpServletResponse response, BusinessesList2 businesses)
+    {
+        String latitudeString = request.getHeader("latitude");
+        String longitudeString = request.getHeader("longitude");
+        JSONArray responseMap = businesses.getBusinessesCloseBy(Double.parseDouble(latitudeString), Double.parseDouble(longitudeString));
+        if (responseMap != null)
+        {                           
+            try
+            {
+                // Send a response to caller
+                jsonResponse(request, response, responseMap);    
+            }
+            catch (IOException e)
+            {
+                SimpleLogger.getInstance().error(currentClassName, e);
+                errorResponse(request, response, "500", "Unable to retrieve businesses");
+            }
+        }
+        else
+        {
+            errorResponse(request, response, "404", "Unable to retrieve business");
+        } 
+    }
 	
 	/**
      * Handles the HTTP <code>GET</code> method.
@@ -157,8 +182,17 @@ public class Businesses extends XmlHttpServlet
                     }
                     else
                     {
-                        String business_id = pathArray[0];
-                        getSingleBusiness(request, response, businesses, enabledOnly, business_id);
+                        String pathText = pathArray[0];
+                        if (pathText.equals("closeby"))
+                        {
+                            // / Businesses/closeby
+                            getBusinessesCloseby(request, response, businesses);
+                        }
+                        else
+                        {
+                            // /Businesses/100
+                            getSingleBusiness(request, response, businesses, enabledOnly, pathText);
+                        }
                     } 
         	    }
         	    else

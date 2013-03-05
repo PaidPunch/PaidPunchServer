@@ -2,6 +2,7 @@ package com.server;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class BusinessesList2 extends DataObjectBase
     private void getListOfBusinesses()
     {
         String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled," + 
-                "a.address_id,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude," +
+                "a.address_id,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude,a.region," +
                 "p.punch_card_id,p.no_of_punches_per_card,p.value_of_each_punch,p.selling_price_of_punch_card,p.restriction_time,p.punchcard_category,p.expirydays,p.minimumvalue,p.punchcard_code " +
                 "FROM business_users b, bussiness_address a, punch_card p " +
                 "WHERE b.business_userid = a.business_id AND b.business_userid = p.business_userid;";
@@ -84,6 +85,7 @@ public class BusinessesList2 extends DataObjectBase
                              currentBranch.setLongitude(results.getString("longitude"));
                              currentBranch.setLatitude(results.getString("latitude"));
                              currentBranch.setContactNo(results.getString("contactno"));
+                             currentBranch.setRegion(Integer.parseInt(results.getString("region")));
                              
                              // Add current branch to the Business 
                              currentBusiness.insertBranch(address_id, currentBranch);    
@@ -184,6 +186,34 @@ public class BusinessesList2 extends DataObjectBase
             jsonBusiness = current.getJSONOfBusiness();
         }
         return jsonBusiness;
+    }
+    
+    public JSONArray getBusinessesCloseBy(double latitude, double longitude)
+    {
+        // Refresh the data if necessary
+        refreshBusinessesFromDatabaseIfNecessary();
+        
+        int region = GeoLocation.coordToRegion(latitude, longitude);
+        ArrayList<Integer> surroundingRegions = GeoLocation.getSurroundingRegions(region);
+        // Add self to region
+        surroundingRegions.add(region);
+        
+        SimpleLogger.getInstance().info(currentClassName, "Regions: " + surroundingRegions.toString());
+        
+        JSONArray jsonBusinesses = new JSONArray();
+        for (Map.Entry<String, Business> entry : currentBusinesses.entrySet())
+        {
+            Business current = entry.getValue();
+            if (current.getBusiEnabled())
+            {
+                JSONObject jsonBusiness = current.getJSONOfBusiness(surroundingRegions);
+                if (jsonBusiness != null)
+                {
+                    jsonBusinesses.put(jsonBusiness);   
+                } 
+            }
+        }
+        return jsonBusinesses;
     }
     
     // Disable cloning for singletons

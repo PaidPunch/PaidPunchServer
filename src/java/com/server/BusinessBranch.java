@@ -1,5 +1,7 @@
 package com.server;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,7 +16,7 @@ public class BusinessBranch
     private String latitude;
     private String longitude;
     private String contactno;
-    private long region;
+    private Integer region;
     
     public BusinessBranch() 
     {
@@ -96,9 +98,23 @@ public class BusinessBranch
         this.longitude = longitude;
     }
     
-    public void setRegion(long region)
+    public void setRegion(Integer region)
     {
         this.region = region;
+    }
+    
+    public boolean isInRegionList(ArrayList<Integer> regions)
+    {
+        boolean found = false;
+        for (Integer current:regions)
+        {
+            if (current.equals(region))
+            {
+                found = true;
+                break;
+            }
+        }
+        return found;
     }
     
     public JSONObject getJSONOfBranch()

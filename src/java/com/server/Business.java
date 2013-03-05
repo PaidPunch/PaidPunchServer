@@ -1,5 +1,6 @@
 package com.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -248,4 +249,57 @@ public class Business
 		
 		return jsonOutput;
 	}
+	
+	public JSONObject getJSONOfBusiness(ArrayList<Integer> regions)
+    {
+        JSONObject jsonOutput= null;
+
+        try
+        {            
+            if (version == 1)
+            {
+                SimpleLogger.getInstance().warn(Business.class.getSimpleName(), "This function is not available for version 1 calls!"); 
+            }
+            else if (version == 2)
+            {
+                boolean atLeastOneBranch = false;
+                JSONArray jsonBranches = new JSONArray();
+                for (Map.Entry<String, BusinessBranch> entry : businessBranches.entrySet())
+                {
+                    if (entry.getValue().isInRegionList(regions))
+                    {
+                        jsonBranches.put(entry.getValue().getJSONOfBranch());  
+                        atLeastOneBranch = true;
+                    }
+                }
+                
+                // At least a single branch in this business is in the region we care about
+                if (atLeastOneBranch)
+                {
+                    jsonOutput= new JSONObject();
+                    
+                    // adding or set elements in Map by put method key and value pair
+                    jsonOutput.put("business_userid", business_userid);
+                    jsonOutput.put("name", name);
+                    jsonOutput.put("desc", desc);
+                    jsonOutput.put("logo_path", logo_path); 
+                    
+                    jsonOutput.put("branches", jsonBranches);
+                    
+                    JSONArray jsonPunchcards = new JSONArray();
+                    for (Map.Entry<String, Punchcard> entry : punchcards.entrySet())
+                    {
+                        jsonPunchcards.put(entry.getValue().getJSONOfOffer());  
+                    }
+                    jsonOutput.put("offers", jsonPunchcards);    
+                }
+            }
+        }
+        catch (JSONException ex)
+        {
+            SimpleLogger.getInstance().error(currentClassName, ex.getMessage());
+        }
+        
+        return jsonOutput;
+    }
 }
