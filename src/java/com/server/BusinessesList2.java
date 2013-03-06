@@ -30,7 +30,7 @@ public class BusinessesList2 extends DataObjectBase
     
     private void getListOfBusinesses()
     {
-        String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled," + 
+        String queryString = "SELECT b.business_userid,b.business_name,b.buss_desc,a.contactno,b.logo_path,b.busi_enabled,b.url_path," + 
                 "a.address_id,a.address_line1,a.city,a.state,a.zipcode,a.longitude,a.latitude,a.region," +
                 "p.punch_card_id,p.no_of_punches_per_card,p.value_of_each_punch,p.selling_price_of_punch_card,p.restriction_time,p.punchcard_category,p.expirydays,p.minimumvalue,p.punchcard_code " +
                 "FROM business_users b, bussiness_address a, punch_card p " +
@@ -61,6 +61,7 @@ public class BusinessesList2 extends DataObjectBase
                              currentBusiness.setDesc(results.getString("buss_desc"));
                              currentBusiness.setLogoPath(results.getString("logo_path"));
                              currentBusiness.setBusiEnabled(results.getString("busi_enabled"));    
+                             currentBusiness.setUrlPath(results.getString("url_path"));    
                              
                              // Add current Business to the Business list
                              hashBusinesses.put(bizId, currentBusiness);

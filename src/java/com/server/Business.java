@@ -18,6 +18,7 @@ public class Business
 	private String desc;
 	private String logo_path;
 	private boolean busi_enabled;
+	private String url_path;
 	
 	// V2-only arrays
 	private HashMap<String,BusinessBranch> businessBranches;
@@ -118,6 +119,11 @@ public class Business
         return punchcards;
     }
 	
+	public String getUrlPath()
+	{
+	    return url_path;
+	}
+	
 	public void setVersion(int version)
     {
         this.version = version;
@@ -183,6 +189,11 @@ public class Business
 		this.busi_enabled = busi_enabled.equalsIgnoreCase("Y");
 	}
 	
+	public void setUrlPath(String url_path)
+	{
+	    this.url_path = url_path;
+	}
+	
 	public void insertBranch(String address_id, BusinessBranch branch)
 	{
 	    if (businessBranches == null)
@@ -227,6 +238,8 @@ public class Business
 			}
 			else if (version == 2)
 			{
+			    jsonOutput.put("url_path", url_path);
+			    
 			    JSONArray jsonBranches = new JSONArray();
 			    for (Map.Entry<String, BusinessBranch> entry : businessBranches.entrySet())
 			    {
@@ -283,6 +296,7 @@ public class Business
                     jsonOutput.put("name", name);
                     jsonOutput.put("desc", desc);
                     jsonOutput.put("logo_path", logo_path); 
+                    jsonOutput.put("url_path", url_path);
                     
                     jsonOutput.put("branches", jsonBranches);
                     
