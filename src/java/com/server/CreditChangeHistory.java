@@ -3,8 +3,12 @@ package com.server;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.db.DataAccess;
+import com.db.SimpleDB;
 
 public class CreditChangeHistory 
 {
@@ -26,28 +30,22 @@ public class CreditChangeHistory
 	public boolean insertCreditChange(String user_id, float creditChange, int reason, String source_id)
 	{
 		boolean success = false;
-		String queryString = "INSERT INTO creditchangehistory (user_id,credit_change,reason,source_id,date_modified) values(?,?,?,?,?)";
-		
-		ArrayList<String> parameters = new ArrayList<String>();
-		parameters.add(user_id);
-		parameters.add(Float.toString(creditChange));
-		parameters.add(Integer.toString(reason));
-		parameters.add(source_id);
-		
-		SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String strDatetime = datetimeFormat.format(new java.util.Date().getTime());	
-		parameters.add(strDatetime);
-		
-		try
-    	{
-        	int new_id = DataAccess.insertDatabase(queryString, parameters);
-        	success = (new_id != 0);	
-    	}
-    	catch (SQLException ex)
-        {
-    		success = false;
-        	Constants.logger.error(ex);
-        }
+		// Get UUID for naming new suggestion
+        UUID itemName = UUID.randomUUID();
+        
+        // Get current datetime
+        SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentDatetime = datetimeFormat.format(new java.util.Date().getTime()); 
+        
+        List<ReplaceableAttribute> listAttributes = new ArrayList<ReplaceableAttribute>();
+        listAttributes.add(new ReplaceableAttribute("user_id", user_id, true));
+        listAttributes.add(new ReplaceableAttribute("credit_change", Float.toString(creditChange), true));
+        listAttributes.add(new ReplaceableAttribute("reason", Integer.toString(reason), true));
+        listAttributes.add(new ReplaceableAttribute("source_id", source_id, true));
+        listAttributes.add(new ReplaceableAttribute("date_modified", currentDatetime, true));
+        
+        SimpleDB sdb = SimpleDB.getInstance();
+        sdb.updateItem(Constants.CREDITCHANGE_DOMAIN, itemName.toString(), listAttributes);
 		
 		return success;
 	}

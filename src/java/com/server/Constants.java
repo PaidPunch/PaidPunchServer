@@ -46,6 +46,7 @@ public class Constants
     public static String SUGGESTBUSINESSES_DOMAIN = "SuggestBusinesses";
     public static String VOTES_DOMAIN = "Votes";
     public static String CODES_DOMAIN = "Codes";
+    public static String CREDITCHANGE_DOMAIN = "CreditChangeHistory";
 
     // Used in database connection
     public static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -122,6 +123,7 @@ public class Constants
             SUGGESTBUSINESSES_DOMAIN = "SuggestBusinesses";
             VOTES_DOMAIN = "Votes";
             CODES_DOMAIN = "Codes";
+            CREDITCHANGE_DOMAIN = "CreditChangeHistory";
             
             MAILCHIMP_LIST_ID = "e7350c242f";
             
@@ -142,6 +144,7 @@ public class Constants
             SUGGESTBUSINESSES_DOMAIN = "SuggestBusinessesTest";
             VOTES_DOMAIN = "VotesTest";
             CODES_DOMAIN = "CodesTest";
+            CREDITCHANGE_DOMAIN = "CreditChangeHistoryTest";
             
             MAILCHIMP_LIST_ID = "4ded3248b9";
             
