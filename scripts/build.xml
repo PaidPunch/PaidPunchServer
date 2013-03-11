@@ -28,7 +28,9 @@
         <mkdir dir="${build-directory}" />
         <delete file="${build-directory}/${war-file-name}" />
         <war warfile="${build-directory}/${war-file-name}" webxml="${web-xml-file}">
-            <lib dir="${lib-directory}"/>
+            <lib dir="${lib-directory}">
+                <exclude name="dev/*.jar"/>
+            </lib>
             <classes dir="${classes-directory}" />
             <fileset dir="${web-directory}">
                 <exclude name="WEB-INF/web.xml" />
