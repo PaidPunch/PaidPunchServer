@@ -20,7 +20,7 @@
     <property name="pp.aws.webservice_test1" value="test.paidpunch.com" />
     <property name="pp.aws.webservice_prodA" value="ec2-54-244-153-182.us-west-2.compute.amazonaws.com" />
     <property name="pp.aws.webservice_prodB" value="ec2-54-244-136-213.us-west-2.compute.amazonaws.com" />
-    <property name="pp.aws.webservice_prodC" value="" />
+    <property name="pp.aws.webservice_prodC" value="ec2-50-112-208-142.us-west-2.compute.amazonaws.com" />
     <property name="pp.aws.remote_deploy_backup_dir" value="/home/ec2-user/deploy_backup" />
     <property name="pp.aws.remote_tomcat_dir" value="/usr/share/tomcat7/webapps" />
 
@@ -65,6 +65,7 @@
     <target name="server.deploy.production" depends="build.server.war">
         <war.deploy host="${pp.aws.webservice_prodA}"/>
         <war.deploy host="${pp.aws.webservice_prodB}"/>
+        <!--<war.deploy host="${pp.aws.webservice_prodC}"/>-->
     </target>
 
 </project>
