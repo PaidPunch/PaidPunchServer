@@ -1,11 +1,8 @@
 package com.jspservlets;
 
-import java.awt.Color;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,20 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
@@ -63,9 +46,9 @@ public class VerifyBusinessUser extends HttpServlet {
     // String orange_qrcode_value = "";
     String flyerQrCode = "";
     String businessName = "";
-    Document document = null;
+//    Document document = null;
     String send = "";
-    PdfWriter writer = null;
+//    PdfWriter writer = null;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -260,390 +243,390 @@ public class VerifyBusinessUser extends HttpServlet {
         return fl;
     }
 
-    /**
-     * Creates a PDF document.
-     * 
-     * @param filename
-     *            the path to the new PDF document
-     * @param locale
-     *            Locale in case you want to create a Calendar in another language
-     * @param year
-     *            the year for which you want to make a calendar
-     * @throws DocumentException
-     * @throws IOException
-     */
-
-    public void createFlyerPdf(String filename) throws IOException, DocumentException {
-        // step 1
-        Rectangle pageSize = new Rectangle(700, 470);
-        document = new Document(pageSize);
-        // step 2
-        writer = PdfWriter.getInstance(document, new FileOutputStream(RESULT));
-        // step 3
-        document.open();
-        // step 4
-        PdfPTable table;
-
-        PdfContentByte canvas = writer.getDirectContent();
-
-        // draw the background
-        drawImageFlyer(canvas);
-        // create a table with 1 columns
-        table = new PdfPTable(1);
-        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-        table.setHorizontalAlignment(Element.ALIGN_RIGHT);
-
-        table.setTotalWidth(500);
-        table.addCell(getBusinessCell());
-        // complete the table
-        table.completeRow();
-        // write the table to an absolute position
-        table.writeSelectedRows(0, -1, 170, 460, canvas);
-
-        table = new PdfPTable(6);
-        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-        table.setHorizontalAlignment(Element.ALIGN_LEFT);
-
-        table.setTotalWidth(680);
-
-        float headerwidths[] = { 55f, 170f, 55f, 160f, 55f, 165f };
-        table.setWidths(headerwidths);
-        // table.setWidthPercentage(100);
-
-        // add the name of the month
-        // table.getDefaultCell().setBackgroundColor(Color.WHITE);
-        String blankcell = " ";
-        table.addCell(getDataCell(blankcell));
-
-        String text_one = "Download the PaidPunch App and scan this QR code";
-        table.addCell(getDataCell(text_one));
-
-        table.addCell(getDataCell(blankcell));
-
-        String text_two = "Pay the Cashier $" + punchCardPrice + " and receive " + punchesPerCard + " $"
-                + punchValue + " vouchers of store credit ($" + cost_price + " value)";
-        table.addCell(getDataCell(text_two));
-
-        table.addCell(getDataCell(blankcell));
-        String text_three = "Every time you visit us, open the PaidPunch app and use a $" + punchValue
-                + " PaidPunch towards your purchase";
-        table.addCell(getDataCell(text_three));
-
-        table.completeRow();
-        // write the table to an absolute position
-        table.writeSelectedRows(0, -1, 0, 300, canvas);
-
-        table = new PdfPTable(1);
-        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-        table.setHorizontalAlignment(Element.ALIGN_LEFT);
-
-        table.setTotalWidth(50);
-        // int headerwidths[] = {4, 30,4, 30,4,30 };
-        // table.setWidths(headerwidths);
-        // table.setWidthPercentage(100);
-
-        // add the name of the month
-        String off_text = "$" + punchValue + "\nOFF";
-        table.addCell(getOffCell(off_text));
-        // complete the table
-        table.completeRow();
-        // write the table to an absolute position
-        table.writeSelectedRows(0, -1, 520, 160, canvas);
-
-        document.newPage();
-        // }
-        // step 5
-        document.close();
-    }
-
-    public void createOrangeQRPdf(String filename) throws IOException, DocumentException {
-        // step 1
-        Rectangle pageSize = new Rectangle(450, 320);
-        document = new Document(pageSize);
-        // step 2
-        writer = PdfWriter.getInstance(document, new FileOutputStream(RESULT1));
-        // step 3
-        document.open();
-        // step 4
-        PdfPTable table;
-
-        PdfContentByte canvas = writer.getDirectContent();
-
-        // draw the background
-        drawImageOrangePdf(canvas);
-        // create a table with 1 columns
-        table = new PdfPTable(1);
-        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-        table.setHorizontalAlignment(Element.ALIGN_LEFT);
-
-        table.setTotalWidth(450);
-        String attn = "ATTENTION : Keep this QR code hidden and allow the customer to scan it only after receiving payment.\n Scanning this code will issue a PaidPunch Card to the customer.";
-        table.addCell(getAttentionText(attn));
-
-        // complete the table
-        table.completeRow();
-        // write the table to an absolute position
-        table.writeSelectedRows(0, -1, 0, 40, canvas);
-
-        table = new PdfPTable(1);
-        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-        table.setHorizontalAlignment(Element.ALIGN_LEFT);
-
-        table.setTotalWidth(450);
-        String busname = "Issuing QR Code for " + businessName;
-        table.addCell(getIssuingText(busname));
-
-        // complete the table
-        table.completeRow();
-        // write the table to an absolute position
-        table.writeSelectedRows(0, -1, 40, 325, canvas);
-
-        document.newPage();
-        // }
-        // step 5
-        document.close();
-    }
-
-    /**
-     * Draws the image of the month to the calendar.
-     * 
-     * @param canvas
-     *            the direct content layer
-     * @param calendar
-     *            the month (to know which picture to use)
-     * @throws DocumentException
-     * @throws IOException
-     */
-    public void drawImageFlyer(PdfContentByte canvas) throws DocumentException, IOException {
-        // get the image
-        // Image img =
-        // Image.getInstance(String.format("C:\\Documents and Settings\\admin\\My Documents\\NetBeansProjects\\trial\\src\\java\\com\\trial\\flyer_bg.png"));
-        Image img = Image.getInstance(String.format(images_path + "flyer_bg12.png"));
-        img.scalePercent(110);
-        // img.scaleToFit(650, 500);
-        // img.setAbsolutePosition((PageSize.A4.getHeight() - img.getScaledWidth()) / 2, (PageSize.A4.getWidth() -
-        // img.getScaledHeight()) / 2);
-        img.setAbsolutePosition(0, 0);
-        canvas.addImage(img);
-        // canvas.saveState();
-        Image img1 = Image.getInstance(images_path + "flyer_logo.JPG");
-        // img1.scaleToFit(100,100);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(40, 370);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "mb_save.png");
-        img1.scaleToFit(180, 180);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(470, 50);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "flyer_card_combined.png");
-        img1.scaleToFit(160, 110);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(280, 90);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "one.jpg");
-        // img1.scaleToFit(33,33);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(18, 260);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "two.jpg");
-        // img1.scaleToFit(35,35);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(250, 260);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "three.jpg");
-        // img1.scaleToFit(35,35);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(468, 260);
-        canvas.addImage(img1);
-        // add metadata\
-        // canvas.saveState();
-        // canvas.restoreState();
-
-        img1 = Image.getInstance("http://api.qrserver.com/v1/create-qr-code/?data=" + send + "&amp;size=100x100");
-        img1.scaleToFit(180, 180);
-        // img1.scalePercent(100);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(50, 30);
-        canvas.addImage(img1);
-
-    }
-
-    /**
-     * Creates a PdfPCell with the name of the month
-     * 
-     * @param calendar
-     *            a date
-     * @param locale
-     *            a locale
-     * @return a PdfPCell with rowspan 7, containing the name of the month
-     */
-    public PdfPCell getBusinessCell() throws BadElementException, MalformedURLException, IOException, DocumentException {
-        PdfPCell cell = new PdfPCell();
-
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setUseDescender(true);
-
-        FontFactory.getFont(FontFactory.COURIER, 14, Font.BOLD, new Color(244, 123, 39));
-
-        Paragraph title11 = new Paragraph("Save ", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.BOLD, new Color(
-                244, 123, 39)));
-        title11.setAlignment("right");
-
-        title11.add(new Chunk(disc + "%", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129,
-                130, 133))));
-
-        title11.add(new Chunk(" at ", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(244, 123,
-                39))));
-
-        title11.add(new Chunk(businessName, FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129, 130,
-                133))));
-        cell.addElement(title11);
-
-        Paragraph line2 = new Paragraph("",
-                FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(244, 123, 39)));
-        line2.setAlignment("right");
-
-        line2.add(new Chunk(" with", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL,
-                new Color(244, 123, 39))));
-        line2.add(new Chunk(" Paid", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129, 130,
-                133))));
-        line2.add(new Chunk("Punch", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL,
-                new Color(244, 123, 39))));
-
-        cell.addElement(line2);
-        return cell;
-    }
-
-    /**
-     * Creates a PdfPCell for a specific day
-     * 
-     * @param calendar
-     *            a date
-     * @param locale
-     *            a locale
-     * @return a PdfPCell
-     */
-
-    public PdfPCell getDataCell(String cell_text) throws BadElementException, MalformedURLException, IOException,
-            DocumentException {
-        PdfPCell cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setUseDescender(true);
-        Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL,
-                new Color(90, 90, 90)));
-        title11.setAlignment("left");
-        cell.addElement(title11);
-        return cell;
-    }
-
-    public PdfPCell getOffCell(String cell_text) throws BadElementException, MalformedURLException, IOException,
-            DocumentException {
-        PdfPCell cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setUseDescender(true);
-        // Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new
-        // Color(244, 123, 39)));
-
-        Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD,
-                new Color(244, 123, 39)));
-        title11.setAlignment("center");
-
-        // title11.add(new Chunk("\nOff",FontFactory.getFont(FontFactory.HELVETICA, 18, Font.NORMAL, new Color(244, 123,
-        // 39))));
-        cell.addElement(title11);
-        return cell;
-    }
-
-    public void drawImageOrangePdf(PdfContentByte canvas) throws DocumentException, IOException {
-        // get the image
-        // Image img =
-        // Image.getInstance(String.format("C:\\Documents and Settings\\admin\\My Documents\\NetBeansProjects\\trial\\src\\java\\com\\trial\\flyer_bg.png"));
-        Image img = Image.getInstance(String.format(images_path + "flyer_bg.png"));
-        img.scalePercent(110);
-        // img.scaleToFit(650, 500);
-        // img.setAbsolutePosition((PageSize.A4.getHeight() - img.getScaledWidth()) / 2, (PageSize.A4.getWidth() -
-        // img.getScaledHeight()) / 2);
-        img.setAbsolutePosition(0, 0);
-        canvas.addImage(img);
-
-        Image img1 = Image.getInstance(images_path + "orange_gradient.png");
-
-        img1.scaleAbsoluteHeight(25f);
-        img1.scaleAbsoluteWidth(450f);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(0, 295);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "orange_gradient.png");
-
-        img1.scaleAbsoluteHeight(200f);
-        img1.scaleAbsoluteWidth(200f);
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(130, 70);
-        canvas.addImage(img1);
-
-        // img1 =
-        // Image.getInstance("http://api.qrserver.com/v1/create-qr-code/?data="+orange_qrcode_value+"&amp;size=100x100");
-        img1.scaleAbsoluteHeight(170f);
-        img1.scaleAbsoluteWidth(170f);
-
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(145, 85);
-        canvas.addImage(img1);
-
-        img1 = Image.getInstance(images_path + "arrows.png");
-
-        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
-        img1.setAbsolutePosition(10, 300);
-        canvas.addImage(img1);
-
-    }
-
-    public PdfPCell getAttentionText(String cell_text) throws BadElementException, MalformedURLException, IOException,
-            DocumentException {
-        PdfPCell cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setUseDescender(true);
-        // Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new
-        // Color(244, 123, 39)));
-
-        Paragraph title11 = new Paragraph("ATTENTION : ", FontFactory.getFont(FontFactory.HELVETICA, 8, Font.BOLD,
-                new Color(90, 90, 90)));
-        title11.setAlignment("center");
-        title11.add(new Chunk("Keep this QR code hidden and allow the customer to scan it", FontFactory.getFont(
-                FontFactory.HELVETICA, 8, Font.NORMAL, new Color(90, 90, 90))));
-        title11.add(new Chunk(" only after receiving payment.\n", FontFactory.getFont(FontFactory.HELVETICA, 8,
-                Font.BOLD, new Color(90, 90, 90))));
-        title11.add(new Chunk("Scanning this code will issue a PaidPunch Card to the customer.", FontFactory.getFont(
-                FontFactory.HELVETICA, 8, Font.NORMAL, new Color(90, 90, 90))));
-        // title11.add(new Chunk("\nOff",FontFactory.getFont(FontFactory.HELVETICA, 18, Font.NORMAL, new Color(244, 123,
-        // 39))));
-        cell.addElement(title11);
-        return cell;
-    }
-
-    public PdfPCell getIssuingText(String cell_text) throws BadElementException, MalformedURLException, IOException,
-            DocumentException {
-        PdfPCell cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setUseDescender(true);
-        // Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new
-        // Color(244, 123, 39)));
-
-        Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 15, Font.BOLD,
-                new Color(255, 255, 255)));
-        title11.setAlignment("left");
-
-        // title11.add(new Chunk("\nOff",FontFactory.getFont(FontFactory.HELVETICA, 18, Font.NORMAL, new Color(244, 123,
-        // 39))));
-        cell.addElement(title11);
-        return cell;
-    }
+//    /**
+//     * Creates a PDF document.
+//     * 
+//     * @param filename
+//     *            the path to the new PDF document
+//     * @param locale
+//     *            Locale in case you want to create a Calendar in another language
+//     * @param year
+//     *            the year for which you want to make a calendar
+//     * @throws DocumentException
+//     * @throws IOException
+//     */
+//
+//    public void createFlyerPdf(String filename) throws IOException, DocumentException {
+//        // step 1
+//        Rectangle pageSize = new Rectangle(700, 470);
+//        document = new Document(pageSize);
+//        // step 2
+//        writer = PdfWriter.getInstance(document, new FileOutputStream(RESULT));
+//        // step 3
+//        document.open();
+//        // step 4
+//        PdfPTable table;
+//
+//        PdfContentByte canvas = writer.getDirectContent();
+//
+//        // draw the background
+//        drawImageFlyer(canvas);
+//        // create a table with 1 columns
+//        table = new PdfPTable(1);
+//        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+//        table.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//
+//        table.setTotalWidth(500);
+//        table.addCell(getBusinessCell());
+//        // complete the table
+//        table.completeRow();
+//        // write the table to an absolute position
+//        table.writeSelectedRows(0, -1, 170, 460, canvas);
+//
+//        table = new PdfPTable(6);
+//        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+//        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+//
+//        table.setTotalWidth(680);
+//
+//        float headerwidths[] = { 55f, 170f, 55f, 160f, 55f, 165f };
+//        table.setWidths(headerwidths);
+//        // table.setWidthPercentage(100);
+//
+//        // add the name of the month
+//        // table.getDefaultCell().setBackgroundColor(Color.WHITE);
+//        String blankcell = " ";
+//        table.addCell(getDataCell(blankcell));
+//
+//        String text_one = "Download the PaidPunch App and scan this QR code";
+//        table.addCell(getDataCell(text_one));
+//
+//        table.addCell(getDataCell(blankcell));
+//
+//        String text_two = "Pay the Cashier $" + punchCardPrice + " and receive " + punchesPerCard + " $"
+//                + punchValue + " vouchers of store credit ($" + cost_price + " value)";
+//        table.addCell(getDataCell(text_two));
+//
+//        table.addCell(getDataCell(blankcell));
+//        String text_three = "Every time you visit us, open the PaidPunch app and use a $" + punchValue
+//                + " PaidPunch towards your purchase";
+//        table.addCell(getDataCell(text_three));
+//
+//        table.completeRow();
+//        // write the table to an absolute position
+//        table.writeSelectedRows(0, -1, 0, 300, canvas);
+//
+//        table = new PdfPTable(1);
+//        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+//        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+//
+//        table.setTotalWidth(50);
+//        // int headerwidths[] = {4, 30,4, 30,4,30 };
+//        // table.setWidths(headerwidths);
+//        // table.setWidthPercentage(100);
+//
+//        // add the name of the month
+//        String off_text = "$" + punchValue + "\nOFF";
+//        table.addCell(getOffCell(off_text));
+//        // complete the table
+//        table.completeRow();
+//        // write the table to an absolute position
+//        table.writeSelectedRows(0, -1, 520, 160, canvas);
+//
+//        document.newPage();
+//        // }
+//        // step 5
+//        document.close();
+//    }
+//
+//    public void createOrangeQRPdf(String filename) throws IOException, DocumentException {
+//        // step 1
+//        Rectangle pageSize = new Rectangle(450, 320);
+//        document = new Document(pageSize);
+//        // step 2
+//        writer = PdfWriter.getInstance(document, new FileOutputStream(RESULT1));
+//        // step 3
+//        document.open();
+//        // step 4
+//        PdfPTable table;
+//
+//        PdfContentByte canvas = writer.getDirectContent();
+//
+//        // draw the background
+//        drawImageOrangePdf(canvas);
+//        // create a table with 1 columns
+//        table = new PdfPTable(1);
+//        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+//        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+//
+//        table.setTotalWidth(450);
+//        String attn = "ATTENTION : Keep this QR code hidden and allow the customer to scan it only after receiving payment.\n Scanning this code will issue a PaidPunch Card to the customer.";
+//        table.addCell(getAttentionText(attn));
+//
+//        // complete the table
+//        table.completeRow();
+//        // write the table to an absolute position
+//        table.writeSelectedRows(0, -1, 0, 40, canvas);
+//
+//        table = new PdfPTable(1);
+//        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+//        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+//
+//        table.setTotalWidth(450);
+//        String busname = "Issuing QR Code for " + businessName;
+//        table.addCell(getIssuingText(busname));
+//
+//        // complete the table
+//        table.completeRow();
+//        // write the table to an absolute position
+//        table.writeSelectedRows(0, -1, 40, 325, canvas);
+//
+//        document.newPage();
+//        // }
+//        // step 5
+//        document.close();
+//    }
+//
+//    /**
+//     * Draws the image of the month to the calendar.
+//     * 
+//     * @param canvas
+//     *            the direct content layer
+//     * @param calendar
+//     *            the month (to know which picture to use)
+//     * @throws DocumentException
+//     * @throws IOException
+//     */
+//    public void drawImageFlyer(PdfContentByte canvas) throws DocumentException, IOException {
+//        // get the image
+//        // Image img =
+//        // Image.getInstance(String.format("C:\\Documents and Settings\\admin\\My Documents\\NetBeansProjects\\trial\\src\\java\\com\\trial\\flyer_bg.png"));
+//        Image img = Image.getInstance(String.format(images_path + "flyer_bg12.png"));
+//        img.scalePercent(110);
+//        // img.scaleToFit(650, 500);
+//        // img.setAbsolutePosition((PageSize.A4.getHeight() - img.getScaledWidth()) / 2, (PageSize.A4.getWidth() -
+//        // img.getScaledHeight()) / 2);
+//        img.setAbsolutePosition(0, 0);
+//        canvas.addImage(img);
+//        // canvas.saveState();
+//        Image img1 = Image.getInstance(images_path + "flyer_logo.JPG");
+//        // img1.scaleToFit(100,100);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(40, 370);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "mb_save.png");
+//        img1.scaleToFit(180, 180);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(470, 50);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "flyer_card_combined.png");
+//        img1.scaleToFit(160, 110);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(280, 90);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "one.jpg");
+//        // img1.scaleToFit(33,33);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(18, 260);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "two.jpg");
+//        // img1.scaleToFit(35,35);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(250, 260);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "three.jpg");
+//        // img1.scaleToFit(35,35);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(468, 260);
+//        canvas.addImage(img1);
+//        // add metadata\
+//        // canvas.saveState();
+//        // canvas.restoreState();
+//
+//        img1 = Image.getInstance("http://api.qrserver.com/v1/create-qr-code/?data=" + send + "&amp;size=100x100");
+//        img1.scaleToFit(180, 180);
+//        // img1.scalePercent(100);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(50, 30);
+//        canvas.addImage(img1);
+//
+//    }
+//
+//    /**
+//     * Creates a PdfPCell with the name of the month
+//     * 
+//     * @param calendar
+//     *            a date
+//     * @param locale
+//     *            a locale
+//     * @return a PdfPCell with rowspan 7, containing the name of the month
+//     */
+//    public PdfPCell getBusinessCell() throws BadElementException, MalformedURLException, IOException, DocumentException {
+//        PdfPCell cell = new PdfPCell();
+//
+//        cell.setBorder(Rectangle.NO_BORDER);
+//        cell.setUseDescender(true);
+//
+//        FontFactory.getFont(FontFactory.COURIER, 14, Font.BOLD, new Color(244, 123, 39));
+//
+//        Paragraph title11 = new Paragraph("Save ", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.BOLD, new Color(
+//                244, 123, 39)));
+//        title11.setAlignment("right");
+//
+//        title11.add(new Chunk(disc + "%", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129,
+//                130, 133))));
+//
+//        title11.add(new Chunk(" at ", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(244, 123,
+//                39))));
+//
+//        title11.add(new Chunk(businessName, FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129, 130,
+//                133))));
+//        cell.addElement(title11);
+//
+//        Paragraph line2 = new Paragraph("",
+//                FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(244, 123, 39)));
+//        line2.setAlignment("right");
+//
+//        line2.add(new Chunk(" with", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL,
+//                new Color(244, 123, 39))));
+//        line2.add(new Chunk(" Paid", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL, new Color(129, 130,
+//                133))));
+//        line2.add(new Chunk("Punch", FontFactory.getFont(FontFactory.HELVETICA, 32, Font.NORMAL,
+//                new Color(244, 123, 39))));
+//
+//        cell.addElement(line2);
+//        return cell;
+//    }
+//
+//    /**
+//     * Creates a PdfPCell for a specific day
+//     * 
+//     * @param calendar
+//     *            a date
+//     * @param locale
+//     *            a locale
+//     * @return a PdfPCell
+//     */
+//
+//    public PdfPCell getDataCell(String cell_text) throws BadElementException, MalformedURLException, IOException,
+//            DocumentException {
+//        PdfPCell cell = new PdfPCell();
+//        cell.setBorder(Rectangle.NO_BORDER);
+//        cell.setUseDescender(true);
+//        Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL,
+//                new Color(90, 90, 90)));
+//        title11.setAlignment("left");
+//        cell.addElement(title11);
+//        return cell;
+//    }
+//
+//    public PdfPCell getOffCell(String cell_text) throws BadElementException, MalformedURLException, IOException,
+//            DocumentException {
+//        PdfPCell cell = new PdfPCell();
+//        cell.setBorder(Rectangle.NO_BORDER);
+//        cell.setUseDescender(true);
+//        // Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new
+//        // Color(244, 123, 39)));
+//
+//        Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD,
+//                new Color(244, 123, 39)));
+//        title11.setAlignment("center");
+//
+//        // title11.add(new Chunk("\nOff",FontFactory.getFont(FontFactory.HELVETICA, 18, Font.NORMAL, new Color(244, 123,
+//        // 39))));
+//        cell.addElement(title11);
+//        return cell;
+//    }
+//
+//    public void drawImageOrangePdf(PdfContentByte canvas) throws DocumentException, IOException {
+//        // get the image
+//        // Image img =
+//        // Image.getInstance(String.format("C:\\Documents and Settings\\admin\\My Documents\\NetBeansProjects\\trial\\src\\java\\com\\trial\\flyer_bg.png"));
+//        Image img = Image.getInstance(String.format(images_path + "flyer_bg.png"));
+//        img.scalePercent(110);
+//        // img.scaleToFit(650, 500);
+//        // img.setAbsolutePosition((PageSize.A4.getHeight() - img.getScaledWidth()) / 2, (PageSize.A4.getWidth() -
+//        // img.getScaledHeight()) / 2);
+//        img.setAbsolutePosition(0, 0);
+//        canvas.addImage(img);
+//
+//        Image img1 = Image.getInstance(images_path + "orange_gradient.png");
+//
+//        img1.scaleAbsoluteHeight(25f);
+//        img1.scaleAbsoluteWidth(450f);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(0, 295);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "orange_gradient.png");
+//
+//        img1.scaleAbsoluteHeight(200f);
+//        img1.scaleAbsoluteWidth(200f);
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(130, 70);
+//        canvas.addImage(img1);
+//
+//        // img1 =
+//        // Image.getInstance("http://api.qrserver.com/v1/create-qr-code/?data="+orange_qrcode_value+"&amp;size=100x100");
+//        img1.scaleAbsoluteHeight(170f);
+//        img1.scaleAbsoluteWidth(170f);
+//
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(145, 85);
+//        canvas.addImage(img1);
+//
+//        img1 = Image.getInstance(images_path + "arrows.png");
+//
+//        // img.setAbsolutePosition((100 - img.getScaledWidth()) / 2, (100 - img.getScaledHeight()) / 2);
+//        img1.setAbsolutePosition(10, 300);
+//        canvas.addImage(img1);
+//
+//    }
+//
+//    public PdfPCell getAttentionText(String cell_text) throws BadElementException, MalformedURLException, IOException,
+//            DocumentException {
+//        PdfPCell cell = new PdfPCell();
+//        cell.setBorder(Rectangle.NO_BORDER);
+//        cell.setUseDescender(true);
+//        // Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new
+//        // Color(244, 123, 39)));
+//
+//        Paragraph title11 = new Paragraph("ATTENTION : ", FontFactory.getFont(FontFactory.HELVETICA, 8, Font.BOLD,
+//                new Color(90, 90, 90)));
+//        title11.setAlignment("center");
+//        title11.add(new Chunk("Keep this QR code hidden and allow the customer to scan it", FontFactory.getFont(
+//                FontFactory.HELVETICA, 8, Font.NORMAL, new Color(90, 90, 90))));
+//        title11.add(new Chunk(" only after receiving payment.\n", FontFactory.getFont(FontFactory.HELVETICA, 8,
+//                Font.BOLD, new Color(90, 90, 90))));
+//        title11.add(new Chunk("Scanning this code will issue a PaidPunch Card to the customer.", FontFactory.getFont(
+//                FontFactory.HELVETICA, 8, Font.NORMAL, new Color(90, 90, 90))));
+//        // title11.add(new Chunk("\nOff",FontFactory.getFont(FontFactory.HELVETICA, 18, Font.NORMAL, new Color(244, 123,
+//        // 39))));
+//        cell.addElement(title11);
+//        return cell;
+//    }
+//
+//    public PdfPCell getIssuingText(String cell_text) throws BadElementException, MalformedURLException, IOException,
+//            DocumentException {
+//        PdfPCell cell = new PdfPCell();
+//        cell.setBorder(Rectangle.NO_BORDER);
+//        cell.setUseDescender(true);
+//        // Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD, new
+//        // Color(244, 123, 39)));
+//
+//        Paragraph title11 = new Paragraph(cell_text, FontFactory.getFont(FontFactory.HELVETICA, 15, Font.BOLD,
+//                new Color(255, 255, 255)));
+//        title11.setAlignment("left");
+//
+//        // title11.add(new Chunk("\nOff",FontFactory.getFont(FontFactory.HELVETICA, 18, Font.NORMAL, new Color(244, 123,
+//        // 39))));
+//        cell.addElement(title11);
+//        return cell;
+//    }
 
 }
