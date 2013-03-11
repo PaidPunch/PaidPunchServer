@@ -22,7 +22,9 @@ public class CorsUtils
             "http://tb-mac.local:8080",
             "http://www.paidpunch.com",
             "https://www.paidpunch.com",
-            "http://dev.paidpunch.com:8080"}));
+            "http://testsite.paidpunch.com",
+            "http://dev.paidpunch.com:8080",
+            "http://devtest.paidpunch.com:8080"}));
 
     public static void addOptionsCorsHeaderInfo(HttpServletRequest request, HttpServletResponse response) 
     {
