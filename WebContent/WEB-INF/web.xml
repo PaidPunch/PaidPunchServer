@@ -170,6 +170,11 @@
         <servlet-name>Feeds</servlet-name>
         <servlet-class>com.app.Feeds</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Dashboard</servlet-name>
+        <servlet-class>com.paidpunch.dashboard.Dashboard</servlet-class>
+    </servlet>
+    
     <servlet-mapping>
         <servlet-name>Register</servlet-name>
         <url-pattern>/app_registration</url-pattern>
@@ -289,6 +294,10 @@
     <servlet-mapping>
       <servlet-name>Feeds</servlet-name>
         <url-pattern>/Feeds</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Dashboard</servlet-name>
+        <url-pattern>/Dashboard</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
