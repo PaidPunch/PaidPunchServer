@@ -19,7 +19,6 @@ public class Dashboard extends HttpServlet {
      */
     public Dashboard() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -39,6 +38,12 @@ public class Dashboard extends HttpServlet {
         String stats = request.getParameter("stats");
         String responseString = new Gson().toJson(DataAccessV2.getStats(stats)).toString();
         response.getWriter().print(responseString);
+    }
+    
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        CorsUtils.addOptionsCorsHeaderInfo(req, resp);
+        super.doOptions(req, resp);
     }
 
 }
