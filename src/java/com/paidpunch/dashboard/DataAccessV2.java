@@ -21,7 +21,7 @@ public class DataAccessV2 {
     private final static String PASSWORD_TEST = "Biscuit-1";
     private final static String PASSWORD_PROD = "Biscuit-1";
     
-    public final static String STATS_PUNCHES_PER_MONTH = "punches_per_month";
+    public final static String STATS_PUNCHES_PER_YEAR_MONTH = "punches_per_year_month";
     
     public static Logger logger = Logger.getLogger(DataAccessV2.class.getName());
 
@@ -41,22 +41,22 @@ public class DataAccessV2 {
     }
 
     private static boolean isProduction() {
-        Object o;
+        Object o; // assumes FALSE if the value isn't declared
         try {
             o = (new InitialContext()).lookup("java:comp/env/isProduction");
         } catch (NamingException e) {
-            o = Boolean.FALSE; // assumes FALSE if the value isn't declared
+            o = Boolean.FALSE;
         }
         return o == null ? Boolean.FALSE : (Boolean) o;
     }
     
-    public static PunchesPerMonth getPunchesPerMonth() {
-        PunchesPerMonth punchesPerMonth = new PunchesPerMonth();
+    public static PunchesPerYearMonth getPunchesPerYearMonth() {
+        PunchesPerYearMonth punchesPerYearMonth = new PunchesPerYearMonth();
         Connection conn = createConnection();
         PreparedStatement prepStmt;
         try {
             prepStmt = conn.prepareStatement(
-                    "SELECT YEAR(download_date) AS YEAR, MONTH(download_date) AS MONTH, COUNT(*) AS COUNT " +
+                    "SELECT YEAR(download_date) AS YEAR, MONTH(download_date) AS MONTH, COUNT(*) AS PUNCHES " +
                             "FROM punchcard_download " +
                             "WHERE isfreepunch = 'false' " +
                             "GROUP BY YEAR(download_date), MONTH(download_date);");
@@ -64,8 +64,8 @@ public class DataAccessV2 {
             while (rs.next()) {
                 String year = rs.getString("YEAR");
                 String month = String.format("%02d", rs.getInt("MONTH"));
-                Integer count = rs.getInt("COUNT");
-                punchesPerMonth.add(year + "/" + month, count);
+                Integer punches = rs.getInt("PUNCHES");
+                punchesPerYearMonth.add(year, month, punches);
             }
             rs.close();
             prepStmt.close();
@@ -73,12 +73,12 @@ public class DataAccessV2 {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return punchesPerMonth;
+        return punchesPerYearMonth;
     }
     
     public static Object getStats(String stats) {
-        if (stats.equals(STATS_PUNCHES_PER_MONTH)) {
-            return getPunchesPerMonth();
+        if (stats.equals(STATS_PUNCHES_PER_YEAR_MONTH)) {
+            return getPunchesPerYearMonth();
         }
         return null;
     }
