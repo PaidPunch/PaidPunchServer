@@ -25,12 +25,12 @@ public class PunchesPerYearMonth {
         @SuppressWarnings("unused")
         private String month = null;
         @SuppressWarnings("unused")
-        private Integer punches = null;
+        private Integer value = null;
         
-        public PunchYearMonth(String year, String month, Integer punches) {
+        public PunchYearMonth(String year, String month, Integer value) {
             this.year = year;
             this.month = month;
-            this.punches = punches;
+            this.value = value;
         }
     }
     

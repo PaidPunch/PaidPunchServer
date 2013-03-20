@@ -21,7 +21,8 @@ public class DataAccessV2 {
     private final static String PASSWORD_TEST = "Biscuit-1";
     private final static String PASSWORD_PROD = "Biscuit-1";
     
-    public final static String STATS_PUNCHES_PER_YEAR_MONTH = "punches_per_year_month";
+    public final static String STATS_PUNCHES_PER_YEAR_MONTH = "punchesPerYearMonth";
+    public final static String STATS_UNIQUE_USERS_PER_YEAR_MONTH = "uniqueUsersPerYearMonth";
     
     public static Logger logger = Logger.getLogger(DataAccessV2.class.getName());
 
@@ -50,6 +51,15 @@ public class DataAccessV2 {
         return o == null ? Boolean.FALSE : (Boolean) o;
     }
     
+    public static Object getStats(String stats) {
+        if (stats.equals(STATS_PUNCHES_PER_YEAR_MONTH)) {
+            return getPunchesPerYearMonth();
+        } else if (stats.equals(STATS_UNIQUE_USERS_PER_YEAR_MONTH)) {
+            return getUniqueUsersPerYearMonth();
+        }
+        return null;
+    }
+    
     public static PunchesPerYearMonth getPunchesPerYearMonth() {
         PunchesPerYearMonth punchesPerYearMonth = new PunchesPerYearMonth();
         Connection conn = createConnection();
@@ -76,11 +86,29 @@ public class DataAccessV2 {
         return punchesPerYearMonth;
     }
     
-    public static Object getStats(String stats) {
-        if (stats.equals(STATS_PUNCHES_PER_YEAR_MONTH)) {
-            return getPunchesPerYearMonth();
+    private static UniqueUsersPerYearMonth getUniqueUsersPerYearMonth() {
+        UniqueUsersPerYearMonth uniqueUsersPerYearMonth = new UniqueUsersPerYearMonth();
+        Connection conn = createConnection();
+        PreparedStatement prepStmt;
+        try {
+            prepStmt = conn.prepareStatement(
+                    "SELECT YEAR(Date) AS YEAR, MONTH(Date) AS MONTH, COUNT(*) AS UNIQUE_USERS " +
+                            "FROM app_user " +
+                            "GROUP BY YEAR(Date), MONTH(Date);");
+            ResultSet rs = prepStmt.executeQuery();
+            while (rs.next()) {
+                String year = rs.getString("YEAR");
+                String month = String.format("%02d", rs.getInt("MONTH"));
+                Integer users = rs.getInt("UNIQUE_USERS");
+                uniqueUsersPerYearMonth.add(year, month, users);
+            }
+            rs.close();
+            prepStmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
         }
-        return null;
+        return uniqueUsersPerYearMonth;
     }
 
 }
