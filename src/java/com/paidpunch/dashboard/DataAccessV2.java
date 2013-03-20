@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 public class DataAccessV2 {
 
     private final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private final static String JDBC_URL_TEST = "jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchtest";
+    private final static String JDBC_URL_TEST = "jdbc:mysql://paidpunchtest.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchprod";
     private final static String JDBC_URL_PROD = "jdbc:mysql://paidpunchprod.csepczasc6nf.us-west-2.rds.amazonaws.com:3306/paidpunchprod";
     private final static String USERID_TEST = "paidpunch";
     private final static String USERID_PROD = "paidpunchprod";
