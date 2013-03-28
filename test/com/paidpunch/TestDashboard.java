@@ -25,7 +25,7 @@ public class TestDashboard {
     
     @Test
     public void testGetPunchesPerYearMonth() {
-        PunchesPerYearMonth punchesPerYearMonth = DataAccessV2.getPunchesPerYearMonth();
+        PunchesPerYearMonth punchesPerYearMonth = DataAccessV2.getPurchasedPunchesPerYearMonth();
         Assert.assertFalse(punchesPerYearMonth.isEmpty());
     }
 

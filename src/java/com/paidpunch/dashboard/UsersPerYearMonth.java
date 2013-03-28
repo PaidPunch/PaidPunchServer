@@ -3,20 +3,20 @@ package com.paidpunch.dashboard;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UniqueUsersPerYearMonth {
+public class UsersPerYearMonth {
     
-    private List<UserYearMonth> uniqueUsersPerYearMonth = null;
+    private List<UserYearMonth> usersPerYearMonth = null;
     
-    public UniqueUsersPerYearMonth() {
-        uniqueUsersPerYearMonth = new ArrayList<UserYearMonth>();
+    public UsersPerYearMonth() {
+        usersPerYearMonth = new ArrayList<UserYearMonth>();
     }
     
     public void add(String year, String month, Integer users) {
-        uniqueUsersPerYearMonth.add(new UserYearMonth(year, month, users));
+        usersPerYearMonth.add(new UserYearMonth(year, month, users));
     }
     
     public boolean isEmpty() {
-        return uniqueUsersPerYearMonth.isEmpty();
+        return usersPerYearMonth.isEmpty();
     }
     
     private class UserYearMonth {
