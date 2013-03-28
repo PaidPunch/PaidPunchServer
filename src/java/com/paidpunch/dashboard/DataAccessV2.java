@@ -70,11 +70,38 @@ public class DataAccessV2 {
         } else if (stats.equals(STATS_PURCHASED_PUNCHES_PER_USER)) {
             return getPurchasedPunchesPerUser();
         } else if (stats.equals(STATS_USED_PUNCHES_PER_USER)) {
-            return null;//getUsedPunchesPerUser();
+            return getUsedPunchesPerUser();
         }
         return null;
     }
     
+    private static Object getUsedPunchesPerUser() {
+        PunchesPerUser usedPunchesPerYearMonth = new PunchesPerUser();
+        Connection conn = createConnection();
+        PreparedStatement prepStmt;
+        try {
+            prepStmt = conn.prepareStatement(
+                    "SELECT pt.app_user_id, a.username AS NAME, a.email_id AS EMAIL, COUNT(*) AS USED_PUNCHES " +
+                            "FROM punch_card_tracker pt, app_user a " +
+                            "WHERE pt.app_user_id = a.user_id " +
+                            "GROUP BY app_user_id " +
+                            "ORDER BY USED_PUNCHES DESC;");
+            ResultSet rs = prepStmt.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("NAME");
+                String email = rs.getString("EMAIL");
+                Integer punches = rs.getInt("USED_PUNCHES");
+                usedPunchesPerYearMonth.add(name, email, punches);
+            }
+            rs.close();
+            prepStmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return usedPunchesPerYearMonth;
+    }
+
     private static PunchesPerUser getPurchasedPunchesPerUser() {
         PunchesPerUser purchasedPunchesPerYearMonth = new PunchesPerUser();
         Connection conn = createConnection();
@@ -82,10 +109,10 @@ public class DataAccessV2 {
         try {
             prepStmt = conn.prepareStatement(
                     "SELECT pd.app_user_id, a.username AS NAME, a.email_id AS EMAIL, COUNT(*) AS PURCHASED_PUNCHES " +
-                            "FROM punchcard_download pd, app_user a" +
+                            "FROM punchcard_download pd, app_user a " +
                             "WHERE isfreepunch = 'false' AND pd.app_user_id = a.user_id " +
                             "GROUP BY app_user_id " +
-                            "ORDER BY purchases DESC;");
+                            "ORDER BY PURCHASED_PUNCHES DESC;");
             ResultSet rs = prepStmt.executeQuery();
             while (rs.next()) {
                 String name = rs.getString("NAME");
